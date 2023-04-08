@@ -1,5 +1,6 @@
 use std::marker::PhantomData;
 
+/// Implementation of a vector
 pub struct Vector<T> {
     _m: PhantomData<T>,
 }
