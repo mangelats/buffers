@@ -19,7 +19,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
+    fn empty_vector_should_be_build_with_new() {
         let _vector = Vector::<u32>::new();
     }
 }
