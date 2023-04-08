@@ -14,5 +14,6 @@
     },
     "rust-analyzer.files.excludeDirs": [
         "target"
-    ]
+    ],
+    "rust-analyzer.showUnlinkedFileNotification": false
 }
