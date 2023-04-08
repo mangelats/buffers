@@ -24,5 +24,7 @@ mod tests {
     }
 
     #[test]
-    fn empty_vector_should_have_no_length() {}
+    fn empty_vector_should_have_no_length() {
+        assert_eq!(Vector::<u32>::new().len(), 0)
+    }
 }
