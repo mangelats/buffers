@@ -1,2 +1,5 @@
 [workspace]
-members = ["1_generic-vec"]
+members = [
+    "1_generic-vec",
+    "2_buffers",
+]
