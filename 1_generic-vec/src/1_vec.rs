@@ -4,7 +4,11 @@ pub struct Vector<T> {
     _m: PhantomData<T>,
 }
 
-impl<T> Vector<T> {}
+impl<T> Vector<T> {
+    pub fn new() -> Vector<T> {
+        Vector { _m: PhantomData }
+    }
+}
 
 #[cfg(test)]
 mod tests {
