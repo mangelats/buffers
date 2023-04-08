@@ -1,3 +1,5 @@
+use std::mem::MaybeUninit;
+
 pub struct InlineBuffer<T, const SIZE: usize> {
-    array: [T; SIZE],
+    array: [MaybeUninit<T>; SIZE],
 }
