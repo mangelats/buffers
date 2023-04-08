@@ -1,6 +1,2 @@
-pub trait Buffer<T> {}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-}
+#[path = "1_traits.rs"]
+pub mod traits;
