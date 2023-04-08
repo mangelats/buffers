@@ -51,7 +51,7 @@ mod tests {
     #[test]
     fn inline_buffer_should_be_able_to_read_multiple_values() {
         let mut vec = InlineBuffer::<u32, 123>::new();
-        for x in 1..3 {
+        for x in 1..3u32 {
             unsafe { vec.mut_ptr(0).write(x) };
             let r = unsafe { vec.ptr(0).read() };
 
