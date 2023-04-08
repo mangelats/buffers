@@ -7,7 +7,7 @@ pub struct InlineBuffer<T, const SIZE: usize> {
 
 impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
     fn capacity(&self) -> usize {
-        todo!()
+        SIZE
     }
 }
 
