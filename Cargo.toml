@@ -1,7 +1,2 @@
-[package]
-name = "generic-vec"
-version = "0.1.0"
-authors = ["Martí Angelats i Ribera <marti.angelats@gmail.com>"]
-
 [workspace]
-members = ["*"]
+members = ["1_generic-vec"]
