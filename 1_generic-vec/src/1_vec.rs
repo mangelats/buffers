@@ -22,4 +22,7 @@ mod tests {
     fn empty_vector_should_be_build_with_new() {
         let _vector = Vector::<u32>::new();
     }
+
+    #[test]
+    fn empty_vector_should_have_no_length() {}
 }
