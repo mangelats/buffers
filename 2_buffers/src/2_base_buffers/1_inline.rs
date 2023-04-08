@@ -5,6 +5,14 @@ pub struct InlineBuffer<T, const SIZE: usize> {
     array: [MaybeUninit<T>; SIZE],
 }
 
+impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
+    pub fn new() -> Self {
+        InlineBuffer {
+            array: MaybeUninit::uninit_array(),
+        }
+    }
+}
+
 impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
     fn capacity(&self) -> usize {
         SIZE
