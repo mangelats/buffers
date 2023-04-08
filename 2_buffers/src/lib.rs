@@ -1,3 +1,6 @@
+#![feature(dropck_eyepatch)]
+#![feature(maybe_uninit_uninit_array)]
+
 #[path = "1_interface/_mod.rs"]
 pub mod interface;
 
