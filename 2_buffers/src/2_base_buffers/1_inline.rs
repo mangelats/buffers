@@ -1,3 +1,3 @@
-pub struct InlineBuffer<const SIZE: usize> {
-    array: [u32; SIZE],
+pub struct InlineBuffer<T, const SIZE: usize> {
+    array: [T; SIZE],
 }
