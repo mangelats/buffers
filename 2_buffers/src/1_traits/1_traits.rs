@@ -13,4 +13,7 @@
 /// This interface has been deliberately designed to have a little constrains to the implementations as possible.
 /// For example: the underlying data doesn't need to be saved in a contiguous chunk of memory, and it could be on
 /// the stack, on the heap, etc.
-pub trait Buffer<T> {}
+pub trait Buffer<T> {
+    /// Current capacity of the buffer
+    fn capacity(&self) -> usize;
+}
