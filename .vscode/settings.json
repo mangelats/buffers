@@ -4,7 +4,7 @@
             {
                 "match": ".rs",
                 "isAsync": false,
-                "cmd": "rustc --test --o ${workspaceFolder}/target/test ${file} && ${workspaceFolder}/target/test && git add -A && git commit -m 'TCR checkpoint' || git reset --hard"
+                "cmd": "rustc --test --o ${workspaceFolder}/target/test ${file} && ${workspaceFolder}/target/test && git add -A && git commit -m 'TCR' || git reset --hard"
             }
         ]
     },
