@@ -13,6 +13,7 @@ impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     #[test]
     fn inline_buffer_should_have_the_capacity_of_its_size() {}
 }
