@@ -8,7 +8,7 @@
             }
         ]
     },
-    "rust-analyzer.files.watcher": "server",
+    "rust-analyzer.files.watcher": "client",
     "files.watcherExclude": {
         "**/target/*/**": true
     },
