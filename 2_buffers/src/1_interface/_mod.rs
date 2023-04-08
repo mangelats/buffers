@@ -1,4 +1,4 @@
 #[path = "1_traits.rs"]
-pub mod traits;
+pub mod buffer;
 
-pub use self::traits::Buffer;
+pub use self::buffer::Buffer;
