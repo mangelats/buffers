@@ -25,5 +25,6 @@ mod tests {
     #[test]
     fn inline_buffer_should_have_the_capacity_of_its_size() {
         let vec = InlineBuffer::<u32, 123>::new();
+        assert_eq!(vec.capacity(), 123);
     }
 }
