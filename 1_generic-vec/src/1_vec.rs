@@ -15,5 +15,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {}
+    fn it_works() {
+        let vector = Vector::<u32>::new();
+    }
 }
