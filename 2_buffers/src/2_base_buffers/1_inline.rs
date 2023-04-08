@@ -11,6 +11,10 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
             array: MaybeUninit::uninit_array(),
         }
     }
+
+    fn ptr(&self, index: usize) -> *const T {
+        self.array[index].as_ptr()
+    }
 }
 
 impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
