@@ -30,9 +30,16 @@ impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     fn inline_buffer_should_have_the_capacity_of_its_size() {
         let vec = InlineBuffer::<u32, 123>::new();
         assert_eq!(vec.capacity(), 123);
+    }
+
+    #[test]
+    fn inline_buffer_should_can_read_previously_written_values() {
+        let mut vec = InlineBuffer::<u32, 123>::new();
+        for x in (1..3) {}
     }
 }
