@@ -1,5 +1,18 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+use std::marker::PhantomData;
+
+/// Implementation of a vector
+pub struct Vector<T> {
+    _m: PhantomData<T>,
+}
+
+impl<T> Vector<T> {
+    pub fn new() -> Vector<T> {
+        Vector { _m: PhantomData }
+    }
+
+    pub fn len(self) -> usize {
+        0
+    }
 }
 
 #[cfg(test)]
@@ -7,8 +20,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    fn empty_vector_should_be_build_with_new() {
+        let _vector = Vector::<u32>::new();
+    }
+
+    #[test]
+    fn empty_vector_should_have_no_length() {
+        assert_eq!(Vector::<u32>::new().len(), 0)
     }
 }
