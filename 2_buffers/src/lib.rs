@@ -1,2 +1,2 @@
-#[path = "1_traits.rs"]
+#[path = "1_traits/_mod.rs"]
 pub mod traits;
