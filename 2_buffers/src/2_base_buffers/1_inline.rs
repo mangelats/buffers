@@ -1,3 +1,4 @@
+use crate::interface::Buffer;
 use std::mem::MaybeUninit;
 
 pub struct InlineBuffer<T, const SIZE: usize> {
