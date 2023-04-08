@@ -8,6 +8,10 @@ impl<T> Vector<T> {
     pub fn new() -> Vector<T> {
         Vector { _m: PhantomData }
     }
+
+    pub fn len(self) -> usize {
+        0
+    }
 }
 
 #[cfg(test)]
