@@ -12,7 +12,7 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
         }
     }
 
-    fn ptr(&self, index: usize) -> *const T {
+    pub fn ptr(&self, index: usize) -> *const T {
         self.array[index].as_ptr()
     }
 }
