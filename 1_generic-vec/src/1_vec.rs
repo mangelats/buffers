@@ -16,6 +16,6 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let vector = Vector::<u32>::new();
+        let _vector = Vector::<u32>::new();
     }
 }
