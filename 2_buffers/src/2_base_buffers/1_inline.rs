@@ -27,7 +27,7 @@ impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
-        todo!()
+        self.ptr(index).read()
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
