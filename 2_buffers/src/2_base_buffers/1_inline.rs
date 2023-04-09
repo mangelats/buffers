@@ -24,7 +24,6 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     ///
     /// index <= SIZE (otherwise you are out of bounds, which is UB)
     pub fn index(&self, index: usize) -> &MaybeUninit<T> {
-        debug_assert!(0 <= index);
         debug_assert!(index < SIZE);
         &self.array[index]
     }
@@ -36,7 +35,6 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     ///
     /// index <= SIZE (otherwise you are out of bounds, which is UB)
     pub fn mut_index(&mut self, index: usize) -> &mut MaybeUninit<T> {
-        debug_assert!(0 <= index);
         debug_assert!(index < SIZE);
         &mut self.array[index]
     }
