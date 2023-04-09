@@ -30,7 +30,7 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     }
 
     pub unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
-        self.array[index].as_mut_ptr()
+        self.mut_index(index).as_mut_ptr()
     }
 }
 
