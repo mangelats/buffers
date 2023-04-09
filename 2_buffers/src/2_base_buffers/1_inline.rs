@@ -17,8 +17,8 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
         }
     }
 
-    pub unsafe fn ptr(&self, index: usize) -> *const T {
-        self.array[index].as_ptr()
+    pub fn index(&self, index: usize) -> &MaybeUninit<T> {
+        &self.array[index]
     }
 
     pub unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
@@ -32,7 +32,7 @@ impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
-        self.ptr(index).read()
+        self.index(index).as_ptr().read()
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
