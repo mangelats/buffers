@@ -17,6 +17,9 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
         }
     }
 
+    /// Get the maybe-uninit value in the specified index
+    ///
+    /// SAFETY: index <= SIZE
     pub fn index(&self, index: usize) -> &MaybeUninit<T> {
         &self.array[index]
     }
