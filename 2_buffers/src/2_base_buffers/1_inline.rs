@@ -17,17 +17,19 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
         }
     }
 
-    /// Get a contant reference maybe-uninit value in the specified index
+    /// Get a contant reference maybe-uninit value in the specified index.
     ///
-    /// SAFETY: index <= SIZE
+    /// ## SAFETY
+    /// index <= SIZE
     pub fn index(&self, index: usize) -> &MaybeUninit<T> {
         debug_assert!(index <= SIZE);
         &self.array[index]
     }
 
-    /// Get a mutable reference maybe-uninit value in the specified index
+    /// Get a mutable reference maybe-uninit value in the specified index.
     ///
-    /// SAFETY: index <= SIZE
+    /// ## SAFETY
+    /// index <= SIZE
     pub fn mut_index(&mut self, index: usize) -> &mut MaybeUninit<T> {
         debug_assert!(index <= SIZE);
         &mut self.array[index]
