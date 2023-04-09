@@ -49,6 +49,8 @@ unsafe impl<T: Send, const SIZE: usize> Send for InlineBuffer<T, SIZE> {}
 mod tests {
     use std::sync::atomic::AtomicI64;
 
+    use crate::test_utils::life_counter::LifeCounter;
+
     use super::*;
 
     #[test]
@@ -83,5 +85,7 @@ mod tests {
     #[test]
     fn drop_in_place_should_call_destructor() {
         let counter = AtomicI64::new(0);
+        let _l = LifeCounter::new(&counter);
+        // let buffer = InlineBuffer::<Li, 1>::new();
     }
 }
