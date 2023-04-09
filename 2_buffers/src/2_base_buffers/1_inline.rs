@@ -101,6 +101,11 @@ mod tests {
     }
 
     #[test]
+    fn inline_buffer_should_be_defaultable() {
+        let vec: InlineBuffer<u32, 123> = Default::default();
+    }
+
+    #[test]
     fn inline_buffer_should_can_read_previously_written_values() {
         let mut vec = InlineBuffer::<u32, 123>::new();
         for x in 1..3 {
