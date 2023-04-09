@@ -60,10 +60,10 @@ mod tests {
     fn inline_buffer_should_be_able_to_read_multiple_values() {
         let mut vec = InlineBuffer::<usize, 123>::new();
         for x in 1..3 {
-            unsafe { vec.mut_ptr(x).write(x * 2) };
+            unsafe { vec.write_value(x, x * 2) };
         }
         for x in 1..3 {
-            let r = unsafe { vec.ptr(x).read() };
+            let r = unsafe { vec.read_value(x) };
             assert_eq!(r, x * 2)
         }
     }
