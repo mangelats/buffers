@@ -28,4 +28,12 @@ pub trait Buffer<T> {
     /// # Safety
     /// The `index` position must not contain a value.
     unsafe fn write_value(&mut self, index: usize, value: T);
+
+    /// Manually drops the value in the specified index position and empties it.
+    ///
+    /// # Safety
+    /// The `index` position must not be empty.
+    unsafe fn manually_drop(&mut self, index: usize) {
+        todo!()
+    }
 }

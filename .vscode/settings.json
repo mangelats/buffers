@@ -2,7 +2,7 @@
     "emeraldwalk.runonsave": {
         "commands": [
             {
-                "match": ".rs",
+                "match": "\\.rs",
                 "isAsync": false,
                 "cmd": "(cd ${workspaceFolder}; cargo test --workspace && git add -A && git commit -m 'TCR' || git reset --hard)"
             }
