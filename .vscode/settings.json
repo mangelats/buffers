@@ -4,7 +4,7 @@
             {
                 "match": "\\.rs",
                 "isAsync": false,
-                "cmd": "(cd ${workspaceFolder}; cargo test --workspace && git add -A && git commit -m 'TCR' || git reset --hard)"
+                "cmd": "(cd ${workspaceFolder}; cargo test --workspace && git add -A && git commit -m 'TCR' --quiet || git reset --hard --quiet)"
             }
         ]
     },
