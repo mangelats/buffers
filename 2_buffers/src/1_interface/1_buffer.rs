@@ -33,7 +33,5 @@ pub trait Buffer<T> {
     ///
     /// # Safety
     /// The `index` position must not be empty.
-    unsafe fn manually_drop(&mut self, index: usize) {
-        todo!()
-    }
+    unsafe fn manually_drop(&mut self, index: usize);
 }
