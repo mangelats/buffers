@@ -10,6 +10,7 @@ pub struct InlineBuffer<T, const SIZE: usize> {
 }
 
 impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
+    /// Create a new, empty inline buffer
     pub fn new() -> Self {
         InlineBuffer {
             array: MaybeUninit::uninit_array(),
