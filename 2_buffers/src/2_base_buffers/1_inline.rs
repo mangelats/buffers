@@ -83,7 +83,7 @@ mod tests {
     }
 
     #[test]
-    fn drop_in_place_should_call_destructor() {
+    fn manually_drop_should_call_destructor() {
         let counter = AtomicI64::new(0);
         let mut buffer = InlineBuffer::<LifeCounter<'_>, 1>::new();
 
