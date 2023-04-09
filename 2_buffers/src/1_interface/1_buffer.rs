@@ -27,5 +27,5 @@ pub trait Buffer<T> {
     ///
     /// # Safety
     /// The `index` position must not be empty.
-    unsafe fn read_value(&mut self, index: usize) -> T;
+    unsafe fn read_value(&self, index: usize) -> T;
 }
