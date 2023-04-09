@@ -39,10 +39,18 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     ///
     /// ## SAFETY
     /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
+    ///
+    /// The pointer may point to unitialized or garbage data. It's the responsability of the caller to keep track of the state.
     pub unsafe fn ptr(&self, index: usize) -> *const T {
         self.index(index).as_ptr()
     }
 
+    /// Get a mutable pointer to the value in the specified index.
+    ///
+    /// ## SAFETY
+    /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
+    ///
+    /// The pointer may point to unitialized or garbage data. It's the responsability of the caller to keep track of the state.
     pub unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
         self.mut_index(index).as_mut_ptr()
     }
