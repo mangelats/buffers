@@ -1,14 +1,11 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+#![feature(dropck_eyepatch)]
+#![feature(maybe_uninit_uninit_array)]
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[path = "1_interface/_mod.rs"]
+pub mod interface;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+#[path = "2_base_buffers/_mod.rs"]
+pub mod base_buffers;
+
+#[path = "a_test_utils/_mod.rs"]
+pub(crate) mod test_utils;
