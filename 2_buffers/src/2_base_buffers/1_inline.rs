@@ -35,7 +35,7 @@ impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
-        todo!()
+        std::ptr::drop_in_place(self.mut_ptr(index));
     }
 }
 
