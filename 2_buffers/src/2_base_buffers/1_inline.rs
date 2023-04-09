@@ -86,7 +86,11 @@ mod tests {
     fn drop_in_place_should_call_destructor() {
         let counter = AtomicI64::new(0);
         let mut buffer = InlineBuffer::<LifeCounter<'_>, 1>::new();
+
         unsafe { buffer.write_value(0, LifeCounter::new(&counter)) };
         assert_eq!(counter.load(Ordering::SeqCst), 1);
+
+        unsafe { buffer.manually_drop(0) };
+        assert_eq!(counter.load(Ordering::SeqCst), 0);
     }
 }
