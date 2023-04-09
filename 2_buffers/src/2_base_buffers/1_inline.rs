@@ -102,7 +102,7 @@ mod tests {
 
     #[test]
     fn inline_buffer_should_be_defaultable() {
-        let vec: InlineBuffer<u32, 123> = Default::default();
+        let _: InlineBuffer<u32, 123> = Default::default();
     }
 
     #[test]
