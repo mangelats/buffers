@@ -21,6 +21,7 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     ///
     /// SAFETY: index <= SIZE
     pub fn index(&self, index: usize) -> &MaybeUninit<T> {
+        debug_assert!(index <= SIZE);
         &self.array[index]
     }
 
