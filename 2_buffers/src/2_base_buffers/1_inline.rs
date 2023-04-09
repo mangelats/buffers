@@ -33,6 +33,10 @@ impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
     unsafe fn write_value(&mut self, index: usize, value: T) {
         self.mut_ptr(index).write(value)
     }
+
+    unsafe fn manually_drop(&mut self, index: usize) {
+        todo!()
+    }
 }
 
 #[cfg(test)]
