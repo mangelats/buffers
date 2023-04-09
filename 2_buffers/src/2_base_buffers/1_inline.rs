@@ -25,6 +25,14 @@ impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
     fn capacity(&self) -> usize {
         SIZE
     }
+
+    unsafe fn write_value(&mut self, index: usize, value: T) {
+        todo!()
+    }
+
+    unsafe fn read_value(&mut self, index: usize) -> T {
+        todo!()
+    }
 }
 
 #[cfg(test)]

@@ -16,4 +16,16 @@
 pub trait Buffer<T> {
     /// Current capacity of the buffer
     fn capacity(&self) -> usize;
+
+    /// Writes the value into the index position of this buffer (which is no longer empty).
+    ///
+    /// # Safety
+    /// The `index` position must not contain a value.
+    unsafe fn write_value(&mut self, index: usize, value: T);
+
+    /// Reads the index position in the buffer, and empties it.
+    ///
+    /// # Safety
+    /// The `index` position must not be empty.
+    unsafe fn read_value(&mut self, index: usize) -> T;
 }
