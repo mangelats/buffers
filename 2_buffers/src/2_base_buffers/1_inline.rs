@@ -47,7 +47,7 @@ unsafe impl<T: Send, const SIZE: usize> Send for InlineBuffer<T, SIZE> {}
 
 #[cfg(test)]
 mod tests {
-    use std::sync::atomic::AtomicI64;
+    use std::sync::atomic::{AtomicI64, Ordering};
 
     use crate::test_utils::life_counter::LifeCounter;
 
@@ -87,5 +87,6 @@ mod tests {
         let counter = AtomicI64::new(0);
         let _l = LifeCounter::new(&counter);
         // let buffer = InlineBuffer::<Li, 1>::new();
+        assert_eq!(counter.load(Ordering::SeqCst), 1);
     }
 }
