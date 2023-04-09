@@ -21,8 +21,6 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     ///
     /// ## SAFETY
     /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
-    ///
-    /// index <= SIZE (otherwise you are out of bounds, which is UB)
     pub fn index(&self, index: usize) -> &MaybeUninit<T> {
         debug_assert!(index < SIZE);
         &self.array[index]
@@ -32,8 +30,6 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     ///
     /// ## SAFETY
     /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
-    ///
-    /// index <= SIZE (otherwise you are out of bounds, which is UB)
     pub fn mut_index(&mut self, index: usize) -> &mut MaybeUninit<T> {
         debug_assert!(index < SIZE);
         &mut self.array[index]
@@ -43,8 +39,6 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     ///
     /// ## SAFETY
     /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
-    ///
-    /// index <= SIZE (otherwise you are out of bounds, which is UB)
     pub unsafe fn ptr(&self, index: usize) -> *const T {
         self.index(index).as_ptr()
     }
