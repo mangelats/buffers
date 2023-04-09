@@ -77,4 +77,7 @@ mod tests {
             assert_eq!(r, x * 2)
         }
     }
+
+    #[test]
+    fn drop_in_place_should_call_destructor() {}
 }
