@@ -26,6 +26,7 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     }
 
     pub fn mut_index(&mut self, index: usize) -> &mut MaybeUninit<T> {
+        debug_assert!(index <= SIZE);
         &mut self.array[index]
     }
 
