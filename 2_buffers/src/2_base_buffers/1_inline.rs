@@ -39,6 +39,12 @@ impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
     }
 }
 
+/// SAFETY: Because the data is inlined, Sync is safe when the underlying type is.
+unsafe impl<T: Sync, const SIZE: usize> Sync for InlineBuffer<T, SIZE> {}
+
+/// SAFETY: Because the data is inlined, Send is safe when the underlying type is.
+unsafe impl<T: Send, const SIZE: usize> Send for InlineBuffer<T, SIZE> {}
+
 #[cfg(test)]
 mod tests {
     use super::*;
