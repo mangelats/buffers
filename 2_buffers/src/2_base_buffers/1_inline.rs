@@ -1,6 +1,10 @@
 use crate::interface::Buffer;
 use std::mem::MaybeUninit;
 
+/// Buffer based on a fixed-sized array, so it cannot grow or shrink.
+///
+/// This means that the memory is contiguous and it can be used in the stack because the size is known at compile time.
+/// It can be used a building block for some other more suffisticated buffers.
 pub struct InlineBuffer<T, const SIZE: usize> {
     array: [MaybeUninit<T>; SIZE],
 }
