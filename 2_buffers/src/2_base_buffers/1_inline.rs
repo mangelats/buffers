@@ -68,8 +68,8 @@ mod tests {
     fn inline_buffer_should_can_read_previously_written_values() {
         let mut vec = InlineBuffer::<u32, 123>::new();
         for x in 1..3 {
-            unsafe { vec.mut_ptr(0).write(x) };
-            let r = unsafe { vec.ptr(0).read() };
+            unsafe { vec.write_value(0, x) };
+            let r = unsafe { vec.read_value(0) };
 
             assert_eq!(x, r)
         }
