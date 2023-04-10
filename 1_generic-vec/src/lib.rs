@@ -1,13 +1,17 @@
 use std::marker::PhantomData;
 
+use buffers::base_buffers::inline::InlineBuffer;
+
 /// Implementation of a vector
 pub struct Vector<T> {
-    _m: PhantomData<T>,
+    buf: InlineBuffer<T, 1234>,
 }
 
 impl<T> Vector<T> {
     pub fn new() -> Vector<T> {
-        Vector { _m: PhantomData }
+        Vector {
+            buf: Default::default(),
+        }
     }
 
     pub fn len(self) -> usize {
