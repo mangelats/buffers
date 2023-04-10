@@ -24,7 +24,11 @@ impl<T> HeapBuffer<T> {
         }
     }
 
-    unsafe fn ptr(&self, index: usize) -> *const T {
+    /// Get a constant pointer to the specified index
+    ///
+    /// ```
+    /// ```
+    pub unsafe fn ptr(&self, index: usize) -> *const T {
         self.ptr.as_ptr().add(index)
     }
 
