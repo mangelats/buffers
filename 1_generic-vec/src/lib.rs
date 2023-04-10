@@ -17,7 +17,7 @@ impl<T> Vector<T> {
     }
 
     pub fn len(self) -> usize {
-        0
+        self.len
     }
 }
 
