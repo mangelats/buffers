@@ -23,6 +23,14 @@ impl<T> HeapBuffer<T> {
             _marker: PhantomData,
         }
     }
+
+    unsafe fn ptr(&self, index: usize) -> *const T {
+        self.ptr.as_ptr().add(index)
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
+        self.ptr.as_ptr().add(index)
+    }
 }
 
 impl<T> Buffer<T> for HeapBuffer<T> {
