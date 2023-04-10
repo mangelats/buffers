@@ -8,7 +8,7 @@ pub struct HeapBuffer<T> {
 }
 
 impl<T> HeapBuffer<T> {
-    /// Makes a new default-sized `HeapBuffer`
+    /// Makes a new default-sized `HeapBuffer`.
     ///
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
