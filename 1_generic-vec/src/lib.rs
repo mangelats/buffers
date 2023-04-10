@@ -68,13 +68,18 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let mut vec = Vector::<u32, ExampleBuffer>::new();
     /// vec.push(123);
-    /// let value = vec.pop(); // value is 123
+    /// let value = vec.pop().expect("There is an element"); // value is 123
     /// # assert_eq!(value, 123);
     /// ```
-    pub fn pop(&mut self) -> T {
-        self.len -= 1;
+    pub fn pop(&mut self) -> Option<T> {
         // TODO: check boudnaries
-        unsafe { self.buffer.read_value(self.len) }
+        if self.len > 0 {
+            self.len -= 1;
+            let value = unsafe { self.buffer.read_value(self.len) };
+            Some(value)
+        } else {
+            None
+        }
     }
 }
 
@@ -132,8 +137,8 @@ mod tests {
         vec.push(123);
         vec.push(456);
 
-        assert_eq!(vec.pop(), 456);
-        assert_eq!(vec.pop(), 123);
+        assert_eq!(vec.pop(), Some(456u32));
+        assert_eq!(vec.pop(), Some(123u32));
     }
 
     #[test]
