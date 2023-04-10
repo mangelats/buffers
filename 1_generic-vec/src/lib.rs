@@ -5,7 +5,7 @@ use buffers::{base_buffers::inline::InlineBuffer, interface::Buffer};
 /// Implementation of a vector
 pub struct Vector<T, B: Buffer<T> = InlineBuffer<T, 1>> {
     len: usize,
-    buf: B,
+    buffer: B,
     _m: PhantomData<T>,
 }
 
@@ -19,7 +19,7 @@ impl<T, B: Buffer<T> + Default> Vector<T, B> {
     pub fn new() -> Vector<T, B> {
         Vector {
             len: 0,
-            buf: Default::default(),
+            buffer: Default::default(),
             _m: PhantomData,
         }
     }
