@@ -72,7 +72,6 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     /// # assert_eq!(value, 123);
     /// ```
     pub fn pop(&mut self) -> Option<T> {
-        // TODO: check boudnaries
         if self.len > 0 {
             self.len -= 1;
             let value = unsafe { self.buffer.read_value(self.len) };
