@@ -2,4 +2,4 @@
 pub mod inline;
 
 #[path = "2_heap.rs"]
-pub mod heao;
+pub mod heap;
