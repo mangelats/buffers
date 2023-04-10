@@ -1,4 +1,7 @@
-use std::{marker::PhantomData, ptr::NonNull};
+use std::{
+    marker::PhantomData,
+    ptr::{self, NonNull},
+};
 
 use crate::interface::Buffer;
 
@@ -47,7 +50,7 @@ impl<T> Buffer<T> for HeapBuffer<T> {
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
-        todo!()
+        ptr::read(self.ptr(index))
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
