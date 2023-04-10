@@ -54,7 +54,7 @@ impl<T> Buffer<T> for HeapBuffer<T> {
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
-        todo!()
+        ptr::write(self.mut_ptr(index), value)
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
