@@ -21,6 +21,14 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     pub fn len(&self) -> usize {
         self.len
     }
+
+    pub fn push(&mut self, value: T) {
+        let target = self.len;
+        unsafe {
+            // SAFETY: we know this value is unused because of len
+        }
+        self.len += 1;
+    }
 }
 
 impl<T, B: Buffer<T> + Default> Vector<T, B> {
