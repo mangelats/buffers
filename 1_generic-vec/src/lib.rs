@@ -55,4 +55,10 @@ mod tests {
     fn empty_vector_should_have_no_length() {
         assert_eq!(TestVector::new().len(), 0)
     }
+
+    #[test]
+    fn should_be_able_to_push_values() {
+        let mut vec = TestVector::new();
+        vec.push(1234)
+    }
 }
