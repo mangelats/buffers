@@ -59,7 +59,12 @@ mod tests {
     #[test]
     fn pushed_values_should_increase_len() {
         let mut vec = TestVector::new();
-        vec.push(1234);
+        assert_eq!(vec.len(), 0);
+
+        vec.push(0);
         assert_eq!(vec.len(), 1);
+
+        vec.push(1);
+        assert_eq!(vec.len(), 2);
     }
 }
