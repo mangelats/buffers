@@ -4,12 +4,14 @@ use buffers::base_buffers::inline::InlineBuffer;
 
 /// Implementation of a vector
 pub struct Vector<T> {
+    len: usize,
     buf: InlineBuffer<T, 1234>,
 }
 
 impl<T> Vector<T> {
     pub fn new() -> Vector<T> {
         Vector {
+            len: 0,
             buf: Default::default(),
         }
     }
