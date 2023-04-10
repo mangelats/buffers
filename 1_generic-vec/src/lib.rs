@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use buffers::{base_buffers::inline::InlineBuffer, interface::Buffer};
+use buffers::interface::Buffer;
 
 /// Implementation of a vector
 pub struct Vector<T, B: Buffer<T>> {
@@ -31,6 +31,8 @@ impl<T, B: Buffer<T> + Default> Vector<T, B> {
 
 #[cfg(test)]
 mod tests {
+    use buffers::base_buffers::inline::InlineBuffer;
+
     use super::*;
 
     type TestVector = Vector<u32, InlineBuffer<u32, 1>>;
