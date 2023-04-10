@@ -17,3 +17,9 @@ impl<T> HeapBuffer<T> {
         }
     }
 }
+
+impl<T> Default for HeapBuffer<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
