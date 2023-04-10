@@ -47,7 +47,6 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let mut vec = Vector::<u32, ExampleBuffer>::new();
     /// assert_eq!(vec.len(), 0);
-    ///
     /// vec.push(1);
     /// assert_eq!(vec.len(), 1);
     /// ```
