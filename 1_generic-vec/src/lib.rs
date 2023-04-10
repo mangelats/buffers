@@ -53,12 +53,13 @@ mod tests {
 
     #[test]
     fn empty_vector_should_have_no_length() {
-        assert_eq!(TestVector::new().len(), 0)
+        assert_eq!(TestVector::new().len(), 0);
     }
 
     #[test]
-    fn should_be_able_to_push_values() {
+    fn pushed_values_should_increase_len() {
         let mut vec = TestVector::new();
-        vec.push(1234)
+        vec.push(1234);
+        assert_eq!(vec.len(), 1);
     }
 }
