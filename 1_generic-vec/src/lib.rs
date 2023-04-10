@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use buffers::{base_buffers::inline::InlineBuffer, interface::Buffer};
 
 /// Implementation of a vector
-pub struct Vector<T, B: Buffer<T> + Default = InlineBuffer<T, 1234>> {
+pub struct Vector<T, B: Buffer<T> + Default = InlineBuffer<T, 1>> {
     len: usize,
     buf: B,
     _m: PhantomData<T>,
