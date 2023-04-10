@@ -39,7 +39,8 @@ impl<T, B: Buffer<T>> Vector<T, B> {
         self.len
     }
 
-    /// Adds a value at the end of the vector.
+    /// Tries to add a value at the end of the vector. This may fail if there is not enough
+    /// space and the buffer cannot grow.
     ///
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
@@ -65,7 +66,7 @@ impl<T, B: Buffer<T>> Vector<T, B> {
         }
     }
 
-    /// Adds a value at the end of the vector.
+    /// Adds a value at the end of the vector. Panics if it cannot.
     ///
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
