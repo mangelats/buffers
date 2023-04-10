@@ -131,5 +131,9 @@ mod tests {
 
         let counter = AtomicI64::new(0);
         let mut vec = Vector::<LifeCounter, InlineBuffer<LifeCounter, 3>>::new();
+
+        {
+            vec.push(LifeCounter::new(&counter))
+        }
     }
 }
