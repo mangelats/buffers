@@ -1,5 +1,7 @@
 use std::{marker::PhantomData, ptr::NonNull};
 
+use crate::interface::Buffer;
+
 /// Buffer implementation using a heap-allocated continuous array.
 pub struct HeapBuffer<T> {
     ptr: NonNull<T>,
@@ -20,6 +22,24 @@ impl<T> HeapBuffer<T> {
             cap: 0,
             _marker: PhantomData,
         }
+    }
+}
+
+impl<T> Buffer<T> for HeapBuffer<T> {
+    fn capacity(&self) -> usize {
+        todo!()
+    }
+
+    unsafe fn read_value(&self, index: usize) -> T {
+        todo!()
+    }
+
+    unsafe fn write_value(&mut self, index: usize, value: T) {
+        todo!()
+    }
+
+    unsafe fn manually_drop(&mut self, index: usize) {
+        todo!()
     }
 }
 
