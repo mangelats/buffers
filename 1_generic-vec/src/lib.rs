@@ -86,7 +86,12 @@ impl<T, B: Buffer<T> + Default> Vector<T, B> {
 }
 
 impl<T, B: Buffer<T>> Drop for Vector<T, B> {
-    fn drop(&mut self) {}
+    fn drop(&mut self) {
+        // Safety: All the allocated elements are in 0 <= index < self.len.
+        unsafe {
+            self.buffer.manually_drop_range(0..self.len);
+        }
+    }
 }
 
 #[cfg(test)]
