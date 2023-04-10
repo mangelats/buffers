@@ -85,6 +85,12 @@ impl<T, B: Buffer<T> + Default> Vector<T, B> {
     }
 }
 
+impl<T, B: Buffer<T> + Default> Default for Vector<T, B> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T, B: Buffer<T>> Drop for Vector<T, B> {
     fn drop(&mut self) {
         // Safety: All the allocated elements are in 0 <= index < self.len.
