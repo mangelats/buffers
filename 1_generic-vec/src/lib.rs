@@ -6,6 +6,7 @@ use buffers::base_buffers::inline::InlineBuffer;
 pub struct Vector<T> {
     len: usize,
     buf: InlineBuffer<T, 1234>,
+    _m: PhantomData<T>,
 }
 
 impl<T> Vector<T> {
@@ -13,6 +14,7 @@ impl<T> Vector<T> {
         Vector {
             len: 0,
             buf: Default::default(),
+            _m: PhantomData,
         }
     }
 
