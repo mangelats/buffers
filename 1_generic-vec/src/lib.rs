@@ -74,4 +74,13 @@ mod tests {
         vec.push(1);
         assert_eq!(vec.len(), 2);
     }
+    #[test]
+    fn pushed_values_should_pop_in_reverse_order() {
+        let mut vec = TestVector::new();
+        vec.push(123);
+        vec.push(456);
+
+        assert_eq!(vec.pop(), 456);
+        assert_eq!(vec.pop(), 123);
+    }
 }
