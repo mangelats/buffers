@@ -27,7 +27,7 @@ impl<T> HeapBuffer<T> {
 
 impl<T> Buffer<T> for HeapBuffer<T> {
     fn capacity(&self) -> usize {
-        todo!()
+        self.cap
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
