@@ -10,6 +10,14 @@ pub struct Vector<T, B: Buffer<T>> {
 }
 
 impl<T, B: Buffer<T>> Vector<T, B> {
+    /// Create a new vector given a buffer
+    ///
+    /// ```rust
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// # type ExampleBuffer = InlineBuffer<u32, 1>;
+    /// let _vec = Vector::from_buffer(ExampleBuffer::new());
+    /// ```
     pub fn from_buffer(buffer: B) -> Vector<T, B> {
         Vector {
             len: 0,
