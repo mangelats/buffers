@@ -118,7 +118,9 @@ mod tests {
     #[test]
     fn drops_contents_on_drop() {
         use std::sync::atomic::{AtomicI64, Ordering};
+        use test_utils::life_counter::LifeCounter;
 
         let counter = AtomicI64::new(0);
+        let mut vec = Vector::<LifeCounter, InlineBuffer<LifeCounter, 3>>::new();
     }
 }

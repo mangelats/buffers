@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 buffers = { path = "../2_buffers" }
+test_utils = { path = "../a_test_utils" }
