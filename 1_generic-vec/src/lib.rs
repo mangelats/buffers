@@ -42,6 +42,13 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     /// Adds a value at the end of the vector.
     ///
     /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// # type ExampleBuffer = InlineBuffer<u32, 1>;
+    /// let mut vec = Vector::<u32, ExampleBuffer>::new();
+    /// assert_eq!(vec.len(), 0);
+    /// vec.push(314);
+    /// assert_eq!(vec.len(), 1);
     /// ```
     pub fn push(&mut self, value: T) {
         let index = self.len;
