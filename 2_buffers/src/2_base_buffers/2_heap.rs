@@ -6,7 +6,7 @@ use std::{
 use crate::interface::Buffer;
 
 /// Buffer implementation using a heap-allocated continuous array.
-pub struct HeapBuffer<T: ?Sized> {
+pub struct HeapBuffer<T> {
     ptr: NonNull<T>,
     cap: usize,
     _marker: PhantomData<T>,
