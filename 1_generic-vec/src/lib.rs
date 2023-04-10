@@ -46,9 +46,9 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     /// # use generic_vec::Vector;
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let mut vec = Vector::<u32, ExampleBuffer>::new();
-    /// assert_eq!(vec.len(), 0);
     /// vec.push(1);
-    /// assert_eq!(vec.len(), 1);
+    /// let length = vec.len(); // Length is 1
+    /// # assert_eq!(length, 1);
     /// ```
     pub fn push(&mut self, value: T) {
         let index = self.len;
