@@ -58,7 +58,7 @@ impl<T> Buffer<T> for HeapBuffer<T> {
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
-        todo!()
+        ptr::drop_in_place(self.mut_ptr(index));
     }
 }
 
