@@ -31,6 +31,12 @@ impl<T, B: Buffer<T>> Vector<T, B> {
         }
         self.len += 1;
     }
+
+    pub fn pop(&mut self) -> T {
+        self.len -= 1;
+        // TODO: check boudnaries
+        unsafe { self.buffer.read_value(self.len) }
+    }
 }
 
 impl<T, B: Buffer<T> + Default> Vector<T, B> {
