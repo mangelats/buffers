@@ -79,6 +79,7 @@ impl<T, B: Buffer<T>> Vector<T, B> {
 }
 
 impl<T, B: Buffer<T> + Default> Vector<T, B> {
+    /// Creates a new vector by default-constructing the underlying buffer.
     pub fn new() -> Vector<T, B> {
         Self::from_buffer(Default::default())
     }
