@@ -35,7 +35,7 @@ mod tests {
 
     use super::*;
 
-    type TestVector = Vector<u32, InlineBuffer<u32, 1>>;
+    type TestVector = Vector<u32, InlineBuffer<u32, 4>>;
 
     #[test]
     fn empty_vector_should_be_build_with_new() {
