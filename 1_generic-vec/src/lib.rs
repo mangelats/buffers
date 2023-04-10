@@ -24,6 +24,7 @@ impl<T, B: Buffer<T>> Vector<T, B> {
 
     pub fn push(&mut self, value: T) {
         let index = self.len;
+        // TODO: check capacity
         unsafe {
             // SAFETY: we know this value is unused because of len
             self.buffer.write_value(index, value)
