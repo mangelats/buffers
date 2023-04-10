@@ -130,10 +130,12 @@ mod tests {
         use test_utils::life_counter::LifeCounter;
 
         let counter = AtomicI64::new(0);
-        let mut vec = Vector::<LifeCounter, InlineBuffer<LifeCounter, 3>>::new();
 
         {
+            let mut vec = Vector::<LifeCounter, InlineBuffer<LifeCounter, 3>>::new();
             vec.push(LifeCounter::new(&counter));
+            assert_eq!(counter.load(Ordering::SeqCst), 1);
         }
+        assert_eq!(counter.load(Ordering::SeqCst), 0);
     }
 }
