@@ -71,16 +71,6 @@ mod tests {
     type TestVector = Vector<u32, InlineBuffer<u32, 4>>;
 
     #[test]
-    fn empty_vector_should_be_build_with_new() {
-        let _vector = TestVector::new();
-    }
-
-    #[test]
-    fn empty_vector_should_have_no_length() {
-        assert_eq!(TestVector::new().len(), 0);
-    }
-
-    #[test]
     fn pushed_values_should_increase_len() {
         let mut vec = TestVector::new();
         assert_eq!(vec.len(), 0);
