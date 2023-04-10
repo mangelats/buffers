@@ -4,7 +4,7 @@ use std::{marker::PhantomData, ptr::NonNull};
 pub struct HeapBuffer<T> {
     ptr: NonNull<T>,
     cap: usize,
-    _m: PhantomData<T>,
+    _marker: PhantomData<T>,
 }
 
 impl<T> HeapBuffer<T> {
@@ -13,7 +13,7 @@ impl<T> HeapBuffer<T> {
         Self {
             ptr: NonNull::dangling(),
             cap: 0,
-            _m: PhantomData,
+            _marker: PhantomData,
         }
     }
 }
