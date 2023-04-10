@@ -60,6 +60,17 @@ impl<T, B: Buffer<T>> Vector<T, B> {
         self.len += 1;
     }
 
+    /// Removes the last element of the vector and returns it
+    ///
+    /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// # type ExampleBuffer = InlineBuffer<u32, 1>;
+    /// let mut vec = Vector::<u32, ExampleBuffer>::new();
+    /// vec.push(123);
+    /// let value = vec.pop(); // value is 123
+    /// # assert_eq!(value, 123);
+    /// ```
     pub fn pop(&mut self) -> T {
         self.len -= 1;
         // TODO: check boudnaries
