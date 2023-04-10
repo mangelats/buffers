@@ -46,11 +46,11 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     /// # use generic_vec::Vector;
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let mut vec = Vector::<u32, ExampleBuffer>::new();
-    /// vec.push(1);
+    /// vec.try_push(1);
     /// let length = vec.len(); // Length is 1
     /// # assert_eq!(length, 1);
     /// ```
-    pub fn push(&mut self, value: T) -> Result<usize, ()> {
+    pub fn try_push(&mut self, value: T) -> Result<usize, ()> {
         let index = self.len;
         if index < self.buffer.capacity() {
             unsafe {
@@ -63,6 +63,22 @@ impl<T, B: Buffer<T>> Vector<T, B> {
             // TODO: try to grow
             Err(())
         }
+    }
+
+    /// Adds a value at the end of the vector.
+    ///
+    /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// # type ExampleBuffer = InlineBuffer<u32, 1>;
+    /// let mut vec = Vector::<u32, ExampleBuffer>::new();
+    /// vec.push(1);
+    /// let length = vec.len(); // Length is 1
+    /// # assert_eq!(length, 1);
+    /// ```
+    pub fn push(&mut self, value: T) -> usize {
+        self.try_push(value)
+            .expect("Should push while having space")
     }
 
     /// Removes the last element of the vector and returns it
