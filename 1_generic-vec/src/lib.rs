@@ -10,7 +10,7 @@ pub struct Vector<T, B: Buffer<T>> {
 }
 
 impl<T, B: Buffer<T>> Vector<T, B> {
-    /// Create a new vector given a buffer
+    /// Create a new vector using the given buffer.
     ///
     /// ```rust
     /// # use buffers::base_buffers::inline::InlineBuffer;
