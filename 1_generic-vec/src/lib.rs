@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use buffers::{base_buffers::inline::InlineBuffer, interface::Buffer};
 
 /// Implementation of a vector
-pub struct Vector<T, B: Buffer<T> = InlineBuffer<T, 1>> {
+pub struct Vector<T, B: Buffer<T>> {
     len: usize,
     buffer: B,
     _m: PhantomData<T>,
@@ -33,7 +33,7 @@ impl<T, B: Buffer<T> + Default> Vector<T, B> {
 mod tests {
     use super::*;
 
-    type TestVector = Vector<u32>;
+    type TestVector = Vector<u32, InlineBuffer<u32, 1>>;
 
     #[test]
     fn empty_vector_should_be_build_with_new() {
