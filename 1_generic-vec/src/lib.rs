@@ -12,7 +12,7 @@ pub struct Vector<T, B: Buffer<T>> {
 impl<T, B: Buffer<T>> Vector<T, B> {
     /// Create a new vector using the given buffer.
     ///
-    /// ```rust
+    /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
@@ -28,7 +28,7 @@ impl<T, B: Buffer<T>> Vector<T, B> {
 
     /// Returns the number of elements currently in the Vector
     ///
-    /// ```rust
+    /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
@@ -39,6 +39,10 @@ impl<T, B: Buffer<T>> Vector<T, B> {
         self.len
     }
 
+    /// Adds a value at the end of the vector.
+    ///
+    /// ```
+    /// ```
     pub fn push(&mut self, value: T) {
         let index = self.len;
         // TODO: check capacity
