@@ -83,4 +83,11 @@ mod tests {
         assert_eq!(vec.pop(), 456);
         assert_eq!(vec.pop(), 123);
     }
+
+    #[test]
+    fn drops_contents_on_drop() {
+        use std::sync::atomic::{AtomicI64, Ordering};
+
+        let counter = AtomicI64::new(0);
+    }
 }
