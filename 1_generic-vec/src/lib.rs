@@ -60,6 +60,7 @@ impl<T, B: Buffer<T>> Vector<T, B> {
             self.len += 1;
             Ok(index)
         } else {
+            // TODO: try to grow
             Err(())
         }
     }
