@@ -18,7 +18,7 @@ impl<T, B: Buffer<T>> Vector<T, B> {
         }
     }
 
-    pub fn len(self) -> usize {
+    pub fn len(&self) -> usize {
         self.len
     }
 }
