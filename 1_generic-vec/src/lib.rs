@@ -23,9 +23,10 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     }
 
     pub fn push(&mut self, value: T) {
-        let target = self.len;
+        let index = self.len;
         unsafe {
             // SAFETY: we know this value is unused because of len
+            self.buffer.write_value(index, value)
         }
         self.len += 1;
     }
