@@ -3,10 +3,16 @@ use std::marker::PhantomData;
 use buffers::{base_buffers::inline::InlineBuffer, interface::Buffer};
 
 /// Implementation of a vector
-pub struct Vector<T, B: Buffer<T> + Default = InlineBuffer<T, 1>> {
+pub struct Vector<T, B: Buffer<T> = InlineBuffer<T, 1>> {
     len: usize,
     buf: B,
     _m: PhantomData<T>,
+}
+
+impl<T, B: Buffer<T>> Vector<T, B> {
+    pub fn len(self) -> usize {
+        self.len
+    }
 }
 
 impl<T, B: Buffer<T> + Default> Vector<T, B> {
@@ -16,10 +22,6 @@ impl<T, B: Buffer<T> + Default> Vector<T, B> {
             buf: Default::default(),
             _m: PhantomData,
         }
-    }
-
-    pub fn len(self) -> usize {
-        self.len
     }
 }
 
