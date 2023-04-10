@@ -50,14 +50,18 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     /// let length = vec.len(); // Length is 1
     /// # assert_eq!(length, 1);
     /// ```
-    pub fn push(&mut self, value: T) {
+    pub fn push(&mut self, value: T) -> Result<usize, ()> {
         let index = self.len;
-        // TODO: check capacity
-        unsafe {
-            // SAFETY: we know this value is unused because of len
-            self.buffer.write_value(index, value)
+        if index < self.buffer.capacity() {
+            unsafe {
+                // SAFETY: we know this value is unused because of len
+                self.buffer.write_value(index, value)
+            }
+            self.len += 1;
+            Ok(index)
+        } else {
+            Err(())
         }
-        self.len += 1;
     }
 
     /// Removes the last element of the vector and returns it
