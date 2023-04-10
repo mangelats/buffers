@@ -26,6 +26,15 @@ impl<T, B: Buffer<T>> Vector<T, B> {
         }
     }
 
+    /// Returns the number of elements currently in the Vector
+    ///
+    /// ```rust
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// # type ExampleBuffer = InlineBuffer<u32, 1>;
+    /// let vec = Vector::<_, ExampleBuffer>::new();
+    /// assert_eq!(vec.len(), 0);
+    /// ```
     pub fn len(&self) -> usize {
         self.len
     }
