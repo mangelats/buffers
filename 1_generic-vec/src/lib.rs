@@ -85,6 +85,10 @@ impl<T, B: Buffer<T> + Default> Vector<T, B> {
     }
 }
 
+impl<T, B: Buffer<T>> Drop for Vector<T, B> {
+    fn drop(&mut self) {}
+}
+
 #[cfg(test)]
 mod tests {
     use buffers::base_buffers::inline::InlineBuffer;
