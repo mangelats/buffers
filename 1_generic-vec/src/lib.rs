@@ -10,6 +10,14 @@ pub struct Vector<T, B: Buffer<T> = InlineBuffer<T, 1>> {
 }
 
 impl<T, B: Buffer<T>> Vector<T, B> {
+    pub fn from_buffer(buffer: B) -> Vector<T, B> {
+        Vector {
+            len: 0,
+            buffer,
+            _m: PhantomData,
+        }
+    }
+
     pub fn len(self) -> usize {
         self.len
     }
