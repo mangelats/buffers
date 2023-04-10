@@ -25,13 +25,15 @@ impl<T> Vector<T> {
 mod tests {
     use super::*;
 
+    type TestVector = Vector<u32>;
+
     #[test]
     fn empty_vector_should_be_build_with_new() {
-        let _vector = Vector::<u32>::new();
+        let _vector = TestVector::new();
     }
 
     #[test]
     fn empty_vector_should_have_no_length() {
-        assert_eq!(Vector::<u32>::new().len(), 0)
+        assert_eq!(TestVector::new().len(), 0)
     }
 }
