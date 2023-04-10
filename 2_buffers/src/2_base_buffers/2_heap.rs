@@ -9,6 +9,11 @@ pub struct HeapBuffer<T> {
 
 impl<T> HeapBuffer<T> {
     /// Makes a new default-sized `HeapBuffer`
+    ///
+    /// ```
+    /// # use buffers::base_buffers::heap::HeapBuffer;
+    /// let buffer = HeapBuffer::<u32>::new();
+    /// ```
     pub fn new() -> Self {
         Self {
             ptr: NonNull::dangling(),
