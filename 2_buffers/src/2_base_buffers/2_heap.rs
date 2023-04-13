@@ -41,6 +41,7 @@ impl<T> HeapBuffer<T> {
     /// Internal function that allocates a new array into the heap
     unsafe fn allocate_array_unchecked(&mut self, target: usize) -> Result<(), ResizeError> {
         let ptr = try_array_alloc::<T>(target)?;
+        self.update_buffer(ptr, target);
         Ok(())
     }
 
