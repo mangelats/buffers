@@ -41,7 +41,7 @@ impl<T> HeapBuffer<T> {
     /// Internal function that allocates a new array into the heap
     ///
     /// # Safety
-    /// It can only be called when there is no ptr allocated and capacity is 0
+    /// It can only be called when there is no array allocated (capacity is 0)
     unsafe fn allocate_array(&mut self, target: usize) -> Result<(), ResizeError> {
         debug_assert!(self.cap == 0);
         let ptr = try_array_alloc(target)?;
@@ -50,6 +50,9 @@ impl<T> HeapBuffer<T> {
     }
 
     /// Internal function that resizes the array in the heap
+    ///
+    /// # Safety
+    /// There needs to be an array already heap allocated
     unsafe fn resize_array(&mut self, target: usize) -> Result<(), ResizeError> {
         let ptr = try_array_realloc(self.ptr, self.cap, target)?;
         self.update_buffer(ptr, target);
