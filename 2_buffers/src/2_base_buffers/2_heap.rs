@@ -156,3 +156,5 @@ unsafe fn deallocate<T>(ptr: NonNull<T>, size: usize) -> Result<(), ResizeError>
     std::alloc::dealloc(ptr, layout);
     Ok(())
 }
+
+mod tests {}
