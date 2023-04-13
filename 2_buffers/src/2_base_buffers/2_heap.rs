@@ -113,5 +113,7 @@ unsafe fn try_array_realloc<T>(
 
     let new_ptr = std::alloc::realloc(old_ptr, old_layout, new_layout.size());
     let new_ptr = new_ptr as *mut T;
+
+    NonNull::new(new_ptr).ok_or(ResizeError::OutOfMemory)?;
     Ok(())
 }
