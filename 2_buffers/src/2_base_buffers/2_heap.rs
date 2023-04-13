@@ -138,5 +138,7 @@ unsafe fn try_array_realloc<T>(
 /// Deallocates an array
 unsafe fn deallocate<T>(ptr: NonNull<T>, size: usize) -> Result<(), ResizeError> {
     let layout = Layout::array::<T>(size)?;
+    let ptr = ptr.as_ptr();
+    let ptr = ptr as *mut u8;
     Ok(())
 }
