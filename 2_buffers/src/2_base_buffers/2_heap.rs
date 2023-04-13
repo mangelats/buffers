@@ -64,7 +64,7 @@ impl<T> HeapBuffer<T> {
     ///
     /// # Safety
     /// There needs to be an array heap allocated
-    unsafe fn deallocate(&mut self) -> Result<(), ResizeError> {
+    unsafe fn deallocate_array(&mut self) -> Result<(), ResizeError> {
         deallocate(self.ptr, self.cap)?;
         self.update_buffer(NonNull::dangling(), 0);
         Ok(())
@@ -106,6 +106,17 @@ impl<T> Buffer<T> for HeapBuffer<T> {
 impl<T> Default for HeapBuffer<T> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+unsafe impl<#[may_dangle] T> Drop for HeapBuffer<T> {
+    fn drop(&mut self) {
+        if self.cap != 0 {
+            // SAFETY: At this point all content should have been dropped
+            unsafe {
+                self.deallocate_array().unwrap();
+            }
+        }
     }
 }
 
