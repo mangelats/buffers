@@ -4,7 +4,7 @@ use std::{
     ptr::{self, NonNull},
 };
 
-use crate::interface::{resize_result::ResizeError, Buffer};
+use crate::interface::{resize_error::ResizeError, Buffer};
 
 /// Buffer implementation using a heap-allocated continuous array.
 pub struct HeapBuffer<T> {

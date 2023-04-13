@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use super::resize_result::ResizeError;
+use super::resize_error::ResizeError;
 
 /// Low level of abstraction of multiple instances of data of type `T` managed as a group.
 ///

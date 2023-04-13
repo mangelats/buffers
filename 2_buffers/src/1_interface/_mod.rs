@@ -2,6 +2,6 @@
 pub mod buffer;
 
 #[path = "2_resize_error.rs"]
-pub mod resize_result;
+pub mod resize_error;
 
 pub use self::buffer::Buffer;
