@@ -10,7 +10,8 @@
     },
     "rust-analyzer.files.watcher": "client",
     "files.watcherExclude": {
-        "**/target/*/**": true
+        "**/target/*/**": true,
+        "Cargo.lock": true,
     },
     "rust-analyzer.files.excludeDirs": [
         "target"
