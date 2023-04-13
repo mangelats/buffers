@@ -81,5 +81,7 @@ unsafe fn try_array_alloc<T>(size: usize) -> Result<(), ResizeError> {
     let layout = Layout::array::<T>(size)?;
 
     let ptr = std::alloc::alloc(layout);
+    let ptr = ptr as *mut T;
+    NonNull::new(ptr).ok_or(ResizeError::OutOfMemory)?;
     Ok(())
 }
