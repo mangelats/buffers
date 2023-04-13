@@ -1,5 +1,7 @@
 use std::ops::Range;
 
+use super::resize_error::ResizeError;
+
 /// Low level of abstraction of multiple instances of data of type `T` managed as a group.
 ///
 /// This is perticularly useful to allow different ways of managing data in memory with a uniform interface.
@@ -48,5 +50,12 @@ pub trait Buffer<T> {
         for index in values_range {
             self.manually_drop(index);
         }
+    }
+
+    /// Attempt to grow the buffer.
+    ///
+    /// This operation may fail a number of ways depending of the implementation and T
+    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
+        Err(ResizeError::UnsupportedOperation)
     }
 }
