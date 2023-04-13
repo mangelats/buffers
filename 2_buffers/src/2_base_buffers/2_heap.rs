@@ -114,7 +114,7 @@ unsafe impl<#[may_dangle] T> Drop for HeapBuffer<T> {
         if self.cap != 0 {
             // SAFETY: At this point all content should have been dropped
             unsafe {
-                self.deallocate_array().unwrap();
+                self.deallocate_array();
             }
         }
     }
