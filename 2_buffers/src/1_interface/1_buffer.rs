@@ -58,4 +58,11 @@ pub trait Buffer<T> {
     unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
         Err(ResizeError::UnsupportedOperation)
     }
+
+    /// Attempt to shrink the buffer.
+    ///
+    /// This operation may fail a number of ways depending of the implementation and T
+    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
+        Err(ResizeError::UnsupportedOperation)
+    }
 }
