@@ -81,7 +81,7 @@ impl<T> Buffer<T> for HeapBuffer<T> {
         if self.cap == 0 {
             self.allocate_array_unchecked(target)
         } else {
-            Ok(())
+            self.resize_array_unchecked(target)
         }
     }
 }
