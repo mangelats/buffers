@@ -98,3 +98,11 @@ unsafe fn try_array_alloc<T>(size: usize) -> Result<NonNull<T>, ResizeError> {
     let ptr = ptr as *mut T;
     NonNull::new(ptr).ok_or(ResizeError::OutOfMemory)
 }
+
+unsafe fn try_array_realloc<T>(
+    old_ptr: NonNull<T>,
+    old_size: usize,
+    new_size: usize,
+) -> Result<(), ResizeError> {
+    Ok(())
+}
