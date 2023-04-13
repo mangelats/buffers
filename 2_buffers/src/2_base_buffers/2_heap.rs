@@ -65,6 +65,8 @@ impl<T> HeapBuffer<T> {
     /// # Safety
     /// There needs to be an array heap allocated
     unsafe fn deallocate(&mut self) -> Result<(), ResizeError> {
+        deallocate(self.ptr, self.cap)?;
+        self.update_buffer(NonNull::dangling(), 0);
         Ok(())
     }
 
