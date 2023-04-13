@@ -38,11 +38,13 @@ impl<T> HeapBuffer<T> {
         self.ptr.as_ptr().add(index)
     }
 
+    /// Internal function that allocates a new array into the heap
     unsafe fn allocate_array_unchecked(&mut self, target: usize) -> Result<(), ResizeError> {
         let ptr = try_array_alloc::<T>(target)?;
         Ok(())
     }
 
+    /// Internal function that sets the capacity and raw buffer pointer
     fn update_buffer(&mut self, ptr: NonNull<T>, cap: usize) {
         self.cap = cap;
         self.ptr = ptr;
