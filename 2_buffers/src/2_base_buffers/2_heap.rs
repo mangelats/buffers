@@ -109,5 +109,6 @@ unsafe fn try_array_realloc<T>(
     let old_layout = Layout::array::<T>(old_size)?;
     let new_layout = Layout::array::<T>(new_size)?;
 
+    let old_ptr = old_ptr.as_ptr() as *mut u8;
     Ok(())
 }
