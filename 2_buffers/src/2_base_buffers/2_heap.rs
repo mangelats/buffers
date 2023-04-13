@@ -59,6 +59,10 @@ impl<T> HeapBuffer<T> {
         Ok(())
     }
 
+    /// Internal function that deallocates the heap allocated array
+    ///
+    /// # Safety
+    /// There needs to be an array heap allocated
     unsafe fn deallocate(&mut self) -> Result<(), ResizeError> {
         Ok(())
     }
