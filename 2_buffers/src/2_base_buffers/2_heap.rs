@@ -57,7 +57,11 @@ impl<T> Buffer<T> for HeapBuffer<T> {
 
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
         debug_assert!(target > self.cap);
-        Ok(())
+        if self.cap == 0 {
+            Ok(())
+        } else {
+            Ok(())
+        }
     }
 }
 
