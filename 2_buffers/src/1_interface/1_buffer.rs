@@ -52,6 +52,9 @@ pub trait Buffer<T> {
         }
     }
 
+    /// Attempt to grow the buffer.
+    ///
+    /// This operation may fail a number of ways depending of the implementation and T
     fn try_grow(&mut self) -> Result<(), ResizeError> {
         Err(ResizeError::UnsupportedOperation)
     }
