@@ -136,4 +136,4 @@ unsafe fn try_array_realloc<T>(
 }
 
 /// Deallocates an array
-unsafe fn deallocate<T>(ptr: NonNull<T>) {}
+unsafe fn deallocate<T>(ptr: NonNull<T>, size: usize) {}
