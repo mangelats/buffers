@@ -158,4 +158,20 @@ unsafe fn deallocate<T>(ptr: NonNull<T>, size: usize) -> Result<(), ResizeError>
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use super::*;
+
+    #[test]
+    fn can_grow_from_default() {
+        const TARGET: usize = 1;
+
+        let mut buffer = HeapBuffer::<i32>::new();
+
+        // SAFETY: initial size < TARGET
+        unsafe {
+            buffer.try_grow(TARGET).unwrap();
+        }
+
+        assert!(buffer.capacity() >= TARGET);
+    }
+}
