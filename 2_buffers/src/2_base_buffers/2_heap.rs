@@ -105,5 +105,6 @@ unsafe fn try_array_realloc<T>(
     old_size: usize,
     new_size: usize,
 ) -> Result<(), ResizeError> {
+    debug_assert!(old_size != new_size);
     Ok(())
 }
