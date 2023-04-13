@@ -47,7 +47,7 @@ impl<T> HeapBuffer<T> {
     }
 
     /// Internal function that resizes the array in the heap
-    unsafe fn reallocate_array_unchecked(&mut self, target: usize) -> Result<(), ResizeError> {
+    unsafe fn resize_array_unchecked(&mut self, target: usize) -> Result<(), ResizeError> {
         let ptr = try_array_realloc(self.ptr, self.cap, target)?;
         self.update_buffer(ptr, target);
         Ok(())
