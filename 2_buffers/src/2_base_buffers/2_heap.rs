@@ -157,4 +157,5 @@ unsafe fn deallocate<T>(ptr: NonNull<T>, size: usize) -> Result<(), ResizeError>
     Ok(())
 }
 
+#[cfg(test)]
 mod tests {}
