@@ -79,5 +79,7 @@ impl<T> Default for HeapBuffer<T> {
 /// Tries to allocate an array of a given size on the heap
 unsafe fn try_array_alloc<T>(size: usize) -> Result<(), ResizeError> {
     let layout = Layout::array::<T>(size)?;
+
+    let ptr = std::alloc::alloc(layout);
     Ok(())
 }
