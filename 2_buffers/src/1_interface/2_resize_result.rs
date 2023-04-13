@@ -10,6 +10,8 @@ pub enum ResizeError {
     /// This buffer doesn't support this operation for this type
     /// (eg. cannot define a memory layout)
     UnsupportedType,
+
+    OutOfMemory,
 }
 
 impl From<LayoutError> for ResizeError {
