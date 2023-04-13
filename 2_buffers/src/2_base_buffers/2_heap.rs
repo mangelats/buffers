@@ -77,11 +77,10 @@ impl<T> Default for HeapBuffer<T> {
 }
 
 /// Tries to allocate an array of a given size on the heap
-unsafe fn try_array_alloc<T>(size: usize) -> Result<(), ResizeError> {
+unsafe fn try_array_alloc<T>(size: usize) -> Result<NonNull<T>, ResizeError> {
     let layout = Layout::array::<T>(size)?;
 
     let ptr = std::alloc::alloc(layout);
     let ptr = ptr as *mut T;
-    NonNull::new(ptr).ok_or(ResizeError::OutOfMemory)?;
-    Ok(())
+    NonNull::new(ptr).ok_or(ResizeError::OutOfMemory)
 }
