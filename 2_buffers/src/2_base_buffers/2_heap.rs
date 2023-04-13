@@ -54,6 +54,7 @@ impl<T> HeapBuffer<T> {
     /// # Safety
     /// There needs to be an array already heap allocated
     unsafe fn resize_array(&mut self, target: usize) -> Result<(), ResizeError> {
+        debug_assert!(target != 0);
         let ptr = try_array_realloc(self.ptr, self.cap, target)?;
         self.update_buffer(ptr, target);
         Ok(())
