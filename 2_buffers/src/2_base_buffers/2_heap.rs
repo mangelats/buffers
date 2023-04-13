@@ -40,6 +40,8 @@ impl<T> HeapBuffer<T> {
 
     /// Internal function that allocates a new array into the heap
     unsafe fn allocate_array_unchecked(&mut self, target: usize) -> Result<(), ResizeError> {
+        debug_assert!(self.cap == 0);
+        debug_assert!(target > 0);
         let ptr = try_array_alloc(target)?;
         self.update_buffer(ptr, target);
         Ok(())
@@ -74,7 +76,6 @@ impl<T> Buffer<T> for HeapBuffer<T> {
     }
 
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
-        debug_assert!(target > self.cap);
         if self.cap == 0 {
             self.allocate_array_unchecked(target)
         } else {
