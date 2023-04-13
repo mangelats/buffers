@@ -3,5 +3,3 @@
 pub enum ResizeError {
     UnsupportedOperation,
 }
-
-pub type ResizeResult<T = ()> = Result<T, ResizeError>;
