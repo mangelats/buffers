@@ -41,7 +41,6 @@ impl<T> HeapBuffer<T> {
     /// Internal function that allocates a new array into the heap
     unsafe fn allocate_array_unchecked(&mut self, target: usize) -> Result<(), ResizeError> {
         debug_assert!(self.cap == 0);
-        debug_assert!(target > 0);
         let ptr = try_array_alloc(target)?;
         self.update_buffer(ptr, target);
         Ok(())
@@ -92,6 +91,7 @@ impl<T> Default for HeapBuffer<T> {
 
 /// Tries to allocate an array of a given size on the heap
 unsafe fn try_array_alloc<T>(size: usize) -> Result<NonNull<T>, ResizeError> {
+    debug_assert!(size > 0);
     let layout = Layout::array::<T>(size)?;
 
     let ptr = std::alloc::alloc(layout);
@@ -99,6 +99,7 @@ unsafe fn try_array_alloc<T>(size: usize) -> Result<NonNull<T>, ResizeError> {
     NonNull::new(ptr).ok_or(ResizeError::OutOfMemory)
 }
 
+/// Tries to reallocate an existing heap array (growing or shrinking)
 unsafe fn try_array_realloc<T>(
     old_ptr: NonNull<T>,
     old_size: usize,
