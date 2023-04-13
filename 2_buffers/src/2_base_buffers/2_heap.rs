@@ -42,6 +42,11 @@ impl<T> HeapBuffer<T> {
         let ptr = try_array_alloc::<T>(target)?;
         Ok(())
     }
+
+    fn update_buffer(&mut self, ptr: NonNull<T>, cap: usize) {
+        self.cap = cap;
+        self.ptr = ptr;
+    }
 }
 
 impl<T> Buffer<T> for HeapBuffer<T> {
