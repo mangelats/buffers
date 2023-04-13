@@ -36,6 +36,10 @@ impl<T> HeapBuffer<T> {
     pub unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
         self.ptr.as_ptr().add(index)
     }
+
+    unsafe fn allocate_array_unchecked(&mut self, target: usize) -> Result<(), ResizeError> {
+        Ok(())
+    }
 }
 
 impl<T> Buffer<T> for HeapBuffer<T> {
