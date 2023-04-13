@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 /// Low level of abstraction of multiple instances of data of type `T` managed as a group.
 ///
 /// This is perticularly useful to allow different ways of managing data in memory with a uniform interface.
@@ -34,4 +36,17 @@ pub trait Buffer<T> {
     /// # Safety
     /// The `index` position must not be empty.
     unsafe fn manually_drop(&mut self, index: usize);
+
+    /// Manually drops all the values specified by the position range and empties it.
+    ///
+    /// By default it calls `manually_drop` one by one, but in most cases it can be overridden for a more performant
+    /// version.
+    ///
+    /// # Safety
+    /// All the positions in `values_range` must not be empty.
+    unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
+        for index in values_range {
+            self.manually_drop(index);
+        }
+    }
 }

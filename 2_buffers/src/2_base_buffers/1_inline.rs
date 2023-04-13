@@ -90,7 +90,7 @@ unsafe impl<T: Send, const SIZE: usize> Send for InlineBuffer<T, SIZE> {}
 mod tests {
     use std::sync::atomic::{AtomicI64, Ordering};
 
-    use crate::test_utils::life_counter::LifeCounter;
+    use test_utils::life_counter::LifeCounter;
 
     use super::*;
 

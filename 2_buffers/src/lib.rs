@@ -6,6 +6,3 @@ pub mod interface;
 
 #[path = "2_base_buffers/_mod.rs"]
 pub mod base_buffers;
-
-#[path = "a_test_utils/_mod.rs"]
-pub(crate) mod test_utils;

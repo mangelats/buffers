@@ -3,6 +3,6 @@ name = "generic-vec"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+buffers = { path = "../2_buffers" }
+test_utils = { path = "../a_test_utils" }

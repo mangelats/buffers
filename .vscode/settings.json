@@ -4,13 +4,14 @@
             {
                 "match": "\\.rs",
                 "isAsync": false,
-                "cmd": "(cd ${workspaceFolder}; cargo test --workspace && git add -A && git commit -m 'TCR' --quiet || git reset --hard --quiet)"
+                "cmd": "(cd ${workspaceFolder}; ./tcr.sh)"
             }
         ]
     },
     "rust-analyzer.files.watcher": "client",
     "files.watcherExclude": {
-        "**/target/*/**": true
+        "**/target/*/**": true,
+        "Cargo.lock": true,
     },
     "rust-analyzer.files.excludeDirs": [
         "target"
