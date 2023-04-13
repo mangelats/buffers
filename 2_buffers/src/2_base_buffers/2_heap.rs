@@ -39,6 +39,7 @@ impl<T> HeapBuffer<T> {
     }
 
     unsafe fn allocate_array_unchecked(&mut self, target: usize) -> Result<(), ResizeError> {
+        let ptr = try_array_alloc::<T>(target)?;
         Ok(())
     }
 }
