@@ -3,7 +3,7 @@ use std::{
     ptr::{self, NonNull},
 };
 
-use crate::interface::Buffer;
+use crate::interface::{resize_result::ResizeError, Buffer};
 
 /// Buffer implementation using a heap-allocated continuous array.
 pub struct HeapBuffer<T> {
@@ -53,6 +53,10 @@ impl<T> Buffer<T> for HeapBuffer<T> {
 
     unsafe fn manually_drop(&mut self, index: usize) {
         ptr::drop_in_place(self.mut_ptr(index));
+    }
+
+    unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
+        Ok(())
     }
 }
 
