@@ -45,6 +45,10 @@ impl<T> HeapBuffer<T> {
         Ok(())
     }
 
+    unsafe fn reallocate_array_unchecked(&mut self, target: usize) -> Result<(), ResizeError> {
+        Ok(())
+    }
+
     /// Internal function that sets the capacity and raw buffer pointer
     fn update_buffer(&mut self, ptr: NonNull<T>, cap: usize) {
         self.cap = cap;
