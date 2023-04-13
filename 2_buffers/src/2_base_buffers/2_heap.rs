@@ -174,4 +174,20 @@ mod tests {
 
         assert!(buffer.capacity() >= TARGET);
     }
+
+    #[test]
+    fn can_grow_twice() {
+        const TARGET1: usize = 1;
+        const TARGET2: usize = 10;
+
+        let mut buffer = HeapBuffer::<i32>::new();
+
+        // SAFETY: initial size < TARGET
+        unsafe {
+            buffer.try_grow(TARGET1).unwrap();
+            buffer.try_grow(TARGET2).unwrap();
+        }
+
+        assert!(buffer.capacity() >= TARGET2);
+    }
 }
