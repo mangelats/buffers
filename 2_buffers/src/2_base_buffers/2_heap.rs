@@ -134,3 +134,6 @@ unsafe fn try_array_realloc<T>(
 
     NonNull::new(new_ptr).ok_or(ResizeError::OutOfMemory)
 }
+
+/// Deallocates an array
+unsafe fn deallocate<T>(ptr: NonNull<T>) {}
