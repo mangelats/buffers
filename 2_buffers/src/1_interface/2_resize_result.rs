@@ -11,6 +11,7 @@ pub enum ResizeError {
     /// (eg. cannot define a memory layout)
     UnsupportedType,
 
+    /// Cannot resize because memory has been exhaused in this system
     OutOfMemory,
 }
 
