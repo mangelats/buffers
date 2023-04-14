@@ -144,6 +144,7 @@ unsafe fn try_array_realloc<T>(
     old_size: usize,
     new_size: usize,
 ) -> Result<NonNull<T>, ResizeError> {
+    debug_assert!(new_size > 0);
     debug_assert!(old_size != new_size);
     let old_layout = Layout::array::<T>(old_size)?;
     let new_layout = Layout::array::<T>(new_size)?;
