@@ -101,6 +101,14 @@ impl<T> Buffer<T> for HeapBuffer<T> {
             self.resize_array(target)
         }
     }
+
+    unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
+        if target == 0 {
+            self.deallocate_array()
+        } else {
+            self.resize_array(target)
+        }
+    }
 }
 
 impl<T> Default for HeapBuffer<T> {
@@ -121,6 +129,9 @@ unsafe impl<#[may_dangle] T> Drop for HeapBuffer<T> {
 }
 
 /// Tries to allocate an array of a given size on the heap
+///
+/// # Safety
+/// size must be bigger than zero.
 unsafe fn try_array_alloc<T>(size: usize) -> Result<NonNull<T>, ResizeError> {
     debug_assert!(size > 0);
     let layout = Layout::array::<T>(size)?;
@@ -131,11 +142,16 @@ unsafe fn try_array_alloc<T>(size: usize) -> Result<NonNull<T>, ResizeError> {
 }
 
 /// Tries to reallocate an existing heap array (growing or shrinking)
+///
+/// # Safety
+/// new_size must be different than old_size.
+/// new_size must be bigger than zero.
 unsafe fn try_array_realloc<T>(
     old_ptr: NonNull<T>,
     old_size: usize,
     new_size: usize,
 ) -> Result<NonNull<T>, ResizeError> {
+    debug_assert!(new_size > 0);
     debug_assert!(old_size != new_size);
     let old_layout = Layout::array::<T>(old_size)?;
     let new_layout = Layout::array::<T>(new_size)?;
@@ -150,6 +166,7 @@ unsafe fn try_array_realloc<T>(
 
 /// Deallocates an array
 unsafe fn deallocate<T>(ptr: NonNull<T>, size: usize) -> Result<(), ResizeError> {
+    debug_assert!(size > 0);
     let layout = Layout::array::<T>(size)?;
     let ptr = ptr.as_ptr();
     let ptr = ptr as *mut u8;
@@ -167,7 +184,7 @@ mod tests {
 
         let mut buffer = HeapBuffer::<i32>::new();
 
-        // SAFETY: initial size < TARGET
+        // SAFETY: 0 < TARGET
         unsafe {
             buffer.try_grow(TARGET).unwrap();
         }
@@ -182,12 +199,46 @@ mod tests {
 
         let mut buffer = HeapBuffer::<i32>::new();
 
-        // SAFETY: initial size < TARGET
+        // SAFETY: 0 < TARGET1 < TARGET2
         unsafe {
             buffer.try_grow(TARGET1).unwrap();
             buffer.try_grow(TARGET2).unwrap();
         }
 
         assert!(buffer.capacity() >= TARGET2);
+    }
+
+    #[test]
+    fn can_shrink() {
+        const TARGET1: usize = 64;
+        const TARGET2: usize = 1;
+
+        let mut buffer = HeapBuffer::<i32>::new();
+
+        // SAFETY: 0 < TARGET2 < TARGET1
+        unsafe {
+            buffer.try_grow(TARGET1).unwrap();
+            buffer.try_shrink(TARGET2).unwrap();
+        }
+
+        assert!(buffer.capacity() < TARGET1);
+        assert!(buffer.capacity() >= TARGET2);
+    }
+
+    #[test]
+    fn can_shrink_to_nothing() {
+        const TARGET1: usize = 64;
+        const TARGET2: usize = 0;
+
+        let mut buffer = HeapBuffer::<i32>::new();
+
+        // SAFETY: 0 == TARGET2 < TARGET1
+        unsafe {
+            buffer.try_grow(TARGET1).unwrap();
+            buffer.try_shrink(TARGET2).unwrap();
+        }
+
+        assert!(buffer.capacity() < TARGET1);
+        assert!(buffer.capacity() == TARGET2);
     }
 }
