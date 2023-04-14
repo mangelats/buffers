@@ -101,6 +101,14 @@ impl<T> Buffer<T> for HeapBuffer<T> {
             self.resize_array(target)
         }
     }
+
+    unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
+        if target == 0 {
+            self.deallocate_array()
+        } else {
+            self.resize_array(target)
+        }
+    }
 }
 
 impl<T> Default for HeapBuffer<T> {
