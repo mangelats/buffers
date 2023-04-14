@@ -184,7 +184,7 @@ mod tests {
 
         let mut buffer = HeapBuffer::<i32>::new();
 
-        // SAFETY: initial size < TARGET
+        // SAFETY: 0 < TARGET
         unsafe {
             buffer.try_grow(TARGET).unwrap();
         }
@@ -199,12 +199,29 @@ mod tests {
 
         let mut buffer = HeapBuffer::<i32>::new();
 
-        // SAFETY: initial size < TARGET
+        // SAFETY: 0 < TARGET1 < TARGET2
         unsafe {
             buffer.try_grow(TARGET1).unwrap();
             buffer.try_grow(TARGET2).unwrap();
         }
 
+        assert!(buffer.capacity() >= TARGET2);
+    }
+
+    #[test]
+    fn can_shrink() {
+        const TARGET1: usize = 64;
+        const TARGET2: usize = 1;
+
+        let mut buffer = HeapBuffer::<i32>::new();
+
+        // SAFETY: 0 < TARGET2 < TARGET1
+        unsafe {
+            buffer.try_grow(TARGET1).unwrap();
+            buffer.try_shrink(TARGET2).unwrap();
+        }
+
+        assert!(buffer.capacity() < TARGET1);
         assert!(buffer.capacity() >= TARGET2);
     }
 }
