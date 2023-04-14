@@ -239,6 +239,6 @@ mod tests {
         }
 
         assert!(buffer.capacity() < TARGET1);
-        assert!(buffer.capacity() >= TARGET2);
+        assert!(buffer.capacity() == TARGET2);
     }
 }
