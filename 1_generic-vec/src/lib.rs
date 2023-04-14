@@ -53,17 +53,15 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     /// ```
     pub fn try_push(&mut self, value: T) -> Result<usize, ()> {
         let index = self.len;
-        if index < self.buffer.capacity() {
-            unsafe {
-                // SAFETY: we know this value is unused because of len
-                self.buffer.write_value(index, value)
-            }
-            self.len += 1;
-            Ok(index)
-        } else {
-            // TODO: try to grow
-            Err(())
+        if index >= self.buffer.capacity() {
+            return Err(());
         }
+        unsafe {
+            // SAFETY: we know this value is unused because of len
+            self.buffer.write_value(index, value)
+        }
+        self.len += 1;
+        Ok(index)
     }
 
     /// Adds a value at the end of the vector. Panics if it cannot.
