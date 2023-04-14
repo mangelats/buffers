@@ -129,6 +129,9 @@ unsafe impl<#[may_dangle] T> Drop for HeapBuffer<T> {
 }
 
 /// Tries to allocate an array of a given size on the heap
+///
+/// # Safety
+/// size must be bigger than zero.
 unsafe fn try_array_alloc<T>(size: usize) -> Result<NonNull<T>, ResizeError> {
     debug_assert!(size > 0);
     let layout = Layout::array::<T>(size)?;
@@ -139,6 +142,10 @@ unsafe fn try_array_alloc<T>(size: usize) -> Result<NonNull<T>, ResizeError> {
 }
 
 /// Tries to reallocate an existing heap array (growing or shrinking)
+///
+/// # Safety
+/// new_size must be different than old_size.
+/// new_size must be bigger than zero.
 unsafe fn try_array_realloc<T>(
     old_ptr: NonNull<T>,
     old_size: usize,
