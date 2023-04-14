@@ -232,7 +232,7 @@ mod tests {
 
         let mut buffer = HeapBuffer::<i32>::new();
 
-        // SAFETY: 0 < TARGET2 < TARGET1
+        // SAFETY: 0 == TARGET2 < TARGET1
         unsafe {
             buffer.try_grow(TARGET1).unwrap();
             buffer.try_shrink(TARGET2).unwrap();
