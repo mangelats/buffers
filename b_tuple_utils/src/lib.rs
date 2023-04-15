@@ -13,6 +13,8 @@ pub trait TypeMap {
     type Output<T>;
 }
 
+pub trait TuppleMapper: TypeMap {}
+
 // impl TupleExt for () {
 //     type MapType<M: TypeMap> = ();
 // }
