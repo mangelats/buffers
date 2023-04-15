@@ -21,16 +21,16 @@ pub trait TupleExt: Tuple {
 
 macro_rules! impl_tuple_ext {
     () => {};
-    ($t:ident) => {
-        impl<$t> TupleExt for ($t,) {
-            type Map<M: TypeMap> = (M::Output<$t>,);
+    ($($t:ident),+) => {
+        impl<$($t),+> TupleExt for ($($t),+) {
+            type Map<M: TypeMap> = ();
         }
     };
 }
 
-impl_tuple_ext! {T0}
+impl_tuple_ext! {T0, T1}
 
-// impl<T0, T1, T2> Includes<T0> for (T0, T1, T2) {}
+// impl<T0, T1, T2> Includes<T0> for (T0, T1, T2<)> {}
 // impl<T0, T1, T2> Includes<T1> for (T0, T1, T2) {}
 // impl<T0, T1, T2> Includes<T2> for (T0, T1, T2) {}
 
