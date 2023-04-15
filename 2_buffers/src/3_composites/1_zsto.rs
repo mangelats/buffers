@@ -1,12 +1,12 @@
 use std::marker::PhantomData;
 
-use crate::interface::Buffer;
+use crate::{base_buffers::zst::ZstBuffer, interface::Buffer};
 
-use super::conditional::Selector;
+use super::conditional::{ConditionalBuffer, Selector};
 
 /// Composite buffer that automatically uses a ZstBuffer when T is a ZST.
 pub struct ZstOptBuffer<T, B: Buffer<T>> {
-    child: B,
+    child: ConditionalBuffer<T, ZstBuffer<T>, B, ZstSelector<T>>,
     _m: PhantomData<T>,
 }
 
