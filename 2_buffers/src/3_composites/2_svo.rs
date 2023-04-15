@@ -12,8 +12,9 @@ pub struct SvoBuffer<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> {
 }
 
 impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE> {
-    fn move_into_big(&mut self) -> Result<(), ResizeError> {
-        let new_buf: B = Default::default();
+    unsafe fn move_into_big(&mut self, target: usize) -> Result<(), ResizeError> {
+        let mut new_buf: B = Default::default();
+        new_buf.try_grow(target)?;
         Ok(())
     }
 }
@@ -40,7 +41,7 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer
     }
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
         match self.inner {
-            EitherBuffer::First(_) => self.move_into_big(),
+            EitherBuffer::First(_) => self.move_into_big(target),
             EitherBuffer::Second(ref mut buf) => buf.try_grow(target),
             EitherBuffer::_InternalMarker(_, _) => unreachable!(),
         }
