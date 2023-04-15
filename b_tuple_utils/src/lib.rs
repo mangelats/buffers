@@ -48,10 +48,3 @@ impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
 
     type Map<M: TypeMap> = (M::Output<T0>, M::Output<T1>, M::Output<T2>);
 }
-
-pub trait TupleMap<M: TypeMap>: Tuple {
-    type Result;
-}
-impl<M: TypeMap, T0, T1, T2> TupleMap<M> for (T1, T2, T3) {
-    type Result = (M::Output<T0>, M::Output<T1>, M::Output<T2>);
-}
