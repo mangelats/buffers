@@ -5,7 +5,9 @@ pub trait TypeMap {
     type Output<T>;
 }
 
-pub trait Reducer<R, T: Tuple> {}
+pub trait Reducer<R, T: Tuple> {
+    // fn reduce<U>(current: R, value: U) -> R 
+}
 
 pub trait TupleExt: Tuple {
     type Ref<'a>;
