@@ -7,11 +7,11 @@ use crate::{
 
 use super::either::EitherBuffer;
 
-pub struct SvoBuffer<T, B: Buffer<T>, const SMALL_SIZE: usize> {
+pub struct SvoBuffer<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> {
     inner: EitherBuffer<T, InlineBuffer<T, SMALL_SIZE>, B>,
 }
 
-impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMALL_SIZE> {
+impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMALL_SIZE> {
     fn capacity(&self) -> usize {
         self.inner.capacity()
     }
@@ -33,7 +33,7 @@ impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMA
     }
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
         match self.inner {
-            EitherBuffer::First(_) => Ok(()),
+            EitherBuffer::First(_) => Ok(()), // TODO: grow as required
             EitherBuffer::Second(ref mut buf) => buf.try_grow(target),
             EitherBuffer::_InternalMarker(_, _) => unreachable!(),
         }
