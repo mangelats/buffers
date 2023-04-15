@@ -17,6 +17,12 @@ impl<T> ZstBuffer<T> {
     }
 }
 
+impl<T> Default for ZstBuffer<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T> Buffer<T> for ZstBuffer<T> {
     fn capacity(&self) -> usize {
         usize::MAX
