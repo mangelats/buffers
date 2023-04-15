@@ -139,7 +139,7 @@ unsafe impl<T, B: Buffer<T> + Send> Send for Vector<T, B> {}
 
 #[cfg(test)]
 mod tests {
-    use buffers::base_buffers::inline::InlineBuffer;
+    use buffers::base_buffers::{heap::HeapBuffer, inline::InlineBuffer};
 
     use super::*;
 
@@ -182,5 +182,7 @@ mod tests {
     }
 
     #[test]
-    fn should_increase_capacity_when_necessary() {}
+    fn should_increase_capacity_when_necessary() {
+        let mut vec: Vector<u32, HeapBuffer<u32>> = Vector::new();
+    }
 }
