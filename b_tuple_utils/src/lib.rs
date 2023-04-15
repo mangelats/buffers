@@ -19,6 +19,15 @@ impl<T0, T1, T2> TupleExt for (T0, T1, T2) {
     type Map<M: TypeMap> = (M::Output<T0>, M::Output<T1>, M::Output<T2>);
 }
 
+macro_rules! impl_tuple_ext {
+    () => {};
+    ($n:literal) => {
+        impl<T$n> TupleExt for (T$n) {
+            type Map<M: TypeMap> = (M::Output<T$n>,);
+        }
+    };
+}
+
 // impl<T0, T1, T2> Includes<T0> for (T0, T1, T2) {}
 // impl<T0, T1, T2> Includes<T1> for (T0, T1, T2) {}
 // impl<T0, T1, T2> Includes<T2> for (T0, T1, T2) {}
