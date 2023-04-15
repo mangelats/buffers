@@ -198,5 +198,7 @@ mod tests {
         for _ in 0..SIZE {
             vec.push(42);
         }
+
+        assert_eq!(vec.capacity(), vec.len());
     }
 }
