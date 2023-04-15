@@ -5,7 +5,7 @@ pub trait TypeMap {
     type Output<T>;
 }
 
-pub trait<T> Includes<T>: Tuple {}
+pub trait<U> Includes<U>: Tuple {}
 
 pub trait Reducer<R, T: Tuple> {
     fn reduce<U>(current: R, value: U) -> R where T: Includes<U>;
@@ -56,4 +56,13 @@ impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
     fn reduce<R>(self, initial: R, r: Reducer<R, Self>) -> R {
         initial
     }
+}
+
+
+impl<T0, T1, T2> Includes<T0> for (T0, T1, T2) {}
+impl<T0, T1, T2> Includes<T1> for (T0, T1, T2) {}
+impl<T0, T1, T2> Includes<T2> for (T0, T1, T2) {}
+
+pub trait Reducer<R, T: Tuple> {
+    fn reduce<U>(current: R, value: U) -> R where T: Includes<U>;
 }
