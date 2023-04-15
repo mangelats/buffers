@@ -7,7 +7,6 @@ use crate::{
 
 use super::either::EitherBuffer;
 
-#[derive(Default)]
 pub struct SvoBuffer<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> {
     inner: EitherBuffer<T, InlineBuffer<T, SMALL_SIZE>, B>,
 }
@@ -33,6 +32,14 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_S
 
         self.inner = EitherBuffer::Second(new_buf);
         Ok(())
+    }
+}
+
+impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Default for SvoBuffer<T, B, SMALL_SIZE> {
+    fn default() -> Self {
+        Self {
+            inner: Default::default(),
+        }
     }
 }
 
