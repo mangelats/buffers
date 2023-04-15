@@ -7,7 +7,7 @@ pub struct ZstBuffer<T> {
 }
 
 impl<T> ZstBuffer<T> {
-    fn new() -> Self {
+    pub fn new() -> Self {
         debug_assert_eq!(
             std::mem::size_of::<T>(),
             0,
