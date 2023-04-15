@@ -34,10 +34,10 @@ impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMA
     unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
         todo!()
     }
-    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
+    unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
         match self.inner {
-            EitherBuffer::First(_) => todo!(),
-            EitherBuffer::Second(_) => todo!(),
+            EitherBuffer::First(_) => Ok(()),
+            EitherBuffer::Second(ref mut buf) => buf.try_shrink(target),
             EitherBuffer::_InternalMarker(_, _) => unreachable!(),
         }
     }
