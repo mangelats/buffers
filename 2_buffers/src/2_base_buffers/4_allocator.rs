@@ -65,6 +65,14 @@ impl<T, A: Allocator> Buffer<T> for AllocatorBuffer<T, A> {
     unsafe fn manually_drop(&mut self, index: usize) {
         std::ptr::drop_in_place(self.mut_ptr(index));
     }
+
+    unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
+        Ok(())
+    }
+
+    unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
+        Ok(())
+    }
 }
 
 /// Internal utility function.
