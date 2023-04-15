@@ -13,6 +13,7 @@ pub struct AllocatorBuffer<T, A: Allocator = Global> {
 }
 
 impl<T, A: Allocator + Default> AllocatorBuffer<T, A> {
+    /// Makes a new buffer by default-constructing the allocator
     pub fn new() -> Self {
         Self::with_allocator(Default::default())
     }
