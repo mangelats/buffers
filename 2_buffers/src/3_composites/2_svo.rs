@@ -24,7 +24,9 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_S
         };
 
         let mut new_buf: B = Default::default();
-        new_buf.try_grow(target)?;
+        if new_buf.capacity() < target {
+            new_buf.try_grow(target)?;
+        }
 
         for index in 0..current_buf.capacity() {
             new_buf.write_value(index, current_buf.read_value(index))
