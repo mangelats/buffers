@@ -12,6 +12,9 @@ pub struct ZstBuffer<T> {
 }
 
 impl<T> ZstBuffer<T> {
+    /// Makes a new zero-sized type buffer.
+    ///
+    /// It has a debug assert to make sure the type is a ZST.
     pub fn new() -> Self {
         debug_assert_eq!(
             std::mem::size_of::<T>(),
