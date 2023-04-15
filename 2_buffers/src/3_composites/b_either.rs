@@ -1,6 +1,6 @@
-use std::marker::PhantomData;
+use std::{marker::PhantomData, ops::Range};
 
-use crate::interface::Buffer;
+use crate::interface::{resize_error::ResizeError, Buffer};
 
 pub enum EitherBuffer<T, A: Buffer<T>, B: Buffer<T>> {
     /// First option (A buffer)
@@ -43,6 +43,18 @@ impl<T, A: Buffer<T>, B: Buffer<T>> Buffer<T> for EitherBuffer<T, A, B> {
             EitherBuffer::Second(buf) => buf.manually_drop(index),
             EitherBuffer::_InternalMarker(_, _) => unreachable!(),
         }
+    }
+
+    unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
+        todo!()
+    }
+
+    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
+        todo!()
+    }
+
+    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
+        todo!()
     }
 }
 
