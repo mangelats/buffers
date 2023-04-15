@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{base_buffers::zst::ZstBuffer, interface::Buffer};
+use crate::base_buffers::zst::ZstBuffer;
 
 use super::conditional::{ConditionalBuffer, Selector};
 
