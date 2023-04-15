@@ -4,6 +4,8 @@ use std::{
     ptr::NonNull,
 };
 
+use crate::interface::Buffer;
+
 /// Similar buffer to HeapBuffer but it uses Allocators instead
 pub struct AllocatorBuffer<T, A: Allocator = Global> {
     ptr: NonNull<T>,
@@ -28,5 +30,23 @@ impl<T, A: Allocator> AllocatorBuffer<T, A> {
             alloc,
             _marker: PhantomData,
         }
+    }
+}
+
+impl<T, A: Allocator> Buffer<T> for AllocatorBuffer<T, A> {
+    fn capacity(&self) -> usize {
+        self.cap
+    }
+
+    unsafe fn read_value(&self, index: usize) -> T {
+        todo!()
+    }
+
+    unsafe fn write_value(&mut self, index: usize, value: T) {
+        todo!()
+    }
+
+    unsafe fn manually_drop(&mut self, index: usize) {
+        todo!()
     }
 }
