@@ -84,3 +84,6 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer
         }
     }
 }
+
+#[cfg(test)]
+mod tests {}
