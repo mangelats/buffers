@@ -6,3 +6,6 @@ pub mod interface;
 
 #[path = "2_base_buffers/_mod.rs"]
 pub mod base_buffers;
+
+#[path = "3_composites/_mod.rs"]
+pub mod composites;
