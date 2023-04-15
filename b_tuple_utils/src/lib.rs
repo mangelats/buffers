@@ -5,6 +5,8 @@ pub trait TypeMap {
     type Output<T>;
 }
 
+pub trait<T> Includes<T>: Tuple {}
+
 pub trait Reducer<R, T: Tuple> {
     // fn reduce<U>(current: R, value: U) -> R 
 }
