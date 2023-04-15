@@ -1,10 +1,10 @@
 use std::{
-    alloc::{Allocator, Global},
+    alloc::{Allocator, Global, Layout},
     marker::PhantomData,
     ptr::NonNull,
 };
 
-use crate::interface::Buffer;
+use crate::interface::{resize_error::ResizeError, Buffer};
 
 /// Similar buffer to HeapBuffer but it uses Allocators instead
 pub struct AllocatorBuffer<T, A: Allocator = Global> {
@@ -49,4 +49,68 @@ impl<T, A: Allocator> Buffer<T> for AllocatorBuffer<T, A> {
     unsafe fn manually_drop(&mut self, index: usize) {
         todo!()
     }
+}
+
+/// Internal utility function.
+///
+/// Tries to allocate a new array of a given size on the heap using the stable functions.
+unsafe fn try_allocate<T, A: Allocator>(alloc: &A, size: usize) -> Result<NonNull<T>, ResizeError> {
+    let new_layout = Layout::array::<T>(size)?;
+
+    let new_ptr = alloc
+        .allocate(new_layout)
+        .map_err(|_| ResizeError::OutOfMemory)?;
+
+    Ok(new_ptr.cast())
+}
+
+/// Internal utility function.
+///
+/// Tries to reallocate an array to a given size on the heap using the stable functions.
+unsafe fn try_grow<T, A: Allocator>(
+    alloc: &A,
+    old_ptr: NonNull<T>,
+    old_size: usize,
+    new_size: usize,
+) -> Result<NonNull<T>, ResizeError> {
+    let old_layout = Layout::array::<T>(old_size)?;
+    let new_layout = Layout::array::<T>(new_size)?;
+
+    let new_ptr = alloc
+        .grow(old_ptr.cast(), old_layout, new_layout)
+        .map_err(|_| ResizeError::OutOfMemory)?;
+
+    Ok(new_ptr.cast())
+}
+
+/// Internal utility function.
+///
+/// Tries to reallocate an array to a given size on the heap using the stable functions.
+unsafe fn try_shrink<T, A: Allocator>(
+    alloc: &A,
+    old_ptr: NonNull<T>,
+    old_size: usize,
+    new_size: usize,
+) -> Result<NonNull<T>, ResizeError> {
+    let old_layout = Layout::array::<T>(old_size)?;
+    let new_layout = Layout::array::<T>(new_size)?;
+
+    let new_ptr = alloc
+        .shrink(old_ptr.cast(), old_layout, new_layout)
+        .map_err(|_| ResizeError::OutOfMemory)?;
+
+    Ok(new_ptr.cast())
+}
+
+/// Internal utility function.
+///
+/// Tries to reallocate an array to a given size on the heap using the stable functions.
+unsafe fn try_deallocate<T, A: Allocator>(
+    alloc: &A,
+    old_ptr: NonNull<T>,
+    old_size: usize,
+) -> Result<(), ResizeError> {
+    let old_layout = Layout::array::<T>(old_size)?;
+    alloc.deallocate(old_ptr.cast(), old_layout);
+    Ok(())
 }
