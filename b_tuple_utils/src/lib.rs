@@ -17,6 +17,9 @@ pub trait TupleExt: Tuple {
         Self: 'a;
     fn as_ref(&self) -> Self::Ref<'_>;
 
+    type MutRef<'a>
+    where
+        Self: 'a;
     // type MutRef<'a>
     // where
     //     Self: 'a;
@@ -43,6 +46,16 @@ impl<T0, T1, T2> TupleExt for (T0, T1, T2) {
     fn as_ref<'a>(&'a self) -> Self::Ref<'a> {
         (&self.0, &self.1, &self.2)
     }
+
+    type MutRef<'a> = (&'a mut T0, &'a mut T1, &'a mut T2)
+    where
+        Self: 'a,
+        T0: 'a,
+        T1: 'a,
+        T2: 'a;
+    // fn as_ref<'a>(&'a self) -> Self::Ref<'a> {
+    //     (&self.0, &self.1, &self.2)
+    // }
 
     //     type MutRef<'a> = (&'a mut T1, &'a mut T2, &'a mut T3);
     //     fn as_mut_ref(&mut self) -> MutRef<'_> {
