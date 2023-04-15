@@ -13,9 +13,7 @@ pub struct SvoBuffer<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> {
 
 impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE> {
     pub fn new() -> Self {
-        Self {
-            inner: EitherBuffer::First(Default::default()),
-        }
+        Default::default()
     }
 
     unsafe fn move_into_big(&mut self, target: usize) -> Result<(), ResizeError> {
