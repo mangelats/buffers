@@ -2,7 +2,7 @@ use std::{marker::PhantomData, ops::Range};
 
 use crate::interface::{resize_error::ResizeError, Buffer};
 
-/// Utility function that allows to statically use one buffer or another
+/// Utility composite buffer that allows to use one buffer or another defined at compilation time.
 ///
 /// Note that this uses both buffers but only uses one. This may be able to change
 /// with generic const expressions.
