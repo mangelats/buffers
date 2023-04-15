@@ -5,7 +5,7 @@ pub trait TypeMap {
     type Output<T>;
 }
 
-pub trait Reducer<T: Tuple> {}
+pub trait Reducer<R, T: Tuple> {}
 
 pub trait TupleExt: Tuple {
     type Ref<'a>;
@@ -22,7 +22,7 @@ pub trait TupleExt: Tuple {
 
     type Map<M: TypeMap>;
 
-    fn reduce<R>(self, initial: R, r: Reducer<Self>) -> R;
+    fn reduce<R>(self, initial: R, r: Reducer<R, Self>) -> R;
 }
 
 impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
@@ -49,7 +49,7 @@ impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
     type Map<M: TypeMap> = (M::Output<T0>, M::Output<T1>, M::Output<T2>);
 
 
-    fn reduce<R>(self, initial: R, r: Reducer<Self>) -> R {
+    fn reduce<R>(self, initial: R, r: Reducer<R, Self>) -> R {
         initial
     }
 }
