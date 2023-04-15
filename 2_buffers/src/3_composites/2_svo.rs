@@ -1,8 +1,9 @@
 use crate::{base_buffers::inline::InlineBuffer, interface::Buffer};
 
+use super::either::EitherBuffer;
+
 pub struct SvoBuffer<T, B: Buffer<T>, const SMALL_SIZE: usize> {
-    small: InlineBuffer<T, SMALL_SIZE>,
-    big: B,
+    inner: EitherBuffer<T, InlineBuffer<T, SMALL_SIZE>, B>,
 }
 
 impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMALL_SIZE> {
