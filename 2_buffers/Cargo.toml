@@ -7,3 +7,7 @@ edition = "2021"
 
 [dependencies]
 test_utils = { path = "../a_test_utils" }
+
+[features]
+default = ["allocator"]
+allocator = []
