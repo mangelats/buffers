@@ -20,6 +20,6 @@ impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMA
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
-        todo!()
+        self.inner.manually_drop(index)
     }
 }
