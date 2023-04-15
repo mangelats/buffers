@@ -194,6 +194,9 @@ mod tests {
     #[test]
     fn should_panic_if_growing_is_not_allowed() {
         const SIZE: usize = 1;
-        for i in 0..SIZE {}
+        let mut vec: Vector<u32, InlineBuffer<u32, SIZE>> = Vector::new();
+        for i in 0..SIZE {
+            vec.push(42);
+        }
     }
 }
