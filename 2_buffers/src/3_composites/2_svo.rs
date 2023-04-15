@@ -12,10 +12,17 @@ pub struct SvoBuffer<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> {
 }
 
 impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE> {
+    pub fn new() -> Self {
+        Self {
+            inner: EitherBuffer::First(Default::default()),
+        }
+    }
+
     unsafe fn move_into_big(&mut self, target: usize) -> Result<(), ResizeError> {
         let EitherBuffer::First(ref current_buf) = self.inner else {
             unreachable!() // SAFETY: This is only called when we grow from small to big. So it's always first
         };
+
         let mut new_buf: B = Default::default();
         new_buf.try_grow(target)?;
         for index in 0..current_buf.capacity() {
