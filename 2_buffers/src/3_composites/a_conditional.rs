@@ -2,6 +2,7 @@ use std::{marker::PhantomData, ops::Range};
 
 use crate::interface::{resize_error::ResizeError, Buffer};
 
+/// Trait used to choose between buffer A or buffer B
 pub trait Selector {
     const SELECT_A: bool;
 }
