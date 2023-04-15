@@ -17,9 +17,17 @@ pub trait TuppleMapper: TypeMap {
     fn map_single<T>(value: &T) -> Self::Output<T>;
 }
 
-// impl TupleExt for () {
-//     type MapType<M: TypeMap> = ();
-// }
+impl TupleExt for () {
+    type MapType<M: TypeMap> = ();
+
+    fn map<M>(&self, mapper: M) -> Self::MapType<M>
+    where
+        M: TuppleMapper,
+    {
+        ()
+    }
+}
+
 // macro_rules! impl_tuple_map {
 //     (() -> ($($body:path,)*)) => { ($($body),*, ) };
 //     (($t:ident,$($rest:ident,)*) -> ($($body:path,)*)) => {
