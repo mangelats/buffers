@@ -2,6 +2,10 @@ use std::{marker::PhantomData, ops::Range};
 
 use crate::interface::{resize_error::ResizeError, Buffer};
 
+pub trait Selector {
+    const SELECT_A: bool;
+}
+
 /// Utility composite buffer that allows to use one buffer or another defined at compilation time.
 ///
 /// Note that this uses both buffers but only uses one. This may be able to change
