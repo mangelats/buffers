@@ -14,7 +14,11 @@ pub enum EitherBuffer<T, A: Buffer<T>, B: Buffer<T>> {
 
 impl<T, A: Buffer<T>, B: Buffer<T>> Buffer<T> for EitherBuffer<T, A, B> {
     fn capacity(&self) -> usize {
-        todo!()
+        match self {
+            EitherBuffer::First(_) => todo!(),
+            EitherBuffer::Second(_) => todo!(),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
