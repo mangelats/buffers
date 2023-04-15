@@ -30,7 +30,11 @@ impl<T, A: Buffer<T>, B: Buffer<T>> Buffer<T> for EitherBuffer<T, A, B> {
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
-        todo!()
+        match self {
+            EitherBuffer::First(buf) => buf.write_value(index, value),
+            EitherBuffer::Second(buf) => buf.write_value(index, value),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
