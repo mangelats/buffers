@@ -39,6 +39,10 @@ impl<T, B: Buffer<T>> Vector<T, B> {
         self.len
     }
 
+    pub fn capacity(&self) -> usize {
+        self.buffer.capacity()
+    }
+
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
     /// space and the buffer cannot grow.
     ///
