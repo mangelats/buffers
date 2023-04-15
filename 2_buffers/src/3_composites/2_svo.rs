@@ -7,7 +7,7 @@ pub struct SvoBuffer<T, B: Buffer<T>, const SMALL_SIZE: usize> {
 
 impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMALL_SIZE> {
     fn capacity(&self) -> usize {
-        todo!()
+        self.small.capacity() + self.big.capacity()
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
