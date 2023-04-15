@@ -7,5 +7,5 @@ function tcr() {
     || git reset --hard --quiet
 }
 
-echo "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+echo $'\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
 tcr
