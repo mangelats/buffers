@@ -20,7 +20,7 @@ pub trait TuppleMapper: TypeMap {
 impl TupleExt for () {
     type MapType<M: TypeMap> = ();
 
-    fn map<M>(&self, mapper: M) -> Self::MapType<M>
+    fn map<M>(&self, _mapper: M) -> Self::MapType<M>
     where
         M: TuppleMapper,
     {
