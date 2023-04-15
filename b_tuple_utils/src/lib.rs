@@ -13,7 +13,9 @@ pub trait TypeMap {
     type Output<T>;
 }
 
-pub trait TuppleMapper: TypeMap {}
+pub trait TuppleMapper: TypeMap {
+    fn map_single<T>(value: &T) -> Self::Output<T>;
+}
 
 // impl TupleExt for () {
 //     type MapType<M: TypeMap> = ();
