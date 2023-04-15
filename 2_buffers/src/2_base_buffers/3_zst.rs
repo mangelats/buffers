@@ -2,6 +2,11 @@ use std::marker::PhantomData;
 
 use crate::interface::Buffer;
 
+/// Buffer optimized for zero-sized types.
+///
+/// Zero-sized types don't have any space, so they actually don't need allocation at all.
+///
+/// Note that this buffer is a zero-sized type.
 pub struct ZstBuffer<T> {
     _m: PhantomData<T>,
 }
