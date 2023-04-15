@@ -1,9 +1,9 @@
 #![feature(tuple_trait)]
 use std::marker::Tuple;
 
-// pub trait TypeMap {
-//     type Output<T>;
-// }
+pub trait TypeMap {
+    type Output<T>;
+}
 
 // pub trait<U> Includes<U>: Tuple {}
 
