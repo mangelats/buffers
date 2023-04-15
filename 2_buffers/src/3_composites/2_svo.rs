@@ -93,6 +93,9 @@ mod tests {
 
     #[test]
     fn should_be_able_to_grow() {
-        let mut vec: SvoBuffer<u32, HeapBuffer<u32>, 1> = Default::default();
+        let mut buffer: SvoBuffer<u32, HeapBuffer<u32>, 1> = Default::default();
+        assert_eq!(buffer.capacity(), 1);
+        unsafe { buffer.try_grow(32) }.expect("Should be able to grow");
+        assert!(buffer.capacity() >= 32)
     }
 }
