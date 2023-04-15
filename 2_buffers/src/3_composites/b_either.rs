@@ -22,7 +22,11 @@ impl<T, A: Buffer<T>, B: Buffer<T>> Buffer<T> for EitherBuffer<T, A, B> {
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
-        todo!()
+        match self {
+            EitherBuffer::First(buf) => buf.read_value(index),
+            EitherBuffer::Second(buf) => buf.read_value(index),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
