@@ -34,7 +34,11 @@ impl<T> Buffer<T> for ZstBuffer<T> {
         std::ptr::read(std::ptr::NonNull::dangling().as_ptr())
     }
 
-    unsafe fn write_value(&mut self, _index: usize, _value: T) {}
+    unsafe fn write_value(&mut self, _index: usize, _value: T) {
+        // Do nothing
+    }
 
-    unsafe fn manually_drop(&mut self, _index: usize) {}
+    unsafe fn manually_drop(&mut self, _index: usize) {
+        // Do nothing
+    }
 }
