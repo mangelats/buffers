@@ -20,10 +20,7 @@ pub trait TupleExt: Tuple {
     type MutRef<'a>
     where
         Self: 'a;
-    // type MutRef<'a>
-    // where
-    //     Self: 'a;
-    // fn as_mut_ref(&mut self) -> Self::MutRef<'_>;
+    fn as_mut_ref(&mut self) -> Self::MutRef<'_>;
 
     // type ConstPtr;
     // fn as_ptr(*const self) -> ConstPtr;
@@ -53,14 +50,10 @@ impl<T0, T1, T2> TupleExt for (T0, T1, T2) {
         T0: 'a,
         T1: 'a,
         T2: 'a;
-    // fn as_ref<'a>(&'a self) -> Self::Ref<'a> {
-    //     (&self.0, &self.1, &self.2)
-    // }
 
-    //     type MutRef<'a> = (&'a mut T1, &'a mut T2, &'a mut T3);
-    //     fn as_mut_ref(&mut self) -> MutRef<'_> {
-    //         (&mut self.0, &mut self.1, &mut self.2)
-    //     }
+    fn as_mut_ref<'a>(&'a mut self) -> Self::MutRef<'a> {
+        (&mut self.0, &mut self.1, &mut self.2)
+    }
 
     //     type ConstPtr = (*const T0, *const T1, *const T2);
     //     fn as_ptr(*const self) -> ConstPtr {
