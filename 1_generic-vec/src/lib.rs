@@ -192,6 +192,7 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
     fn should_panic_if_growing_is_not_allowed() {
         const SIZE: usize = 1;
         let mut vec: Vector<u32, InlineBuffer<u32, SIZE>> = Vector::new();
@@ -200,5 +201,7 @@ mod tests {
         }
 
         assert_eq!(vec.capacity(), vec.len());
+
+        vec.push(123);
     }
 }
