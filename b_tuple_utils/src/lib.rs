@@ -10,6 +10,9 @@ pub trait TupleExt: Tuple {
 
     type ConstPtr;
     fn as_ptr(*const self) -> ConstPtr;
+
+    type MutPtr;
+    fn as_mut_ptr(*mut self) -> MutPtr;
 }
 
 impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
@@ -26,5 +29,10 @@ impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
     type ConstPtr = (*const T0, *const T1, *const T2);
     fn as_ptr(*const self) -> ConstPtr {
         (&*self.0, &*self.1, &*self.2)
+    }
+
+    type MutPtr = (*mut T0, *mut T1, *mut T2);
+    fn as_mut_ptr(*mut self) -> MutPtr {
+        (&mut *self.0, &mut *self.1, &mut *self.2)
     }
 }
