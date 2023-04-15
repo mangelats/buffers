@@ -12,8 +12,10 @@ pub trait TypeMap {
 // }
 
 pub trait TupleExt: Tuple {
-    //     type Ref<'a>;
-    //     fn as_ref<'a>(&'a self) -> Ref<'a>;
+    type Ref<'a>
+    where
+        Self: 'a;
+    fn as_ref<'a>(&'a self) -> Self::Ref<'a>;
 
     //     type MutRef<'a>;
     //     fn as_mut_ref(&mut self) -> MutRef<'_>;
