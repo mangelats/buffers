@@ -98,4 +98,14 @@ mod tests {
         unsafe { buffer.try_grow(32) }.expect("Should be able to grow");
         assert!(buffer.capacity() >= 32)
     }
+
+    #[test]
+    fn should_move_elements_when_growing() {
+        let mut buffer: SvoBuffer<u32, HeapBuffer<u32>, 1> = Default::default();
+        unsafe {
+            buffer.write_value(0, 123);
+            buffer.try_grow(32).expect("Should be able to grow");
+            assert_eq!(buffer.read_value(0), 123);
+        }
+    }
 }
