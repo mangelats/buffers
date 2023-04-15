@@ -63,7 +63,7 @@ impl<T, A: Allocator> Buffer<T> for AllocatorBuffer<T, A> {
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
-        todo!()
+        std::ptr::drop_in_place(self.mut_ptr(index));
     }
 }
 
