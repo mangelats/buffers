@@ -12,6 +12,12 @@ pub enum EitherBuffer<T, A: Buffer<T>, B: Buffer<T>> {
     _InternalMarker(Never, PhantomData<T>),
 }
 
+impl<T, A: Buffer<T> + Default, B: Buffer<T>> Default for EitherBuffer<T, A, B> {
+    fn default() -> Self {
+        Self::First(Default::default())
+    }
+}
+
 impl<T, A: Buffer<T>, B: Buffer<T>> Buffer<T> for EitherBuffer<T, A, B> {
     fn capacity(&self) -> usize {
         match self {
