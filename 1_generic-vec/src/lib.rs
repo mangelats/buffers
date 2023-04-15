@@ -1,9 +1,9 @@
 use std::marker::PhantomData;
 
-use buffers::interface::Buffer;
+use buffers::{interface::Buffer, DefaultBuffer};
 
 /// Implementation of a vector
-pub struct Vector<T, B: Buffer<T>> {
+pub struct Vector<T, B: Buffer<T> = DefaultBuffer<T>> {
     len: usize,
     buffer: B,
     _m: PhantomData<T>,
