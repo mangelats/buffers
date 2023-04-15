@@ -15,6 +15,10 @@ pub trait TupleExt: Tuple {
     fn as_mut_ptr(*mut self) -> MutPtr;
 }
 
+pub trait Distribute {
+    type Output<T>;
+}
+
 impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
     type Ref<'a> = (&'a T1, &'a T2, &'a T3);
     fn as_ref(&self) -> Ref<'_> {
