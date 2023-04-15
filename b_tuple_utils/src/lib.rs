@@ -5,7 +5,7 @@ pub trait TypeMap {
     type Output<T>;
 }
 
-pub trait TupleMap<D: TypeMap>: Tuple {
+pub trait TupleMap<M: TypeMap>: Tuple {
     type Result;
 }
 
