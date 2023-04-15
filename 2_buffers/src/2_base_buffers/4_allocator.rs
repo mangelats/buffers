@@ -7,3 +7,15 @@ pub struct AllocatorBuffer<T, A: Allocator> {
     alloc: A,
     _marker: PhantomData<T>,
 }
+
+impl<T, A: Allocator> AllocatorBuffer<T, A> {
+    /// Make an empty `AllocatorBuffer` given an allocator
+    pub fn with_allocator(alloc: A) -> Self {
+        Self {
+            ptr: NonNull::dangling(),
+            cap: 0,
+            alloc,
+            _marker: PhantomData,
+        }
+    }
+}
