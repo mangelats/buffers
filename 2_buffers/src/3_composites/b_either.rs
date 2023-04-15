@@ -53,12 +53,20 @@ impl<T, A: Buffer<T>, B: Buffer<T>> Buffer<T> for EitherBuffer<T, A, B> {
         }
     }
 
-    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
-        todo!()
+    unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
+        match self {
+            EitherBuffer::First(buf) => buf.try_grow(target),
+            EitherBuffer::Second(buf) => buf.try_grow(target),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 
-    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
-        todo!()
+    unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
+        match self {
+            EitherBuffer::First(buf) => buf.try_shrink(target),
+            EitherBuffer::Second(buf) => buf.try_shrink(target),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 }
 
