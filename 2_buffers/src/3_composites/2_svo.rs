@@ -87,8 +87,12 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer
 
 #[cfg(test)]
 mod tests {
+    use crate::base_buffers::heap::HeapBuffer;
+
     use super::*;
 
     #[test]
-    fn should_be_able_to_grow() {}
+    fn should_be_able_to_grow() {
+        let mut vec: SvoBuffer<u32, HeapBuffer<u32>, 1> = Default::default();
+    }
 }
