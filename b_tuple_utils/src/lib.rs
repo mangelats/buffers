@@ -15,9 +15,9 @@ pub trait TupleExt: Tuple {
     type Map<M: TypeMap>;
 }
 
-impl<T0, T1, T2> TupleExt for (T0, T1, T2) {
-    type Map<M: TypeMap> = (M::Output<T0>, M::Output<T1>, M::Output<T2>);
-}
+// impl<T0, T1, T2> TupleExt for (T0, T1, T2) {
+//     type Map<M: TypeMap> = (M::Output<T0>, M::Output<T1>, M::Output<T2>);
+// }
 
 macro_rules! impl_tuple_ext {
     () => {};
