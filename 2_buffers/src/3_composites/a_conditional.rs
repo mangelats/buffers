@@ -50,8 +50,12 @@ impl<T, A: Buffer<T>, B: Buffer<T>, const SELECT_A: bool> Buffer<T>
             self.b.manually_drop_range(values_range)
         }
     }
-    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
-        Err(ResizeError::UnsupportedOperation)
+    unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
+        if SELECT_A {
+            self.a.try_grow(target)
+        } else {
+            self.b.try_grow(target)
+        }
     }
 
     unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
