@@ -1,6 +1,14 @@
 #![feature(tuple_trait)]
 use std::marker::Tuple;
 
+pub trait Distribute {
+    type Output<T>;
+}
+
+pub trait TupleMap: Tuple {
+    
+}
+
 pub trait TupleExt: Tuple {
     type Ref<'a>;
     fn as_ref<'a>(&'a self) -> Ref<'a>;
@@ -13,10 +21,6 @@ pub trait TupleExt: Tuple {
 
     type MutPtr;
     fn as_mut_ptr(*mut self) -> MutPtr;
-}
-
-pub trait Distribute {
-    type Output<T>;
 }
 
 impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
