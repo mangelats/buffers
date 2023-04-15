@@ -87,6 +87,8 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
     fn should_be_able_to_grow() {}
 }
