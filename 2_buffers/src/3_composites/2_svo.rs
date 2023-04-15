@@ -16,7 +16,7 @@ impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMA
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
-        todo!()
+        self.inner.write_value(index, value)
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
