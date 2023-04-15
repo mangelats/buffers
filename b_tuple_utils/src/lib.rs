@@ -21,6 +21,8 @@ pub trait TupleExt: Tuple {
 
     type MutPtr;
     fn as_mut_ptr(*mut self) -> MutPtr;
+
+    type Map<M: TypeMap>;
 }
 
 impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
@@ -43,6 +45,8 @@ impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
     fn as_mut_ptr(*mut self) -> MutPtr {
         (&mut *self.0, &mut *self.1, &mut *self.2)
     }
+
+    type Map<M: TypeMap> = (M::Output<T0>, M::Output<T1>, M::Output<T2>);
 }
 
 pub trait TupleMap<M: TypeMap>: Tuple {
