@@ -6,7 +6,7 @@ pub trait TupleExt: Tuple {
 
     fn map<M>(&self, mapper: M) -> Self::MapType<M>
     where
-        M: TypeMap;
+        M: TuppleMapper;
 }
 
 pub trait TypeMap {
