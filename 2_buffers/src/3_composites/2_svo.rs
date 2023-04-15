@@ -39,7 +39,7 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer
     }
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
         match self.inner {
-            EitherBuffer::First(_) => Ok(()), // TODO: grow as required
+            EitherBuffer::First(_) => self.move_into_big(),
             EitherBuffer::Second(ref mut buf) => buf.try_grow(target),
             EitherBuffer::_InternalMarker(_, _) => unreachable!(),
         }
