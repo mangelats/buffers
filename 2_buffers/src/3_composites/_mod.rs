@@ -6,3 +6,6 @@ pub mod svo;
 
 #[path = "a_conditional.rs"]
 pub mod conditional;
+
+#[path = "b_either.rs"]
+pub mod either;
