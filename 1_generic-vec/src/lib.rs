@@ -39,6 +39,7 @@ impl<T, B: Buffer<T>> Vector<T, B> {
         self.len
     }
 
+    /// Queries the buffer for its capacity
     pub fn capacity(&self) -> usize {
         self.buffer.capacity()
     }
