@@ -12,7 +12,7 @@ impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMA
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
-        todo!()
+        self.inner.read_value(index)
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
