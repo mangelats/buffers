@@ -11,23 +11,23 @@ pub trait TypeMap {
 //     fn reduce<U>(current: R, value: U) -> R where T: Includes<U>;
 // }
 
-// pub trait TupleExt: Tuple {
-//     type Ref<'a>;
-//     fn as_ref<'a>(&'a self) -> Ref<'a>;
+pub trait TupleExt: Tuple {
+    //     type Ref<'a>;
+    //     fn as_ref<'a>(&'a self) -> Ref<'a>;
 
-//     type MutRef<'a>;
-//     fn as_mut_ref(&mut self) -> MutRef<'_>;
+    //     type MutRef<'a>;
+    //     fn as_mut_ref(&mut self) -> MutRef<'_>;
 
-//     type ConstPtr;
-//     fn as_ptr(*const self) -> ConstPtr;
+    //     type ConstPtr;
+    //     fn as_ptr(*const self) -> ConstPtr;
 
-//     type MutPtr;
-//     fn as_mut_ptr(*mut self) -> MutPtr;
+    //     type MutPtr;
+    //     fn as_mut_ptr(*mut self) -> MutPtr;
 
-//     type Map<M: TypeMap>;
+    //     type Map<M: TypeMap>;
 
-//     fn reduce<R>(self, initial: R, r: Reducer<R, Self>) -> R;
-// }
+    //     fn reduce<R>(self, initial: R, r: Reducer<R, Self>) -> R;
+}
 
 // impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
 //     type Ref<'a> = (&'a T1, &'a T2, &'a T3);
