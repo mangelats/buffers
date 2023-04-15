@@ -50,7 +50,6 @@ impl<T0, T1, T2> TupleExt for (T0, T1, T2) {
         T0: 'a,
         T1: 'a,
         T2: 'a;
-
     fn as_mut_ref<'a>(&'a mut self) -> Self::MutRef<'a> {
         (&mut self.0, &mut self.1, &mut self.2)
     }
