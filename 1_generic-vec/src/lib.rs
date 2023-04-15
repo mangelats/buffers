@@ -39,6 +39,11 @@ impl<T, B: Buffer<T>> Vector<T, B> {
         self.len
     }
 
+    /// Queries the buffer for its capacity
+    pub fn capacity(&self) -> usize {
+        self.buffer.capacity()
+    }
+
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
     /// space and the buffer cannot grow.
     ///
@@ -53,17 +58,17 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     /// ```
     pub fn try_push(&mut self, value: T) -> Result<usize, ()> {
         let index = self.len;
-        if index < self.buffer.capacity() {
+        if index >= self.buffer.capacity() {
             unsafe {
-                // SAFETY: we know this value is unused because of len
-                self.buffer.write_value(index, value)
+                self.buffer.try_grow(self.len + 1).map_err(|_| ())?;
             }
-            self.len += 1;
-            Ok(index)
-        } else {
-            // TODO: try to grow
-            Err(())
         }
+        unsafe {
+            // SAFETY: we know this value is unused because of len
+            self.buffer.write_value(index, value)
+        }
+        self.len += 1;
+        Ok(index)
     }
 
     /// Adds a value at the end of the vector. Panics if it cannot.
@@ -134,15 +139,15 @@ unsafe impl<T, B: Buffer<T> + Send> Send for Vector<T, B> {}
 
 #[cfg(test)]
 mod tests {
-    use buffers::base_buffers::inline::InlineBuffer;
+    use buffers::base_buffers::{heap::HeapBuffer, inline::InlineBuffer};
 
     use super::*;
 
-    type TestVector = Vector<u32, InlineBuffer<u32, 4>>;
+    type InlineVector = Vector<u32, InlineBuffer<u32, 4>>;
 
     #[test]
     fn pushed_values_should_increase_len() {
-        let mut vec = TestVector::new();
+        let mut vec = InlineVector::new();
         assert_eq!(vec.len(), 0);
 
         vec.push(0);
@@ -154,7 +159,7 @@ mod tests {
 
     #[test]
     fn pushed_values_should_pop_in_reverse_order() {
-        let mut vec = TestVector::new();
+        let mut vec = InlineVector::new();
         vec.push(123);
         vec.push(456);
 
@@ -174,5 +179,29 @@ mod tests {
             assert_eq!(counter.load(Ordering::SeqCst), 1);
         }
         assert_eq!(counter.load(Ordering::SeqCst), 0);
+    }
+
+    #[test]
+    fn should_increase_capacity_when_necessary() {
+        let mut vec: Vector<u32, HeapBuffer<u32>> = Vector::new();
+
+        vec.push(32);
+        vec.push(32);
+
+        assert!(vec.capacity() >= vec.len()); // This can probably be testes with a proptest
+    }
+
+    #[test]
+    #[should_panic]
+    fn should_panic_if_growing_is_not_allowed() {
+        const SIZE: usize = 1;
+        let mut vec: Vector<u32, InlineBuffer<u32, SIZE>> = Vector::new();
+        for _ in 0..SIZE {
+            vec.push(42);
+        }
+
+        assert_eq!(vec.capacity(), vec.len());
+
+        vec.push(123);
     }
 }
