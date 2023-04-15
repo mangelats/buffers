@@ -2,6 +2,9 @@ use std::{marker::PhantomData, ops::Range};
 
 use crate::interface::{resize_error::ResizeError, Buffer};
 
+/// Utility buffer that may contain one of two buffers.
+///
+/// It's a Buffer itself, forwarding the requests to the currently selected.
 pub enum EitherBuffer<T, A: Buffer<T>, B: Buffer<T>> {
     /// First option (A buffer)
     First(A),
