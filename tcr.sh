@@ -7,5 +7,5 @@ function tcr() {
     || git reset --hard --quiet
 }
 
-clear
+reset
 tcr
