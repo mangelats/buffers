@@ -77,7 +77,15 @@ impl<T, A: Allocator> Buffer<T> for AllocatorBuffer<T, A> {
     }
 
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
-        Ok(())
+        if target == 0 {
+            try_deallocate(&self.alloc, self.ptr, target)?;
+            self.update_buffer(NonNull::dangling(), 0);
+            Ok(())
+        } else {
+            let ptr = try_shrink(&self.alloc, self.ptr, self.cap, target)?;
+            self.update_buffer(ptr, target);
+            Ok(())
+        }
     }
 }
 
