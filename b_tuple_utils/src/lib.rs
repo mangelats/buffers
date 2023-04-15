@@ -18,15 +18,19 @@ pub trait TupleExt: Tuple {
 // impl<T0, T1, T2> TupleExt for (T0, T1, T2) {
 //     type Map<M: TypeMap> = (M::Output<T0>, M::Output<T1>, M::Output<T2>);
 // }
-
+macro_rules! join_tuple {
+    ($t:path, ($($rest:path),*)) => {
+        ($t, $($rest),*)
+    }
+}
 macro_rules! impl_tuple_map {
     () => {()};
 
-    ($t:ident) => {
-        M::Output<$t>
+    (($t:ident)) => {
+        (M::Output<$t>)
     };
-    ($t:ident, $($rest:ident),+) => {
-        ($t, impl_tuple_map!{$($rest),+})
+    (($t:ident, $($rest:ident),+)) => {
+        join_tuple!($t, impl_tuple_map!{$($rest),+})
     };
 }
 macro_rules! impl_tuple_ext {
