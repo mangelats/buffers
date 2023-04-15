@@ -38,7 +38,11 @@ impl<T, A: Buffer<T>, B: Buffer<T>> Buffer<T> for EitherBuffer<T, A, B> {
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
-        todo!()
+        match self {
+            EitherBuffer::First(buf) => buf.manually_drop(index),
+            EitherBuffer::Second(buf) => buf.manually_drop(index),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 }
 
