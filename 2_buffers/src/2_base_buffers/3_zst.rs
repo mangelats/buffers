@@ -17,12 +17,6 @@ impl<T> ZstBuffer<T> {
     }
 }
 
-impl<T> Default for ZstBuffer<T> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl<T> Buffer<T> for ZstBuffer<T> {
     fn capacity(&self) -> usize {
         usize::MAX
@@ -40,5 +34,11 @@ impl<T> Buffer<T> for ZstBuffer<T> {
 
     unsafe fn manually_drop(&mut self, _index: usize) {
         // Do nothing
+    }
+}
+
+impl<T> Default for ZstBuffer<T> {
+    fn default() -> Self {
+        Self::new()
     }
 }
