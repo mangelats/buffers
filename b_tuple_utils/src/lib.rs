@@ -1,5 +1,5 @@
-// #![feature(tuple_trait)]
-// use std::marker::Tuple;
+#![feature(tuple_trait)]
+use std::marker::Tuple;
 
 // pub trait TypeMap {
 //     type Output<T>;
