@@ -168,3 +168,72 @@ unsafe fn try_deallocate<T, A: Allocator>(
     alloc.deallocate(old_ptr.cast(), old_layout);
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn can_grow_from_default() {
+        const TARGET: usize = 1;
+
+        let mut buffer = AllocatorBuffer::<i32, Global>::new();
+
+        // SAFETY: 0 < TARGET
+        unsafe {
+            buffer.try_grow(TARGET).unwrap();
+        }
+
+        assert!(buffer.capacity() >= TARGET);
+    }
+
+    #[test]
+    fn can_grow_twice() {
+        const TARGET1: usize = 1;
+        const TARGET2: usize = 10;
+
+        let mut buffer = AllocatorBuffer::<i32, Global>::new();
+
+        // SAFETY: 0 < TARGET1 < TARGET2
+        unsafe {
+            buffer.try_grow(TARGET1).unwrap();
+            buffer.try_grow(TARGET2).unwrap();
+        }
+
+        assert!(buffer.capacity() >= TARGET2);
+    }
+
+    #[test]
+    fn can_shrink() {
+        const TARGET1: usize = 64;
+        const TARGET2: usize = 1;
+
+        let mut buffer = AllocatorBuffer::<i32, Global>::new();
+
+        // SAFETY: 0 < TARGET2 < TARGET1
+        unsafe {
+            buffer.try_grow(TARGET1).unwrap();
+            buffer.try_shrink(TARGET2).unwrap();
+        }
+
+        assert!(buffer.capacity() < TARGET1);
+        assert!(buffer.capacity() >= TARGET2);
+    }
+
+    #[test]
+    fn can_shrink_to_nothing() {
+        const TARGET1: usize = 64;
+        const TARGET2: usize = 0;
+
+        let mut buffer = AllocatorBuffer::<i32, Global>::new();
+
+        // SAFETY: 0 == TARGET2 < TARGET1
+        unsafe {
+            buffer.try_grow(TARGET1).unwrap();
+            buffer.try_shrink(TARGET2).unwrap();
+        }
+
+        assert!(buffer.capacity() < TARGET1);
+        assert!(buffer.capacity() == TARGET2);
+    }
+}
