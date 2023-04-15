@@ -11,6 +11,12 @@ pub struct SvoBuffer<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> {
     inner: EitherBuffer<T, InlineBuffer<T, SMALL_SIZE>, B>,
 }
 
+impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE> {
+    fn move_into_big(&mut self) -> Result<(), ResizeError> {
+        Ok(())
+    }
+}
+
 impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMALL_SIZE> {
     fn capacity(&self) -> usize {
         self.inner.capacity()
