@@ -31,6 +31,12 @@ impl<T, A: Allocator> AllocatorBuffer<T, A> {
             _marker: PhantomData,
         }
     }
+
+    /// Internal function that sets the capacity and raw buffer pointer
+    fn update_buffer(&mut self, ptr: NonNull<T>, cap: usize) {
+        self.cap = cap;
+        self.ptr = ptr;
+    }
 }
 
 impl<T, A: Allocator> Buffer<T> for AllocatorBuffer<T, A> {
