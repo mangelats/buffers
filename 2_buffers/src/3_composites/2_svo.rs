@@ -29,7 +29,7 @@ impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMA
     }
 
     unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
-        todo!()
+        self.inner.manually_drop_range(values_range)
     }
     unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
         todo!()
