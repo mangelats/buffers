@@ -5,7 +5,7 @@ use std::{
 };
 
 /// Similar buffer to HeapBuffer but it uses Allocators instead
-pub struct AllocatorBuffer<T, A: Allocator> {
+pub struct AllocatorBuffer<T, A: Allocator = Global> {
     ptr: NonNull<T>,
     cap: usize,
     alloc: A,
