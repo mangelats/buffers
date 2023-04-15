@@ -1,4 +1,9 @@
-use crate::{base_buffers::inline::InlineBuffer, interface::Buffer};
+use std::ops::Range;
+
+use crate::{
+    base_buffers::inline::InlineBuffer,
+    interface::{resize_error::ResizeError, Buffer},
+};
 
 use super::either::EitherBuffer;
 
@@ -21,5 +26,15 @@ impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMA
 
     unsafe fn manually_drop(&mut self, index: usize) {
         self.inner.manually_drop(index)
+    }
+
+    unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
+        todo!()
+    }
+    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
+        todo!()
+    }
+    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
+        todo!()
     }
 }
