@@ -8,6 +8,18 @@ pub struct ConditionalBuffer<T, A: Buffer<T>, B: Buffer<T>, const SELECT_A: bool
     _m: PhantomData<T>,
 }
 
+impl<T, A: Buffer<T> + Default, B: Buffer<T> + Default, const SELECT_A: bool> Default
+    for ConditionalBuffer<T, A, B, SELECT_A>
+{
+    fn default() -> Self {
+        Self {
+            a: Default::default(),
+            b: Default::default(),
+            _m: Default::default(),
+        }
+    }
+}
+
 impl<T, A: Buffer<T>, B: Buffer<T>, const SELECT_A: bool> Buffer<T>
     for ConditionalBuffer<T, A, B, SELECT_A>
 {
