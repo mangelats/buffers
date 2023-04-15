@@ -15,11 +15,7 @@ impl<T> Buffer<T> for ZstBuffer<T> {
         todo!()
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: T) {
-        todo!()
-    }
+    unsafe fn write_value(&mut self, index: usize, value: T) {}
 
-    unsafe fn manually_drop(&mut self, index: usize) {
-        todo!()
-    }
+    unsafe fn manually_drop(&mut self, index: usize) {}
 }
