@@ -143,11 +143,11 @@ mod tests {
 
     use super::*;
 
-    type TestVector = Vector<u32, InlineBuffer<u32, 4>>;
+    type InlineVector = Vector<u32, InlineBuffer<u32, 4>>;
 
     #[test]
     fn pushed_values_should_increase_len() {
-        let mut vec = TestVector::new();
+        let mut vec = InlineVector::new();
         assert_eq!(vec.len(), 0);
 
         vec.push(0);
@@ -159,7 +159,7 @@ mod tests {
 
     #[test]
     fn pushed_values_should_pop_in_reverse_order() {
-        let mut vec = TestVector::new();
+        let mut vec = InlineVector::new();
         vec.push(123);
         vec.push(456);
 
@@ -189,5 +189,11 @@ mod tests {
         vec.push(32);
 
         assert!(vec.capacity() >= vec.len()); // This can probably be testes with a proptest
+    }
+
+    #[test]
+    fn should_panic_if_growing_is_not_allowed() {
+        const SIZE: usize = 1;
+        for i in 0..SIZE {}
     }
 }
