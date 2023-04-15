@@ -6,6 +6,17 @@ pub struct ZstBuffer<T> {
     _m: PhantomData<T>,
 }
 
+impl<T> ZstBuffer<T> {
+    fn new() -> Self {
+        debug_assert_eq!(
+            std::mem::size_of::<T>(),
+            0,
+            "ZstBuffer only works with zero-sized types"
+        );
+        Self { _m: PhantomData }
+    }
+}
+
 impl<T> Buffer<T> for ZstBuffer<T> {
     fn capacity(&self) -> usize {
         usize::MAX
