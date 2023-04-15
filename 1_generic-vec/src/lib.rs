@@ -188,6 +188,6 @@ mod tests {
         vec.push(32);
         vec.push(32);
 
-        assert!(vec.capacity() >= 2);
+        assert!(vec.capacity() >= vec.len());
     }
 }
