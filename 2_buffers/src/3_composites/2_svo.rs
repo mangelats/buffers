@@ -13,6 +13,7 @@ pub struct SvoBuffer<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> {
 
 impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE> {
     fn move_into_big(&mut self) -> Result<(), ResizeError> {
+        let new_buf: B = Default::default();
         Ok(())
     }
 }
