@@ -58,7 +58,11 @@ impl<T, A: Buffer<T>, B: Buffer<T>, const SELECT_A: bool> Buffer<T>
         }
     }
 
-    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
-        Err(ResizeError::UnsupportedOperation)
+    unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
+        if SELECT_A {
+            self.a.try_shrink(target)
+        } else {
+            self.b.try_shrink(target)
+        }
     }
 }
