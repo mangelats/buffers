@@ -31,8 +31,12 @@ impl<T, B: Buffer<T>, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMA
     unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
         self.inner.manually_drop_range(values_range)
     }
-    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
-        todo!()
+    unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
+        match self.inner {
+            EitherBuffer::First(_) => Ok(()),
+            EitherBuffer::Second(ref mut buf) => buf.try_grow(target),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
         match self.inner {
