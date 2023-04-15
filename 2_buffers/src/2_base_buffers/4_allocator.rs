@@ -89,6 +89,12 @@ impl<T, A: Allocator> Buffer<T> for AllocatorBuffer<T, A> {
     }
 }
 
+impl<T, A: Allocator + Default> Default for AllocatorBuffer<T, A> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// Internal utility function.
 ///
 /// Tries to allocate a new array of a given size on the heap using the stable functions.
