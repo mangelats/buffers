@@ -21,7 +21,7 @@ impl<T0, T1, T2> TupleExt for (T0, T1, T2) {
 
 macro_rules! impl_tuple_ext {
     () => {};
-    ($t:ident) => {
+    ($t:expr) => {
         impl<$n> TupleExt for ($n) {
             type Map<M: TypeMap> = (M::Output<$n>,);
         }
