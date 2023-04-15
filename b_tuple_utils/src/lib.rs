@@ -5,8 +5,8 @@ pub trait Distribute {
     type Output<T>;
 }
 
-pub trait TupleMap: Tuple {
-    
+pub trait TupleMap<D: Distribute>: Tuple {
+    type Result;
 }
 
 pub trait TupleExt: Tuple {
