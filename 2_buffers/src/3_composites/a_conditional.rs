@@ -2,6 +2,10 @@ use std::{marker::PhantomData, ops::Range};
 
 use crate::interface::{resize_error::ResizeError, Buffer};
 
+/// Utility function that allows to statically use one buffer or another
+///
+/// Note that this uses both buffers but only uses one. This may be able to change
+/// with generic const expressions.
 pub struct ConditionalBuffer<T, A: Buffer<T>, B: Buffer<T>, const SELECT_A: bool> {
     a: A,
     b: B,
