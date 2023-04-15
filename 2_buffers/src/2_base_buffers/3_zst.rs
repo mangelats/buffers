@@ -12,7 +12,9 @@ impl<T> Buffer<T> for ZstBuffer<T> {
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
-        todo!()
+        // SAFETY: This type has no size. Null should work as well as any other pointer.
+        // TODO: adding an intrinsics::assume for the size of T may be worth
+        std::ptr::read(std::ptr::NonNull::dangling().as_ptr())
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {}
