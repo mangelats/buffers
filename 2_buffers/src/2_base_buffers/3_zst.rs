@@ -8,7 +8,7 @@ pub struct ZstBuffer<T> {
 
 impl<T> Buffer<T> for ZstBuffer<T> {
     fn capacity(&self) -> usize {
-        todo!()
+        usize::MAX
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
