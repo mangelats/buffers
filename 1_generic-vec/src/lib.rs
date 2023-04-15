@@ -180,4 +180,7 @@ mod tests {
         }
         assert_eq!(counter.load(Ordering::SeqCst), 0);
     }
+
+    #[test]
+    fn should_increase_capacity_when_necessary() {}
 }
