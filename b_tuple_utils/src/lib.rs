@@ -6,10 +6,10 @@ pub trait TypeMap {
 }
 
 pub trait TupleExt: Tuple {
-    type Map<M: TypeMap>;
+    type MapType<M: TypeMap>;
 }
 impl TupleExt for () {
-    type Map<M: TypeMap> = ();
+    type MapType<M: TypeMap> = ();
 }
 
 macro_rules! impl_tuple_map {
@@ -21,7 +21,7 @@ macro_rules! impl_tuple_map {
 macro_rules! impl_tuple_ext_one {
     ($($t:ident),+) => {
         impl<$($t),+> TupleExt for ($($t),+,) {
-            type Map<M: TypeMap> = impl_tuple_map!(($($t,)+) -> ());
+            type MapType<M: TypeMap> = impl_tuple_map!(($($t,)+) -> ());
         }
     };
 }
