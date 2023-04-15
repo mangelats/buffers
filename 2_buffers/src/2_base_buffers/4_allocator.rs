@@ -1,4 +1,4 @@
-use std::alloc::Allocator;
+use std::alloc::{Allocator, Global};
 
 /// Similar buffer to HeapBuffer but it uses Allocators instead
 pub struct AllocatorBuffer<T, A: Allocator> {
@@ -7,6 +7,8 @@ pub struct AllocatorBuffer<T, A: Allocator> {
     alloc: A,
     _marker: PhantomData<T>,
 }
+
+impl<T> AllocatorBuffer<T, Global> {}
 
 impl<T, A: Allocator> AllocatorBuffer<T, A> {
     /// Make an empty `AllocatorBuffer` given an allocator
