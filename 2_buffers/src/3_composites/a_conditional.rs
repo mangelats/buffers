@@ -44,8 +44,10 @@ impl<T, A: Buffer<T>, B: Buffer<T>, const SELECT_A: bool> Buffer<T>
     }
 
     unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
-        for index in values_range {
-            self.manually_drop(index);
+        if SELECT_A {
+            self.a.manually_drop_range(values_range)
+        } else {
+            self.b.manually_drop_range(values_range)
         }
     }
     unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
