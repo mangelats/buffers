@@ -21,6 +21,7 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_S
         for index in 0..current_buf.capacity() {
             new_buf.write_value(index, current_buf.read_value(index))
         }
+        self.inner = EitherBuffer::Second(new_buf);
         Ok(())
     }
 }
