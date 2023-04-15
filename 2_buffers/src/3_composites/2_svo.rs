@@ -35,6 +35,14 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_S
     }
 }
 
+impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Default for SvoBuffer<T, B, SMALL_SIZE> {
+    fn default() -> Self {
+        Self {
+            inner: Default::default(),
+        }
+    }
+}
+
 impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMALL_SIZE> {
     fn capacity(&self) -> usize {
         self.inner.capacity()
