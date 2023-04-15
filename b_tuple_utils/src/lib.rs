@@ -8,7 +8,7 @@ pub trait TypeMap {
 pub trait<T> Includes<T>: Tuple {}
 
 pub trait Reducer<R, T: Tuple> {
-    // fn reduce<U>(current: R, value: U) -> R 
+    fn reduce<U>(current: R, value: U) -> R where T: Includes<U>;
 }
 
 pub trait TupleExt: Tuple {
