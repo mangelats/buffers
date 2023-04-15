@@ -30,6 +30,8 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_S
             new_buf.try_grow(target)?;
         }
 
+        // TODO: either detect or force B to have a continuous array so we can use
+        // `ptr.copy_to_nonoverlapping` instead of copying element by element
         for index in 0..current_buf.capacity() {
             new_buf.write_value(index, current_buf.read_value(index))
         }
