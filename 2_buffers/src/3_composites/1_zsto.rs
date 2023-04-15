@@ -12,3 +12,7 @@ pub struct ZstSelector<T>(PhantomData<T>);
 impl<T> Selector for ZstSelector<T> {
     const SELECT_A: bool = std::mem::size_of::<T>() == 0;
 }
+
+pub trait Result {
+    type T;
+}
