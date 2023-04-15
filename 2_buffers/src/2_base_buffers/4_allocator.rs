@@ -67,6 +67,12 @@ impl<T, A: Allocator> Buffer<T> for AllocatorBuffer<T, A> {
     }
 
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
+        let ptr = if self.cap > 0 {
+            try_grow(&self.alloc, self.ptr, self.cap, target)
+        } else {
+            try_allocate(&self.alloc, target)
+        }?;
+        self.update_buffer(ptr, target);
         Ok(())
     }
 
