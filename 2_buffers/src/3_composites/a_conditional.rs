@@ -1,6 +1,6 @@
-use std::marker::PhantomData;
+use std::{marker::PhantomData, ops::Range};
 
-use crate::interface::Buffer;
+use crate::interface::{resize_error::ResizeError, Buffer};
 
 pub struct ConditionalBuffer<T, A: Buffer<T>, B: Buffer<T>, const SELECT_A: bool> {
     a: A,
@@ -41,5 +41,18 @@ impl<T, A: Buffer<T>, B: Buffer<T>, const SELECT_A: bool> Buffer<T>
         } else {
             self.b.manually_drop(index)
         }
+    }
+
+    unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
+        for index in values_range {
+            self.manually_drop(index);
+        }
+    }
+    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
+        Err(ResizeError::UnsupportedOperation)
+    }
+
+    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
+        Err(ResizeError::UnsupportedOperation)
     }
 }
