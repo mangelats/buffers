@@ -78,7 +78,7 @@ impl<T, A: Allocator> Buffer<T> for AllocatorBuffer<T, A> {
 
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
         if target == 0 {
-            try_deallocate(&self.alloc, self.ptr, target)?;
+            try_deallocate(&self.alloc, self.ptr, self.cap)?;
             self.update_buffer(NonNull::dangling(), 0);
             Ok(())
         } else {
@@ -95,6 +95,16 @@ impl<T, A: Allocator + Default> Default for AllocatorBuffer<T, A> {
     }
 }
 
+unsafe impl<#[may_dangle] T, A: Allocator> Drop for AllocatorBuffer<T, A> {
+    fn drop(&mut self) {
+        if self.cap != 0 {
+            // SAFETY: At this point all content should have been dropped
+            unsafe {
+                let _ = try_deallocate(&self.alloc, self.ptr, self.cap);
+            }
+        }
+    }
+}
 /// Internal utility function.
 ///
 /// Tries to allocate a new array of a given size on the heap using the stable functions.
