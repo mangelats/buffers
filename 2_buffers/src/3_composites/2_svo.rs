@@ -20,7 +20,8 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_S
 
     unsafe fn move_into_big(&mut self, target: usize) -> Result<(), ResizeError> {
         let EitherBuffer::First(ref current_buf) = self.inner else {
-            // SAFETY: This is only called when we grow from small to big. So it's always first
+            // SAFETY: This is only called when we grow from small to big.
+            // This means that we always have an inline buffer at this point
             unreachable!()
         };
 
