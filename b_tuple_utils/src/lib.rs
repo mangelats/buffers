@@ -22,15 +22,15 @@ pub trait TupleExt: Tuple {
         Self: 'a;
     fn as_mut_ref(&mut self) -> Self::MutRef<'_>;
 
-    //     type ConstPtr;
-    //     fn as_ptr(*const self) -> ConstPtr;
+    // type ConstPtr;
+    // fn as_ptr(*const self) -> ConstPtr;
 
-    //     type MutPtr;
-    //     fn as_mut_ptr(*mut self) -> MutPtr;
+    // type MutPtr;
+    // fn as_mut_ptr(*mut self) -> MutPtr;
 
-    //     type Map<M: TypeMap>;
+    // type Map<M: TypeMap>;
 
-    //     fn reduce<R>(self, initial: R, r: Reducer<R, Self>) -> R;
+    // fn reduce<R>(self, initial: R, r: Reducer<R, Self>) -> R;
 }
 
 // impl<T0, T1, T2> TupleExt for (T1, T2, T3) {
