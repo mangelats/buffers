@@ -1,11 +1,11 @@
 #![feature(tuple_trait)]
 use std::marker::Tuple;
 
-pub trait Distribute {
+pub trait TypeMap {
     type Output<T>;
 }
 
-pub trait TupleMap<D: Distribute>: Tuple {
+pub trait TupleMap<D: TypeMap>: Tuple {
     type Result;
 }
 
