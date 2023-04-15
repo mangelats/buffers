@@ -184,5 +184,10 @@ mod tests {
     #[test]
     fn should_increase_capacity_when_necessary() {
         let mut vec: Vector<u32, HeapBuffer<u32>> = Vector::new();
+
+        vec.push(32);
+        vec.push(32);
+
+        assert!(vec.capacity() >= 2);
     }
 }
