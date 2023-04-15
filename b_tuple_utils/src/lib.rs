@@ -1,16 +1,16 @@
 #![feature(tuple_trait)]
 use std::marker::Tuple;
 
-pub trait TypeMap {
-    type Output<T>;
-}
-
 pub trait TupleExt: Tuple {
     type MapType<M: TypeMap>;
 
     fn map<M>(&self, mapper: M) -> Self::MapType<M>
     where
         M: TypeMap;
+}
+
+pub trait TypeMap {
+    type Output<T>;
 }
 
 // impl TupleExt for () {
