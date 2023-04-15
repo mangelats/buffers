@@ -4,9 +4,9 @@ use std::marker::Tuple;
 pub trait TupleExt: Tuple {
     type MapType<M: TypeMap>;
 
-    fn map<M>(&self, mapper: M) -> Self::MapType<M>
-    where
-        M: TuppleMapper;
+    // fn map<M>(&self, mapper: M) -> Self::MapType<M>
+    // where
+    //     M: TuppleMapper;
 }
 
 pub trait TypeMap {
@@ -20,12 +20,12 @@ pub trait TuppleMapper: TypeMap {
 impl TupleExt for () {
     type MapType<M: TypeMap> = ();
 
-    fn map<M>(&self, _mapper: M) -> Self::MapType<M>
-    where
-        M: TuppleMapper,
-    {
-        ()
-    }
+    // fn map<M>(&self, _mapper: M) -> Self::MapType<M>
+    // where
+    //     M: TuppleMapper,
+    // {
+    //     ()
+    // }
 }
 
 // macro_rules! impl_tuple_map {
