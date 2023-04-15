@@ -46,7 +46,11 @@ impl<T, A: Buffer<T>, B: Buffer<T>> Buffer<T> for EitherBuffer<T, A, B> {
     }
 
     unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
-        todo!()
+        match self {
+            EitherBuffer::First(buf) => buf.manually_drop_range(values_range),
+            EitherBuffer::Second(buf) => buf.manually_drop_range(values_range),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 
     unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
