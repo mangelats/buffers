@@ -1,10 +1,7 @@
 extern crate quote;
 
-use proc_macro2::Ident;
-use proc_macro2::Span;
-use proc_macro2::TokenStream;
-use quote::quote;
-use quote::TokenStreamExt;
+use proc_macro2::{Ident, Span, TokenStream};
+use quote::{quote, TokenStreamExt};
 
 #[proc_macro]
 pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
