@@ -1,5 +1,7 @@
 extern crate quote;
 
+use proc_macro2::Ident;
+use proc_macro2::Span;
 use proc_macro2::TokenStream;
 use quote::quote;
 use quote::TokenStreamExt;
@@ -14,5 +16,10 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
 }
 
 fn generate_for_size(i: usize) -> TokenStream {
-    quote!(let _ = "hi")
+    let names: Vec<_> = (0..=i).into_iter().map(|n| (n, type_ident(n))).collect();
+    quote!()
+}
+
+fn type_ident(n: usize) -> Ident {
+    Ident::new(&format!("T{}", n), Span::call_site())
 }
