@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate quote;
 
+use proc_macro::Ident;
 use proc_macro2::TokenStream;
 use quote::quote;
 
