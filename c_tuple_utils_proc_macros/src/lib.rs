@@ -7,6 +7,9 @@ use quote::{quote, TokenStreamExt};
 pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let mut generated = TokenStream::new();
     generated.append_all(quote!(
+        pub trait TupleMapper {
+            type Output<T>;
+        }
         pub trait TupleExt: Sealed {}
 
         mod sealed {
