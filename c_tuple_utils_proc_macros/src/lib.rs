@@ -18,7 +18,7 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
 fn generate_for_size(i: usize) -> TokenStream {
     let names: Vec<_> = (0..=i).into_iter().map(|n| type_ident(n)).collect();
     quote!(
-        impl TupleExt for () {}
+        impl< #(#names, )* > TupleExt for ( #(#names, )* ) {}
     )
 }
 
