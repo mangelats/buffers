@@ -7,5 +7,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn should_be_able_to_map_values() {}
+    fn should_be_able_to_map_values() {
+        struct SumMapper;
+    }
 }
