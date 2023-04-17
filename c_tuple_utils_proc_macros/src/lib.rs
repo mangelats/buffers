@@ -7,7 +7,12 @@ use quote::{quote, TokenStreamExt};
 pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let mut generated = TokenStream::new();
     generated.append_all(quote!(
-        pub trait TupleExt {}
+        pub trait TupleExt: Sealed {}
+
+        mod sealed {
+            pub trait Sealed {}
+        }
+        use sealed::Sealed;
     ));
     for i in 0..12 {
         generated.append_all(generate_for_size(i));
@@ -19,6 +24,8 @@ fn generate_for_size(i: usize) -> TokenStream {
     let names: Vec<_> = (0..=i).into_iter().map(|n| type_ident(n)).collect();
     quote!(
         impl< #(#names, )* > TupleExt for ( #(#names, )* ) {}
+
+        impl< #(#names, )* > Sealed for ( #(#names, )* ) {}
     )
 }
 
