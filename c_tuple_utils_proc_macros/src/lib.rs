@@ -41,7 +41,7 @@ fn generate_pluck(i: usize) -> TokenStream {
                 type Head = ();
                 type Tail = ();
                 fn pluck(self) -> (Self::Head, Self::Tail) {
-                    ()
+                    ((), ())
                 }
             }
         )
