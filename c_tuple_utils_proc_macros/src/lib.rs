@@ -14,7 +14,7 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
             type Ref<'a>
             where
                 Self: 'a;
-            fn propagate_reference(&self) -> Self::Ref<'_>;
+            fn inner_ref(&self) -> Self::Ref<'_>;
         }
 
         pub trait Pluck: Sealed {
@@ -72,7 +72,7 @@ fn generate_tuple_ext(i: usize) -> TokenStream {
             type Ref<'a> = ( #(&'a #types,)* )
             where
                 Self: 'a;
-            fn propagate_reference(&self) -> Self::Ref<'_> {
+            fn inner_ref(&self) -> Self::Ref<'_> {
                 ( #(&self.#fields,)* )
             }
         }
