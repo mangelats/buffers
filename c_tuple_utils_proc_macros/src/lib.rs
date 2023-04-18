@@ -2,6 +2,7 @@ extern crate quote;
 
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, TokenStreamExt};
+use syn::Index;
 
 #[proc_macro]
 pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
@@ -35,10 +36,6 @@ fn generate_for_size(i: usize) -> TokenStream {
 
 fn type_ident(n: usize) -> Ident {
     Ident::new(&format!("T{}", n), Span::call_site())
-}
-
-fn number_ident(n: usize) -> Ident {
-    Ident::new(&n.to_string(), Span::call_site())
 }
 
 // impl< #(#names, )* > Pluck for ( #(#names, )* ) {
