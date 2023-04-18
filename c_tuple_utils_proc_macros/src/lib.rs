@@ -13,7 +13,6 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
             type Tail;
             fn pluck(self) -> (Self::Head, Self::Tail);
         }
-        pub trait TupleExt: Sealed {}
 
         mod sealed {
             pub trait Sealed {}
