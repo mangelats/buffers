@@ -134,7 +134,6 @@ fn generate_reduce(i: usize) -> TokenStream {
         )
     } else {
         let types: Vec<_> = (0..i).map(type_ident).collect();
-        let fields: Vec<_> = (0..i).map(Index::from).collect();
         quote!(
             impl<R, Acc, #(#types, )* > ReduceTuple<R, Acc> for ( #(#types, )* )
             where
