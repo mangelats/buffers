@@ -7,5 +7,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn should_be_able_to_pluck_values() {}
+    fn should_be_able_to_pluck_values() {
+        let start = (123u32,);
+    }
 }
