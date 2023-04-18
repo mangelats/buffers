@@ -21,47 +21,16 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
         use sealed::Sealed;
     ));
     for i in 0..12 {
-        generated.append_all(generate_for_size(i));
+        generated.append_all(generate_sealed(i));
     }
     generated.into()
 }
 
-fn generate_pluck(i: usize) -> TokenStream {
-    if i == 0 {
-        quote!(
-            impl Pluck for () {
-                type Head = ();
-                type Tail = ();
-                fn pluck(self) -> (Self::Head, Self::Tail) {
-                    ()
-                }
-            }
-        )
-    } else {
-        let head = type_ident(0);
-        let tail: Vec<_> = (1..=i).map(type_ident).collect();
-        let fields: Vec<_> = (1..=i).map(Index::from).collect();
-        quote!(
-            impl< #head, #(#tail, )* > Pluck for ( #head, #(#tail, )* ) {
-                type Head = #head;
-                type Tail = ( #(#tail, )* );
-                fn pluck(self) -> (Self::Head, Self::Tail) {
-                    (
-                        self.0,
-                        ( #(#fields,)* )
-                    )
-                }
-            }
-        )
-    }
-}
-
-fn generate_for_size(i: usize) -> TokenStream {
-    let names: Vec<_> = (0..=i).map(type_ident).collect();
+fn generate_sealed(i: usize) -> TokenStream {
+    let names: Vec<_> = (0..i).map(type_ident).collect();
 
     quote!(
         impl< #(#names, )* > Sealed for ( #(#names, )* ) {}
-        impl< #(#names, )* > TupleExt for ( #(#names, )* ) {}
     )
 }
 
