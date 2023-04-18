@@ -47,6 +47,7 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
 }
 
 fn generate_sealed(i: usize) -> TokenStream {
+    // TODO: in the future, this will be unnecessary thanks to the Tuple trait
     let types: Vec<_> = (0..i).map(type_ident).collect();
 
     quote!(
