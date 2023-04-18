@@ -14,6 +14,11 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
             fn pluck(self) -> (Self::Head, Self::Tail);
         }
 
+        pub trait Mapper<T> {
+            type Output;
+            fn map(value: T) -> Self::Output;
+        }
+
         mod sealed {
             pub trait Sealed {}
         }
