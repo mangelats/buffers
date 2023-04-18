@@ -33,8 +33,10 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
         }
 
         pub trait TupleExt: Sealed {
-            type Ref;
-            fn ref_fields(self) -> Self::Ref;
+            type Ref<'a>
+            where
+                Self: 'a;
+            fn propagate_reference(&self) -> Self::Ref<'_>;
         }
 
         mod sealed {
