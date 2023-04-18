@@ -37,8 +37,8 @@ mod tests {
 
     #[test]
     fn should_be_able_to_map_to_string() {
-        struct Noop;
-        impl<T: ToString> Mapper<T> for Noop {
+        struct Stringify;
+        impl<T: ToString> Mapper<T> for Stringify {
             type Output = String;
             fn map(value: T) -> Self::Output {
                 value.to_string()
@@ -46,7 +46,7 @@ mod tests {
         }
 
         assert_eq!(
-            (1, 2, 3).map(Noop),
+            (1, 2, 3).map(Stringify),
             ("1".to_string(), "2".to_string(), "3".to_string())
         )
     }
