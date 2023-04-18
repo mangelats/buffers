@@ -8,8 +8,6 @@ mod tests {
 
     #[test]
     fn should_be_able_to_pluck_values() {
-        use super::Pluck;
-
         let start = (123u32,);
         let result = start.pluck();
         assert_eq!(result.0, 123u32);
@@ -18,8 +16,6 @@ mod tests {
 
     #[test]
     fn should_be_able_to_pluck_values_and_keep_the_rest() {
-        use super::Pluck;
-
         let start = (123u32, 'a', "abc");
         let result = start.pluck();
         assert_eq!(result.0, 123u32);
