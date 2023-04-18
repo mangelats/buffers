@@ -96,7 +96,7 @@ fn generate_map(i: usize) -> TokenStream {
                 );
                 fn map(self, _: M) -> Self::Output {
                     (
-                        ( #(M::map(self.#fields),)* )
+                        #(M::map(self.#fields),)*
                     )
                 }
             }
