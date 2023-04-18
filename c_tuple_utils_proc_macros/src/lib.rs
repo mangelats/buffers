@@ -37,9 +37,9 @@ fn type_ident(n: usize) -> Ident {
     Ident::new(&format!("T{}", n), Span::call_site())
 }
 
-// fn number_ident(n: usize) -> Ident {
-
-// }
+fn number_ident(n: usize) -> Ident {
+    Ident::new(&n.to_string(), Span::call_site())
+}
 
 // impl< #(#names, )* > Pluck for ( #(#names, )* ) {
 //     type Head = T0;
