@@ -22,6 +22,7 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
     ));
     for i in 0..3 {
         generated.append_all(generate_sealed(i));
+        generated.append_all(generate_pluck(i));
     }
     generated.into()
 }
@@ -56,7 +57,7 @@ fn generate_pluck(i: usize) -> TokenStream {
                 fn pluck(self) -> (Self::Head, Self::Tail) {
                     (
                         self.0,
-                        ( #(#fields,)* )
+                        ( #(self.#fields,)* )
                     )
                 }
             }
