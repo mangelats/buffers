@@ -21,4 +21,17 @@ mod tests {
         assert_eq!(result.0, 123u32);
         assert_eq!(result.1, ('a', "abc"));
     }
+
+    #[test]
+    fn should_be_able_to_map_empty_tuples() {
+        struct Noop;
+        impl<T> Mapper<T> for Noop {
+            type Output = T;
+            fn map(value: T) -> Self::Output {
+                value
+            }
+        }
+
+        assert_eq!((1, 2, 3).map(Noop), (1, 2, 3))
+    }
 }
