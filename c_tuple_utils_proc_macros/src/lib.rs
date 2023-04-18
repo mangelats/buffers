@@ -4,6 +4,8 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, TokenStreamExt};
 use syn::Index;
 
+const MAX_TUPLE_SIZE: usize = 3;
+
 #[proc_macro]
 pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let mut generated = TokenStream::new();
@@ -28,7 +30,7 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
         }
         use sealed::Sealed;
     ));
-    for i in 0..=3 {
+    for i in 0..=MAX_TUPLE_SIZE {
         generated.append_all(generate_sealed(i));
         generated.append_all(generate_pluck(i));
         generated.append_all(generate_map(i));
