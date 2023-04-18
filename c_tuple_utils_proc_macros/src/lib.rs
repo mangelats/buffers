@@ -69,10 +69,9 @@ fn generate_tuple_ext(i: usize) -> TokenStream {
 
     quote!(
         impl< #(#types,)* > TupleExt for ( #(#types,)* ) {
-            type Ref<'a>
+            type Ref<'a> = ( #(&'a #types,)* )
             where
-                Self: 'a
-            = ( #(&'a #types,)* );
+                Self: 'a;
             fn propagate_reference(&self) -> Self::Ref<'_> {
                 ( #(&self.#fields,)* )
             }
