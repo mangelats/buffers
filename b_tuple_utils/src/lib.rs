@@ -23,7 +23,7 @@ mod tests {
     }
 
     #[test]
-    fn should_be_able_to_map_empty_tuples() {
+    fn should_be_able_to_map_with_noop() {
         struct Noop;
         impl<T> Mapper<T> for Noop {
             type Output = T;
