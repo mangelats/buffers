@@ -10,6 +10,13 @@ const MAX_TUPLE_SIZE: usize = 4;
 pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let mut generated = TokenStream::new();
     generated.append_all(quote!(
+        pub trait TupleExt: Sealed {
+            type Ref<'a>
+            where
+                Self: 'a;
+            fn propagate_reference(&self) -> Self::Ref<'_>;
+        }
+
         pub trait Pluck: Sealed {
             type Head;
             type Tail;
@@ -30,13 +37,6 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
         }
         pub trait ReduceTuple<R, Acc>: Sealed {
             fn reduce(self, initial: Acc, _: R) -> Acc;
-        }
-
-        pub trait TupleExt: Sealed {
-            type Ref<'a>
-            where
-                Self: 'a;
-            fn propagate_reference(&self) -> Self::Ref<'_>;
         }
 
         mod sealed {
