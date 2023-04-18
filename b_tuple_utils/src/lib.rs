@@ -4,8 +4,7 @@ tuple_ext_impl!();
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
+    use super::{MapTuple, Mapper, Pluck, ReduceTuple, Reducer};
     #[test]
     fn should_be_able_to_pluck_values() {
         let start = (123u32,);
