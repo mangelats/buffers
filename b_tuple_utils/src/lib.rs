@@ -12,5 +12,7 @@ mod tests {
 
         let start = (123u32,);
         let result = start.pluck();
+        assert_eq!(result.0, 123u32);
+        assert_eq!(result.1, ());
     }
 }
