@@ -20,7 +20,6 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
             type Output;
             fn map(value: T) -> Self::Output;
         }
-
         pub trait MapTuple<M> {
             fn map(self, _: M) -> Self::Output;
             type Output;
