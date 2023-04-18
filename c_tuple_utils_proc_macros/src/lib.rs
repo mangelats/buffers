@@ -25,8 +25,8 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
             type Output;
         }
 
-        pub trait Reducer<T, R> {
-            fn reduce(current: T, accumulated: R) -> R;
+        pub trait Reducer<T, Acc> {
+            fn reduce(current: T, accumulated: Acc) -> Acc;
         }
         pub trait ReduceTuple<R, Acc>: Sealed {
             fn reduce(self, initial: Acc, _: R) -> Acc;
