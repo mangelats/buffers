@@ -18,6 +18,10 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
             type Output;
             fn map(value: T) -> Self::Output;
         }
+        pub trait MapTuple<M> {
+            fn map(self, _: M) -> Self::Output;
+            type Output;
+        }
 
         mod sealed {
             pub trait Sealed {}
@@ -32,10 +36,10 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
 }
 
 fn generate_sealed(i: usize) -> TokenStream {
-    let names: Vec<_> = (0..i).map(type_ident).collect();
+    let types: Vec<_> = (0..i).map(type_ident).collect();
 
     quote!(
-        impl< #(#names, )* > Sealed for ( #(#names, )* ) {}
+        impl< #(#types, )* > Sealed for ( #(#types, )* ) {}
     )
 }
 
@@ -67,6 +71,26 @@ fn generate_pluck(i: usize) -> TokenStream {
             }
         )
     }
+}
+
+fn generate_map(i: usize) -> TokenStream {
+    let types: Vec<_> = (0..i).map(type_ident).collect();
+    let fields: Vec<_> = (0..i).map(Index::from).collect();
+    quote!(
+        impl<M, #(#types, )* > MapTuple<M> for ( #(#types, )* )
+        where
+            #(M: Mapper<#types>>,)*
+        {
+            type Output = (
+                #(<M as Mapper<#types>>::Output,)*
+            );
+            fn map(self, _: M) -> Self::Output {
+                (
+                    ( #(M::map(self.#fields),)* )
+                )
+            }
+        }
+    )
 }
 
 fn type_ident(n: usize) -> Ident {
