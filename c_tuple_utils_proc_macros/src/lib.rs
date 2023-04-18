@@ -38,6 +38,13 @@ fn type_ident(n: usize) -> Ident {
     Ident::new(&format!("T{}", n), Span::call_site())
 }
 
+fn number_ident(n: usize) -> Index {
+    Index {
+        index: n as u32,
+        span: Span::call_site(),
+    }
+}
+
 // impl< #(#names, )* > Pluck for ( #(#names, )* ) {
 //     type Head = T0;
 //     type Tail = (T1, T2);
