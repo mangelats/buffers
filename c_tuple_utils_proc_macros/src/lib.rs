@@ -15,6 +15,11 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
             where
                 Self: 'a;
             fn inner_ref(&self) -> Self::Ref<'_>;
+
+            type MutRef<'a>
+            where
+                Self: 'a;
+            fn inner_mut_ref(&mut self) -> Self::MutRef<'_>;
         }
 
         pub trait Pluck: Sealed {
@@ -74,6 +79,13 @@ fn generate_tuple_ext(i: usize) -> TokenStream {
                 Self: 'a;
             fn inner_ref(&self) -> Self::Ref<'_> {
                 ( #(&self.#fields,)* )
+            }
+
+            type MutRef<'a> = ( #(&'a mut #types,)* )
+            where
+                Self: 'a;
+            fn inner_mut_ref(&mut self) -> Self::MutRef<'_> {
+                ( #(&mut self.#fields,)* )
             }
         }
     )
