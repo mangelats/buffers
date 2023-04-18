@@ -20,7 +20,7 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
         }
         use sealed::Sealed;
     ));
-    for i in 0..3 {
+    for i in 0..=3 {
         generated.append_all(generate_sealed(i));
         generated.append_all(generate_pluck(i));
     }
