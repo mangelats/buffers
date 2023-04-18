@@ -4,7 +4,7 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, TokenStreamExt};
 use syn::Index;
 
-const MAX_TUPLE_SIZE: usize = 3;
+const MAX_TUPLE_SIZE: usize = 12;
 
 #[proc_macro]
 pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
