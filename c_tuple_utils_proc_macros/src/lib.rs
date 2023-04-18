@@ -34,6 +34,36 @@ fn generate_sealed(i: usize) -> TokenStream {
     )
 }
 
+fn generate_pluck(i: usize) -> TokenStream {
+    if i == 0 {
+        quote!(
+            impl Pluck for () {
+                type Head = ();
+                type Tail = ();
+                fn pluck(self) -> (Self::Head, Self::Tail) {
+                    ()
+                }
+            }
+        )
+    } else {
+        let head = type_ident(0);
+        let tail: Vec<_> = (1..i).map(type_ident).collect();
+        let fields: Vec<_> = (1..i).map(Index::from).collect();
+        quote!(
+            impl< #head, #(#tail, )* > Pluck for ( #head, #(#tail, )* ) {
+                type Head = #head;
+                type Tail = ( #(#tail, )* );
+                fn pluck(self) -> (Self::Head, Self::Tail) {
+                    (
+                        self.0,
+                        ( #(#fields,)* )
+                    )
+                }
+            }
+        )
+    }
+}
+
 fn type_ident(n: usize) -> Ident {
     Ident::new(&format!("T{}", n), Span::call_site())
 }
