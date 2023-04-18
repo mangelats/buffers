@@ -41,7 +41,7 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
         generated.append_all(generate_sealed(i));
         generated.append_all(generate_pluck(i));
         generated.append_all(generate_map(i));
-        println!("{}", generate_reduce(i))
+        generated.append_all(generate_reduce(i))
     }
     generated.into()
 }
