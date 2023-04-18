@@ -2,5 +2,6 @@
 members = [
     "1_generic-vec",
     "2_buffers",
-    "a_test_utils"
+    "a_test_utils",
+    "b_tuple_utils"
 ]

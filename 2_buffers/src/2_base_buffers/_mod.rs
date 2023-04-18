@@ -10,3 +10,6 @@ pub mod zst;
 #[cfg(feature = "allocator")]
 #[path = "4_allocator.rs"]
 pub mod allocator;
+
+#[path = "5_soa.rs"]
+pub mod soa;

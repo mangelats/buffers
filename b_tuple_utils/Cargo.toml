@@ -1,0 +1,7 @@
+[package]
+name = "tuple_utils"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tuple_utils_proc_macros = { path = "../c_tuple_utils_proc_macros" }
