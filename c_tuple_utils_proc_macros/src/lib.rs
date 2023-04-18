@@ -46,7 +46,7 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
     ));
     for i in 0..=MAX_TUPLE_SIZE {
         generated.append_all(generate_sealed(i));
-        println!("{}", generate_tuple_ext(i));
+        generated.append_all(generate_tuple_ext(i));
         generated.append_all(generate_pluck(i));
         generated.append_all(generate_map(i));
         generated.append_all(generate_reduce(i));
