@@ -112,6 +112,43 @@ fn generate_map(i: usize) -> TokenStream {
     }
 }
 
+fn generate_reduce(i: usize) -> TokenStream {
+    if i == 0 {
+        quote!(
+            impl<R, Acc> ReduceTuple<R, Acc> for () {
+                fn reduce(self, initial: Acc, _: R) -> Acc {
+                    initial
+                }
+            }
+        )
+    } else if i == 1 {
+        quote!(
+            impl<R, Acc, T0> ReduceTuple<R, Acc> for (T0,)
+            where
+                R: Reducer<T0, Acc>,
+            {
+                fn reduce(self, initial: Acc, _: R) -> Acc {
+                    R::reduce(self.0, initial)
+                }
+            }
+        )
+    } else {
+        let types: Vec<_> = (0..i).map(type_ident).collect();
+        let fields: Vec<_> = (0..i).map(Index::from).collect();
+        quote!(
+            impl<R, Acc, #(#types, )* > ReduceTuple<R, Acc> for ( #(#types, )* )
+            where
+                #(R: Reducer<#types, Acc>,)*
+            {
+                fn reduce(self, initial: Acc, reducer: R) -> Acc {
+                    let (head, tail) = self.pluck();
+                    tail.reduce(R::reduce(head, initial), reducer)
+                }
+            }
+        )
+    }
+}
+
 fn type_ident(n: usize) -> Ident {
     Ident::new(&format!("T{}", n), Span::call_site())
 }
