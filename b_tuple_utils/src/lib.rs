@@ -7,10 +7,5 @@ mod tests {
     use super::*;
 
     #[test]
-    fn should_be_able_to_map_values() {
-        struct SumMapper;
-        impl TupleMapper for SumMapper {
-            type Output<T> = T;
-        }
-    }
+    fn should_be_able_to_map_values() {}
 }

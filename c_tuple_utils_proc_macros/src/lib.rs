@@ -7,8 +7,10 @@ use quote::{quote, TokenStreamExt};
 pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let mut generated = TokenStream::new();
     generated.append_all(quote!(
-        pub trait TupleMapper {
-            type Output<T>;
+        pub trait Pluck: Sealed {
+            type Head;
+            type Tail;
+            fn pluck(self) -> (Self::Head, Self::Tail);
         }
         pub trait TupleExt: Sealed {}
 
@@ -34,3 +36,21 @@ fn generate_for_size(i: usize) -> TokenStream {
 fn type_ident(n: usize) -> Ident {
     Ident::new(&format!("T{}", n), Span::call_site())
 }
+
+// fn number_ident(n: usize) -> Ident {
+
+// }
+
+// impl< #(#names, )* > Pluck for ( #(#names, )* ) {
+//     type Head = T0;
+//     type Tail = (T1, T2);
+//     fn pluck(self) -> (Self::Head, Self::Tail) {
+//         (
+//             self.0,
+//             (
+//                 self.1,
+//                 self.2,
+//             )
+//         )
+//     }
+// }
