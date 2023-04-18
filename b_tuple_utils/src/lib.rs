@@ -54,9 +54,10 @@ mod tests {
     #[test]
     fn should_be_able_to_sum() {
         struct Sum;
-        impl Reducer<u32, u32> for Sum {
-            fn reduce(current: u32, accumulated: u32) -> u32 {
-                current + accumulated
+        impl<T: Into<u32>> Reducer<T, u32> for Sum {
+            fn reduce(current: T, accumulated: u32) -> u32 {
+                let value: u32 = current.into();
+                value + accumulated
             }
         }
 
