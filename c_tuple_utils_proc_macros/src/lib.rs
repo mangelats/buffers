@@ -31,6 +31,7 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
     for i in 0..=3 {
         generated.append_all(generate_sealed(i));
         generated.append_all(generate_pluck(i));
+        generated.append_all(generate_map(i));
     }
     generated.into()
 }
@@ -89,11 +90,9 @@ fn generate_map(i: usize) -> TokenStream {
         quote!(
             impl<M, #(#types, )* > MapTuple<M> for ( #(#types, )* )
             where
-                #(M: Mapper<#types>>,)*
+                #(M: Mapper<#types>,)*
             {
-                type Output = (
-                    #(<M as Mapper<#types>>::Output,)*
-                );
+                type Output = ( #(<M as Mapper<#types>>::Output,)* );
                 fn map(self, _: M) -> Self::Output {
                     (
                         #(M::map(self.#fields),)*
