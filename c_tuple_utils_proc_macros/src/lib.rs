@@ -26,8 +26,37 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
     generated.into()
 }
 
+fn generate_pluck(i: usize) -> TokenStream {
+    if i == 0 {
+        quote!(
+            impl Pluck for () {
+                type Head = ();
+                type Tail = ();
+                fn pluck(self) -> (Self::Head, Self::Tail) {
+                    ()
+                }
+            }
+        )
+    } else {
+        let head = type_ident(0);
+        let tail: Vec<_> = (1..=i).map(type_ident).collect();
+        let fields: Vec<_> = (1..=i).map(Index::from).collect();
+        quote!(
+            impl< #head, #(#tail, )* > Pluck for ( #head, #(#tail, )* ) {
+                type Head = #head;
+                type Tail = ( #(#tail, )* );
+                fn pluck(self) -> (Self::Head, Self::Tail) {
+                    (
+                        self.0,
+                        ( #(#fields,)* )
+                    )
+                }
+            }
+        )
+    }
+}
+
 fn generate_for_size(i: usize) -> TokenStream {
-    let fields: Vec<_> = (0..=i).map(Index::from).collect();
     let names: Vec<_> = (0..=i).map(type_ident).collect();
 
     quote!(
@@ -39,17 +68,3 @@ fn generate_for_size(i: usize) -> TokenStream {
 fn type_ident(n: usize) -> Ident {
     Ident::new(&format!("T{}", n), Span::call_site())
 }
-
-// impl< #(#names, )* > Pluck for ( #(#names, )* ) {
-//     type Head = T0;
-//     type Tail = (T1, T2);
-//     fn pluck(self) -> (Self::Head, Self::Tail) {
-//         (
-//             self.0,
-//             (
-//                 self.1,
-//                 self.2,
-//             )
-//         )
-//     }
-// }
