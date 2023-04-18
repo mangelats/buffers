@@ -4,7 +4,7 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, TokenStreamExt};
 use syn::Index;
 
-const MAX_TUPLE_SIZE: usize = 12;
+const MAX_TUPLE_SIZE: usize = 4;
 
 #[proc_macro]
 pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStream {
@@ -30,6 +30,11 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
         }
         pub trait ReduceTuple<R, Acc>: Sealed {
             fn reduce(self, initial: Acc, _: R) -> Acc;
+        }
+
+        pub trait TupleExt: Sealed {
+            type Ref;
+            fn ref_fields(self) -> Self::Ref;
         }
 
         mod sealed {
