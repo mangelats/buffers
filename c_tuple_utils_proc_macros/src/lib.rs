@@ -62,6 +62,23 @@ fn generate_sealed(i: usize) -> TokenStream {
     )
 }
 
+fn generate_tuple_ext(i: usize) -> TokenStream {
+    let types: Vec<_> = (0..i).map(type_ident).collect();
+    let fields: Vec<_> = (0..i).map(Index::from).collect();
+
+    quote!(
+        impl< #(#types,)* > TupleExt for ( #(#types,)* ) {
+            type Ref<'a>
+            where
+                Self: 'a
+            = ( #(&'a #types,)* );
+            fn propagate_reference(&self) -> Self::Ref<'_> {
+                ( #(&self.#fields,)* )
+            }
+        }
+    )
+}
+
 fn generate_pluck(i: usize) -> TokenStream {
     if i == 0 {
         quote!(
