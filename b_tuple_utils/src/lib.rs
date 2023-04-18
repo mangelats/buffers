@@ -60,6 +60,6 @@ mod tests {
             }
         }
 
-        // assert_eq!((1u32, 2u32, 3u32, 4u32).reduce(0u32, Sum), 10);
+        assert_eq!((1u32, 2u32, 3u32).reduce(0u32, Sum), 6);
     }
 }
