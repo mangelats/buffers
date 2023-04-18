@@ -27,7 +27,7 @@ pub fn tuple_ext_impl(_input: proc_macro::TokenStream) -> proc_macro::TokenStrea
 }
 
 fn generate_for_size(i: usize) -> TokenStream {
-    let fields: Vec<_> = (0..=i).map(number_ident).collect();
+    let fields: Vec<_> = (0..=i).map(Index::from).collect();
     let names: Vec<_> = (0..=i).map(type_ident).collect();
     quote!(
         impl< #(#names, )* > Sealed for ( #(#names, )* ) {}
