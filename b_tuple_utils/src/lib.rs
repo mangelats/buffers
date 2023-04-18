@@ -50,4 +50,15 @@ mod tests {
             ("1".to_string(), "2".to_string(), "3".to_string())
         )
     }
+
+    #[test]
+    fn should_be_able_to_sum() {
+        struct Sum;
+        impl<T: Into<u32>> Reducer<T, u32> for Sum {
+            fn reduce(current: T, accumulated: u32) -> u32 {
+                let value = current.into();
+                value + accumulated
+            }
+        }
+    }
 }
