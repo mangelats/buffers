@@ -5,7 +5,7 @@ use crate::interface::{resize_error::ResizeError, Buffer};
 /// Utility buffer that may contain one of two buffers.
 ///
 /// It's a Buffer itself, forwarding the requests to the currently selected.
-pub enum EitherBuffer<T, A: Buffer<T>, B: Buffer<T>> {
+pub enum EitherBuffer<T, A: Buffer<Element = T>, B: Buffer<Element = T>> {
     /// First option (A buffer)
     First(A),
     /// Second option (B buffer)
@@ -15,13 +15,17 @@ pub enum EitherBuffer<T, A: Buffer<T>, B: Buffer<T>> {
     _InternalMarker(Never, PhantomData<T>),
 }
 
-impl<T, A: Buffer<T> + Default, B: Buffer<T>> Default for EitherBuffer<T, A, B> {
+impl<T, A: Buffer<Element = T> + Default, B: Buffer<Element = T>> Default
+    for EitherBuffer<T, A, B>
+{
     fn default() -> Self {
         Self::First(Default::default())
     }
 }
 
-impl<T, A: Buffer<T>, B: Buffer<T>> Buffer<T> for EitherBuffer<T, A, B> {
+impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>> Buffer for EitherBuffer<T, A, B> {
+    type Element = T;
+
     fn capacity(&self) -> usize {
         match self {
             EitherBuffer::First(buf) => buf.capacity(),

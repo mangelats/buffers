@@ -2,7 +2,7 @@ use std::ops::Range;
 
 use super::resize_error::ResizeError;
 
-/// Low level of abstraction of multiple instances of data of type `T` managed as a group.
+/// Low level of abstraction of multiple `Elements` managed as a group.
 ///
 /// This is perticularly useful to allow different ways of managing data in memory with a uniform interface.
 ///
@@ -17,7 +17,10 @@ use super::resize_error::ResizeError;
 /// This interface has been deliberately designed to have a little constrains to the implementations as possible.
 /// For example: the underlying data doesn't need to be saved in a contiguous chunk of memory, and it could be on
 /// the stack, on the heap, etc.
-pub trait Buffer<T> {
+pub trait Buffer {
+    /// Type of elements this buffer holds
+    type Element;
+
     /// Current capacity of the buffer
     fn capacity(&self) -> usize;
 
@@ -25,13 +28,13 @@ pub trait Buffer<T> {
     ///
     /// # Safety
     /// The `index` position must not be empty.
-    unsafe fn read_value(&self, index: usize) -> T;
+    unsafe fn read_value(&self, index: usize) -> Self::Element;
 
     /// Writes the value into the index position of this buffer (which is no longer empty).
     ///
     /// # Safety
     /// The `index` position must not contain a value.
-    unsafe fn write_value(&mut self, index: usize, value: T);
+    unsafe fn write_value(&mut self, index: usize, value: Self::Element);
 
     /// Manually drops the value in the specified index position and empties it.
     ///
@@ -54,7 +57,7 @@ pub trait Buffer<T> {
 
     /// Attempt to grow the buffer.
     ///
-    /// This operation may fail a number of ways depending of the implementation and T
+    /// This operation may fail a number of ways depending on the implementation and `Self::Element`
     ///
     /// # Safety
     /// Target size must be bigger than the current capacity (and thus, also 0)
@@ -64,7 +67,7 @@ pub trait Buffer<T> {
 
     /// Attempt to shrink the buffer.
     ///
-    /// This operation may fail a number of ways depending of the implementation and T
+    /// This operation may fail a number of ways depending on the implementation and and `Self::Element`
     ///
     /// # Safety
     /// Target size must be smaller than the current capacity but bigger than 0

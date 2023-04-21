@@ -25,7 +25,9 @@ impl<T> ZstBuffer<T> {
     }
 }
 
-impl<T> Buffer<T> for ZstBuffer<T> {
+impl<T> Buffer for ZstBuffer<T> {
+    type Element = T;
+
     fn capacity(&self) -> usize {
         usize::MAX
     }

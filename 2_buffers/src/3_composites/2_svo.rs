@@ -8,11 +8,11 @@ use crate::{
 use super::either::EitherBuffer;
 
 /// Buffer composite that adds small vector optimization (SVO) to a given buffer.
-pub struct SvoBuffer<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> {
+pub struct SvoBuffer<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> {
     inner: EitherBuffer<T, InlineBuffer<T, SMALL_SIZE>, B>,
 }
 
-impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE> {
+impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE> {
     /// Creates a new empty buffer
     pub fn new() -> Self {
         Default::default()
@@ -41,7 +41,9 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_S
     }
 }
 
-impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Default for SvoBuffer<T, B, SMALL_SIZE> {
+impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> Default
+    for SvoBuffer<T, B, SMALL_SIZE>
+{
     fn default() -> Self {
         Self {
             inner: Default::default(),
@@ -49,7 +51,11 @@ impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Default for SvoBuffer<T
     }
 }
 
-impl<T, B: Buffer<T> + Default, const SMALL_SIZE: usize> Buffer<T> for SvoBuffer<T, B, SMALL_SIZE> {
+impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> Buffer
+    for SvoBuffer<T, B, SMALL_SIZE>
+{
+    type Element = T;
+
     fn capacity(&self) -> usize {
         self.inner.capacity()
     }

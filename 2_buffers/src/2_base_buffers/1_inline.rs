@@ -56,7 +56,9 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     }
 }
 
-impl<T, const SIZE: usize> Buffer<T> for InlineBuffer<T, SIZE> {
+impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
+    type Element = T;
+
     fn capacity(&self) -> usize {
         SIZE
     }

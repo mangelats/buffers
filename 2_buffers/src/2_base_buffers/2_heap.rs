@@ -77,7 +77,9 @@ impl<T> HeapBuffer<T> {
     }
 }
 
-impl<T> Buffer<T> for HeapBuffer<T> {
+impl<T> Buffer for HeapBuffer<T> {
+    type Element = T;
+
     fn capacity(&self) -> usize {
         self.cap
     }

@@ -3,13 +3,13 @@ use std::marker::PhantomData;
 use buffers::{interface::Buffer, DefaultBuffer};
 
 /// Implementation of a vector
-pub struct Vector<T, B: Buffer<T> = DefaultBuffer<T>> {
+pub struct Vector<T, B: Buffer<Element = T> = DefaultBuffer<T>> {
     len: usize,
     buffer: B,
     _m: PhantomData<T>,
 }
 
-impl<T, B: Buffer<T>> Vector<T, B> {
+impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Create a new vector using the given buffer.
     ///
     /// ```
@@ -109,20 +109,20 @@ impl<T, B: Buffer<T>> Vector<T, B> {
     }
 }
 
-impl<T, B: Buffer<T> + Default> Vector<T, B> {
+impl<T, B: Buffer<Element = T> + Default> Vector<T, B> {
     /// Creates a new vector by default-constructing the underlying buffer.
     pub fn new() -> Vector<T, B> {
         Self::from_buffer(Default::default())
     }
 }
 
-impl<T, B: Buffer<T> + Default> Default for Vector<T, B> {
+impl<T, B: Buffer<Element = T> + Default> Default for Vector<T, B> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T, B: Buffer<T>> Drop for Vector<T, B> {
+impl<T, B: Buffer<Element = T>> Drop for Vector<T, B> {
     fn drop(&mut self) {
         // Safety: All the allocated elements are in 0 <= index < self.len.
         unsafe {
@@ -132,10 +132,10 @@ impl<T, B: Buffer<T>> Drop for Vector<T, B> {
 }
 
 // SAFETY: The data is managed by the buffer. If it's Sync, so it's the vector.
-unsafe impl<T, B: Buffer<T> + Sync> Sync for Vector<T, B> {}
+unsafe impl<T, B: Buffer<Element = T> + Sync> Sync for Vector<T, B> {}
 
 // SAFETY: The data is managed by the buffer. If it's Send, so it's the vector.
-unsafe impl<T, B: Buffer<T> + Send> Send for Vector<T, B> {}
+unsafe impl<T, B: Buffer<Element = T> + Send> Send for Vector<T, B> {}
 
 #[cfg(test)]
 mod tests {

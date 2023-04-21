@@ -49,7 +49,9 @@ impl<T, A: Allocator> AllocatorBuffer<T, A> {
     }
 }
 
-impl<T, A: Allocator> Buffer<T> for AllocatorBuffer<T, A> {
+impl<T, A: Allocator> Buffer for AllocatorBuffer<T, A> {
+    type Element = T;
+
     fn capacity(&self) -> usize {
         self.cap
     }

@@ -11,13 +11,13 @@ pub trait Selector {
 ///
 /// Note that this uses both buffers but only uses one. This may be able to change
 /// with generic const expressions.
-pub struct ConditionalBuffer<T, A: Buffer<T>, B: Buffer<T>, S: Selector> {
+pub struct ConditionalBuffer<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> {
     a: A,
     b: B,
     _m: PhantomData<(T, S)>,
 }
 
-impl<T, A: Buffer<T>, B: Buffer<T>, S: Selector> ConditionalBuffer<T, A, B, S> {
+impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> ConditionalBuffer<T, A, B, S> {
     pub fn new(a: A, b: B) -> Self {
         Self {
             a,
@@ -27,7 +27,7 @@ impl<T, A: Buffer<T>, B: Buffer<T>, S: Selector> ConditionalBuffer<T, A, B, S> {
     }
 }
 
-impl<T, A: Buffer<T> + Default, B: Buffer<T> + Default, S: Selector> Default
+impl<T, A: Buffer<Element = T> + Default, B: Buffer<Element = T> + Default, S: Selector> Default
     for ConditionalBuffer<T, A, B, S>
 {
     fn default() -> Self {
@@ -35,7 +35,10 @@ impl<T, A: Buffer<T> + Default, B: Buffer<T> + Default, S: Selector> Default
     }
 }
 
-impl<T, A: Buffer<T>, B: Buffer<T>, S: Selector> Buffer<T> for ConditionalBuffer<T, A, B, S> {
+impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> Buffer
+    for ConditionalBuffer<T, A, B, S>
+{
+    type Element = T;
     fn capacity(&self) -> usize {
         if S::SELECT_A {
             self.a.capacity()
