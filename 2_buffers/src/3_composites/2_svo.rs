@@ -120,6 +120,10 @@ where
         self.inner.mut_ptr(index)
     }
 }
+impl<T, B, const SMALL_SIZE: usize> ContinuousMemoryBuffer for SvoBuffer<T, B, SMALL_SIZE> where
+    B: Buffer<Element = T> + Default + ContinuousMemoryBuffer
+{
+}
 
 #[cfg(test)]
 mod tests {
