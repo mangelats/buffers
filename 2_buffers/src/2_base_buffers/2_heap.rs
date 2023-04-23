@@ -8,7 +8,7 @@ use crate::interface::{resize_error::ResizeError, Buffer};
 
 /// Buffer implementation using a heap-allocated continuous array.
 pub struct HeapBuffer<T> {
-    ptr: NonNull<T>,
+    buffer_start: NonNull<T>,
     cap: usize,
     _marker: PhantomData<T>,
 }
@@ -22,7 +22,7 @@ impl<T> HeapBuffer<T> {
     /// ```
     pub fn new() -> Self {
         Self {
-            ptr: NonNull::dangling(),
+            buffer_start: NonNull::dangling(),
             cap: 0,
             _marker: PhantomData,
         }
@@ -30,12 +30,12 @@ impl<T> HeapBuffer<T> {
 
     /// Get a constant pointer to the specified index
     pub unsafe fn ptr(&self, index: usize) -> *const T {
-        self.ptr.as_ptr().add(index)
+        self.buffer_start.as_ptr().add(index)
     }
 
     /// Get a mutable pointer to the specified index
     pub unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
-        self.ptr.as_ptr().add(index)
+        self.buffer_start.as_ptr().add(index)
     }
 
     /// Internal function that allocates a new array into the heap
@@ -55,7 +55,7 @@ impl<T> HeapBuffer<T> {
     /// There needs to be an array already heap allocated. Target should be bigger than 0.
     unsafe fn resize_array(&mut self, target: usize) -> Result<(), ResizeError> {
         debug_assert!(target > 0);
-        let ptr = try_array_realloc(self.ptr, self.cap, target)?;
+        let ptr = try_array_realloc(self.buffer_start, self.cap, target)?;
         self.update_buffer(ptr, target);
         Ok(())
     }
@@ -65,7 +65,7 @@ impl<T> HeapBuffer<T> {
     /// # Safety
     /// There needs to be an array heap allocated
     unsafe fn deallocate_array(&mut self) -> Result<(), ResizeError> {
-        deallocate(self.ptr, self.cap)?;
+        deallocate(self.buffer_start, self.cap)?;
         self.update_buffer(NonNull::dangling(), 0);
         Ok(())
     }
@@ -73,7 +73,7 @@ impl<T> HeapBuffer<T> {
     /// Internal function that sets the capacity and raw buffer pointer
     fn update_buffer(&mut self, ptr: NonNull<T>, cap: usize) {
         self.cap = cap;
-        self.ptr = ptr;
+        self.buffer_start = ptr;
     }
 }
 
