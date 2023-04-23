@@ -31,6 +31,8 @@ impl<T: ShiftOneByOne> BufferShift for T {
             let old_pos = end - current;
             self.write_value(new_pos, self.read_value(old_pos));
         }
+
+        // Old values left as is, since the bytes themselves are considered garbage
     }
 
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
