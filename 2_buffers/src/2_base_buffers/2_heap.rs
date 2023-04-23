@@ -4,7 +4,9 @@ use std::{
     ptr::{self, NonNull},
 };
 
-use crate::interface::{resize_error::ResizeError, Buffer};
+use crate::interface::{
+    continuous_memory::ContinuousMemoryBuffer, resize_error::ResizeError, Buffer,
+};
 
 /// Buffer implementation using a heap-allocated continuous array.
 pub struct HeapBuffer<T> {
@@ -74,6 +76,18 @@ impl<T> HeapBuffer<T> {
     fn update_buffer(&mut self, ptr: NonNull<T>, cap: usize) {
         self.cap = cap;
         self.buffer_start = ptr;
+    }
+}
+
+impl<T> ContinuousMemoryBuffer for HeapBuffer<T> {
+    unsafe fn ptr(&self, index: usize) -> *const T {
+        debug_assert!(index < self.capacity());
+        todo!()
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
+        debug_assert!(index < self.capacity());
+        todo!()
     }
 }
 
