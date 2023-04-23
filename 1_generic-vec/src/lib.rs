@@ -126,10 +126,12 @@ impl<T, B> Vector<T, B>
 where
     B: Buffer<Element = T> + PtrBuffer,
 {
+    /// Returns an unsafe pointer to the start of the vector's buffer
     pub fn as_ptr(&self) -> *const T {
         unsafe { self.buffer.ptr(0) }
     }
 
+    /// Returns an unsafe mutable pointer to the start of the vector's buffer
     pub fn as_mut_ptr(&mut self) -> *const T {
         unsafe { self.buffer.mut_ptr(0) }
     }
