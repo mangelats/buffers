@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use buffers::{
-    interface::{ptrs::PtrBuffer, Buffer},
+    interface::{continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, Buffer},
     DefaultBuffer,
 };
 
@@ -134,6 +134,21 @@ where
     /// Returns an unsafe mutable pointer to the start of the vector's buffer
     pub fn as_mut_ptr(&mut self) -> *const T {
         unsafe { self.buffer.mut_ptr(0) }
+    }
+}
+
+impl<T, B> Vector<T, B>
+where
+    B: Buffer<Element = T> + ContinuousMemoryBuffer,
+{
+    /// Extracts a slice containing the entire vector
+    pub fn as_slice(&self) -> &[T] {
+        unsafe { self.buffer.slice(0..self.len) }
+    }
+
+    /// Extracts a mutable slice containing the entire vector
+    pub fn as_mut_slice(&self) -> &[T] {
+        unsafe { self.buffer.slice(0..self.len) }
     }
 }
 
