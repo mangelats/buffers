@@ -19,7 +19,7 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
 
     /// Get a contant reference maybe-uninit value in the specified index.
     ///
-    /// ## SAFETY
+    /// # SAFETY
     /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
     pub fn index(&self, index: usize) -> &MaybeUninit<T> {
         debug_assert!(index < SIZE);
