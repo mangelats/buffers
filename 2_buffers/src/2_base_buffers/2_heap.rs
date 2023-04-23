@@ -79,18 +79,6 @@ impl<T> HeapBuffer<T> {
     }
 }
 
-impl<T> ContinuousMemoryBuffer for HeapBuffer<T> {
-    unsafe fn ptr(&self, index: usize) -> *const T {
-        debug_assert!(index < self.capacity());
-        self.buffer_start.as_ptr().add(index)
-    }
-
-    unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
-        debug_assert!(index < self.capacity());
-        self.buffer_start.as_ptr().add(index)
-    }
-}
-
 impl<T> Buffer for HeapBuffer<T> {
     type Element = T;
 
@@ -124,6 +112,18 @@ impl<T> Buffer for HeapBuffer<T> {
         } else {
             self.resize_array(target)
         }
+    }
+}
+
+impl<T> ContinuousMemoryBuffer for HeapBuffer<T> {
+    unsafe fn ptr(&self, index: usize) -> *const T {
+        debug_assert!(index < self.capacity());
+        self.buffer_start.as_ptr().add(index)
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
+        debug_assert!(index < self.capacity());
+        self.buffer_start.as_ptr().add(index)
     }
 }
 
