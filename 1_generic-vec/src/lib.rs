@@ -147,8 +147,8 @@ where
     }
 
     /// Extracts a mutable slice containing the entire vector
-    pub fn as_mut_slice(&self) -> &[T] {
-        unsafe { self.buffer.slice(0..self.len) }
+    pub fn as_mut_slice(&mut self) -> &[T] {
+        unsafe { self.buffer.mut_slice(0..self.len) }
     }
 }
 
