@@ -5,11 +5,13 @@ Currently it is expected that the data is saved in a continuous slice of memory 
 
 In this project I add an abstraction in between the container (vector) and the actual memory, which splits the responsabilities in different interfaces:
 
- - Allocator (or `std::alloc`): Its responsible to manage slices of memory on the heap.
+ - [Allocator](https://doc.rust-lang.org/std/alloc/trait.Allocator.html) (or [`std::alloc`](https://doc.rust-lang.org/std/alloc/) global allocation functions): Its responsible to manage slices of memory on the heap.
  - Buffer: Its responsability is to read and write values to memory, and aquire and release memory (if it can) but doesn't track what values have been writen, or removed.
  - Container (Vector): Is responsible to manage where the values are
 
-At first this abstraction seems a bit unnecessary, but the original need for this split came from trying to make a struct of arrays (SoA) by only managing memory ([see soa_derive's issue](https://github.com/lumol-org/soa-derive/issues/19)). This case is different because the data is actually split into multiple slices of memory (which is the whole point of a SoA), so the stadard aproach doesn't work for it. Once this case was covered I discovered the the new abstraction became composable and could compose optimizations to a buffer really simply. One such optimization is an Small Vector Optimization (SVO) which would be really hard to add into the standard (which, in fact, doesn't). It also make it possible to use buffers on the stack with `InlineBuffer`.
+Note that a buffer will only use an allocator when allocating to the heap. Buffers like `ZstBuffer` or `InlineBuffer` never do so.
+
+At first this abstraction seems a bit unnecessary, but the original need for this split came from trying to make a struct of arrays (SoA) by only managing memory ([see soa_derive's issue](https://github.com/lumol-org/soa-derive/issues/19)). This case is special because the data needs to be split into multiple slices of memory (which is the whole point of a SoA), so the stadard aproach doesn't work. Once this case was covered I discovered the the new abstraction became composable and could compose optimizations to a buffer really simply. One such optimization is an Small Vector Optimization (SVO) which could be really hard to add into the standard (which, in fact, doesn't). It also make it possible to use buffers without allocation like `InlineBuffer`.
 
 Most of the working have been heavily inspired by the standard [`Vec`](https://doc.rust-lang.org/std/vec/struct.Vec.html), `RawVec` (internal only), and [the Rustonomicon's `RawVec`](https://doc.rust-lang.org/nomicon/vec/vec-raw.html).
 
@@ -21,8 +23,9 @@ use generic_vec::Vector;
 let vector: Vector<usize> = Vector::new();
 ```
 
-This project will try to make it as similar as `Vec` but a lot of work is still missing, so only a few methods are actually implemented.
+This project will try to make it as similar as [`Vec`](https://doc.rust-lang.org/std/vec/struct.Vec.html) but a lot of work is still missing, so only a few methods are actually implemented.
 
+Note though that some [`Vec`](https://doc.rust-lang.org/std/vec/struct.Vec.html) methods are now responsibility of the buffer, and thus may never be available.
 
 You can also create your own buffer stack. For example an inline buffer:
 ```rust
