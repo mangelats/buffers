@@ -128,6 +128,10 @@ where
     }
 
     unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
-        todo!()
+        if S::SELECT_A {
+            self.a.mut_ptr(index)
+        } else {
+            self.b.mut_ptr(index)
+        }
     }
 }
