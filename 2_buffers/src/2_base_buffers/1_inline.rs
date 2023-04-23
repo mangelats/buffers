@@ -1,4 +1,6 @@
-use crate::interface::{continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, Buffer};
+use crate::interface::{
+    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer, Buffer,
+};
 use std::mem::MaybeUninit;
 
 /// Buffer based on a fixed-sized array, so it cannot grow or shrink.
@@ -72,6 +74,7 @@ impl<T, const SIZE: usize> PtrBuffer for InlineBuffer<T, SIZE> {
 }
 
 impl<T, const SIZE: usize> ContinuousMemoryBuffer for InlineBuffer<T, SIZE> {}
+impl<T, const SIZE: usize> DefaultRefBuffer for InlineBuffer<T, SIZE> {}
 
 impl<T, const SIZE: usize> Default for InlineBuffer<T, SIZE> {
     fn default() -> Self {
