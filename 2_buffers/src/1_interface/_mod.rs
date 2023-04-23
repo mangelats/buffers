@@ -10,10 +10,10 @@ pub mod ptrs;
 #[path = "4_refs.rs"]
 pub mod refs;
 
-#[path = "5_shift.rs"]
-pub mod shift;
-
-#[path = "6_continuous_memory.rs"]
+#[path = "5_continuous_memory.rs"]
 pub mod continuous_memory;
+
+#[path = "6_shift.rs"]
+pub mod shift;
 
 pub use self::buffer::Buffer;
