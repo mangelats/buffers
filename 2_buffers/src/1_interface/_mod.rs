@@ -7,7 +7,7 @@ pub mod resize_error;
 #[path = "3_ptrs.rs"]
 pub mod ptrs;
 
-#[path = "4_continuous_memory.rs"]
+#[path = "5_continuous_memory.rs"]
 pub mod continuous_memory;
 
 pub use self::buffer::Buffer;
