@@ -271,8 +271,9 @@ mod tests {
 
     #[test]
     fn should_be_able_to_get_reference() {
-        let mut vec: Vector<u32, InlineBuffer<u32, 10>> = Vector::new();
-        for i in 0..10 {
+        const SIZE: usize = 10;
+        let mut vec: Vector<u32, InlineBuffer<u32, SIZE>> = Vector::new();
+        for i in 0..SIZE {
             vec.push(i.try_into().unwrap());
         }
     }
