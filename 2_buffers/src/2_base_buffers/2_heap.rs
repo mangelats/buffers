@@ -106,6 +106,8 @@ impl<T> Buffer for HeapBuffer<T> {
 }
 
 impl<T> PtrBuffer for HeapBuffer<T> {
+    type ConstantPointer = *const T;
+
     unsafe fn ptr(&self, index: usize) -> *const T {
         debug_assert!(index < self.capacity());
         self.buffer_start.as_ptr().add(index)

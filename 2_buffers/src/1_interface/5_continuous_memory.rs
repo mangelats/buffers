@@ -9,7 +9,9 @@ use super::Buffer;
 ///   2. All the memory is allocated continuously
 ///
 /// All common allocators actually fulfill this requirements but in some cases –like in a SoA– this may not be the case
-pub trait ContinuousMemoryBuffer: Buffer + PtrBuffer {
+pub trait ContinuousMemoryBuffer:
+    Buffer + PtrBuffer<ConstantPointer = *const <Self as Buffer>::Element>
+{
     /// Get the slice represanted by the range
     ///
     /// # SAFETY

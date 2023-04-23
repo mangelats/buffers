@@ -116,9 +116,11 @@ where
 impl<T, A, B, S> PtrBuffer for ConditionalBuffer<T, A, B, S>
 where
     A: Buffer<Element = T> + PtrBuffer,
-    B: Buffer<Element = T> + PtrBuffer,
+    B: Buffer<Element = T> + PtrBuffer<ConstantPointer = A::ConstantPointer>,
     S: Selector,
 {
+    type ConstantPointer = A::ConstantPointer;
+
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
         if S::SELECT_A {
             self.a.ptr(index)

@@ -98,8 +98,10 @@ where
 impl<T, A, B> PtrBuffer for EitherBuffer<T, A, B>
 where
     A: Buffer<Element = T> + PtrBuffer,
-    B: Buffer<Element = T> + PtrBuffer,
+    B: Buffer<Element = T> + PtrBuffer<ConstantPointer = A::ConstantPointer>,
 {
+    type ConstantPointer = A::ConstantPointer;
+
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
         match self {
             EitherBuffer::First(buf) => buf.ptr(index),

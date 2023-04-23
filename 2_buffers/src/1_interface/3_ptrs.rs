@@ -4,6 +4,8 @@ use super::Buffer;
 ///
 /// Note that in some cases the elements themselves may not ahve a unique pointers (eg. zero-sized types)
 pub trait PtrBuffer: Buffer {
+    type ConstantPointer;
+
     /// Get a contant pointer to the value in the specified index.
     ///
     /// # SAFETY
