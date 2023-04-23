@@ -143,13 +143,23 @@ impl<T, B> Vector<T, B>
 where
     B: Buffer<Element = T> + RefBuffer,
 {
-    /// Returns an unsafe pointer to the start of the vector's buffer
+    /// Get a reference to the element in index
+    ///
+    /// # Safety
+    /// 0 <= index < self.len()
     pub fn index(&self, index: usize) -> B::ConstantReference<'_> {
+        debug_assert!(0 <= index);
+        debug_assert!(index < self.len());
         unsafe { self.buffer.index(index) }
     }
 
-    /// Returns an unsafe mutable pointer to the start of the vector's buffer
+    /// Get a mutable reference to the element in index
+    ///
+    /// # Safety
+    /// 0 <= index < self.len()
     pub fn mut_index(&mut self, index: usize) -> B::MutableReference<'_> {
+        debug_assert!(0 <= index);
+        debug_assert!(index < self.len());
         unsafe { self.buffer.mut_index(index) }
     }
 }
