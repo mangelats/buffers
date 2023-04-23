@@ -1,6 +1,8 @@
 use std::{marker::PhantomData, ops::Range};
 
-use crate::interface::{resize_error::ResizeError, Buffer};
+use crate::interface::{
+    continuous_memory::ContinuousMemoryBuffer, resize_error::ResizeError, Buffer,
+};
 
 /// Utility buffer that may contain one of two buffers.
 ///
@@ -90,6 +92,20 @@ where
             EitherBuffer::Second(buf) => buf.try_shrink(target),
             EitherBuffer::_InternalMarker(_, _) => unreachable!(),
         }
+    }
+}
+
+impl<T, A, B> ContinuousMemoryBuffer for EitherBuffer<T, A, B>
+where
+    A: Buffer<Element = T> + ContinuousMemoryBuffer,
+    B: Buffer<Element = T> + ContinuousMemoryBuffer,
+{
+    unsafe fn ptr(&self, index: usize) -> *const Self::Element {
+        todo!()
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
+        todo!()
     }
 }
 
