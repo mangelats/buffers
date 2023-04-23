@@ -97,9 +97,21 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
 
     /// Shrinks the capacity of the vector as much as possible.
     pub fn shrink_to_fit(&mut self) {
-        // SAFETY: it should get OOM but the buffer may not be able to shrink (eg. InlineBuffer)
-        // this still is considered successful in that case
-        let _ = unsafe { self.buffer.try_shrink(self.len()) };
+        self.shrink_to(self.len())
+    }
+
+    /// Shrinks the capacity of the vector with a lower bound.
+    ///
+    /// The capacity will remain at least as large as both the length and the supplied value.
+    ///
+    /// If the current capacity is less than the lower limit, this is a no-op.
+    pub fn shrink_to(&mut self, min_capacity: usize) {
+        let target = std::cmp::max(min_capacity, self.len());
+        if target < self.capacity() {
+            // SAFETY: it should get OOM but the buffer may not be able to shrink (eg. InlineBuffer)
+            // this still is considered successful in that case
+            let _ = unsafe { self.buffer.try_shrink(min_capacity) };
+        }
     }
 
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
