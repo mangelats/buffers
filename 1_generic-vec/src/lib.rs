@@ -148,8 +148,8 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         // Move only when necessary
         if self.len != index {
             unsafe {
-                self.buffer
-                    .write_value(index, self.buffer.read_value(self.len))
+                let value = self.buffer.read_value(self.len);
+                self.buffer.write_value(index, value);
             }
         }
 
