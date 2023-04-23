@@ -29,8 +29,11 @@ impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> Conditional
     }
 }
 
-impl<T, A: Buffer<Element = T> + Default, B: Buffer<Element = T> + Default, S: Selector> Default
-    for ConditionalBuffer<T, A, B, S>
+impl<T, A, B, S> Default for ConditionalBuffer<T, A, B, S>
+where
+    A: Buffer<Element = T> + Default,
+    B: Buffer<Element = T> + Default,
+    S: Selector,
 {
     fn default() -> Self {
         Self::new(Default::default(), Default::default())
