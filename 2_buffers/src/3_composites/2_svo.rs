@@ -141,6 +141,7 @@ where
 
     unsafe fn index<'a>(&'a self, index: usize) -> Self::ConstantReference<'a> {
         // self.inner.index(index)
+        let buffer = &self.inner;
         todo!()
     }
 
