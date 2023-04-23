@@ -34,16 +34,6 @@ impl<T, A: Allocator> AllocatorBuffer<T, A> {
         }
     }
 
-    /// Get a constant pointer to the specified index
-    pub unsafe fn ptr(&self, index: usize) -> *const T {
-        self.ptr.as_ptr().add(index)
-    }
-
-    /// Get a mutable pointer to the specified index
-    pub unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
-        self.ptr.as_ptr().add(index)
-    }
-
     /// Internal function that sets the capacity and raw buffer pointer
     fn update_buffer(&mut self, ptr: NonNull<T>, cap: usize) {
         self.cap = cap;
