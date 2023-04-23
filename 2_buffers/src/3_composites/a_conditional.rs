@@ -1,7 +1,8 @@
 use std::{marker::PhantomData, ops::Range};
 
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, resize_error::ResizeError, Buffer,
+    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+    resize_error::ResizeError, Buffer,
 };
 
 /// Trait used to choose between buffer A or buffer B
@@ -137,6 +138,33 @@ where
         } else {
             self.b.mut_ptr(index)
         }
+    }
+}
+
+impl<T, A, B, S> RefBuffer for ConditionalBuffer<T, A, B, S>
+where
+    A: Buffer<Element = T> + RefBuffer,
+    B: Buffer<Element = T>,
+    for<'a> B: RefBuffer<
+            ConstantReference<'a> = A::ConstantReference<'a>,
+            MutableReference<'a> = A::MutableReference<'a>,
+        > + 'a,
+    S: Selector,
+{
+    type ConstantReference<'a> = A::ConstantReference<'a>
+    where
+        Self: 'a;
+
+    type MutableReference<'a> = A::ConstantReference<'a>
+    where
+        Self: 'a;
+
+    unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
+        todo!()
+    }
+
+    unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
+        todo!()
     }
 }
 
