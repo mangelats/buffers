@@ -29,7 +29,11 @@ where
     }
 }
 
-impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>> Buffer for EitherBuffer<T, A, B> {
+impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>> Buffer for EitherBuffer<T, A, B>
+where
+    A: Buffer<Element = T>,
+    B: Buffer<Element = T>,
+{
     type Element = T;
 
     fn capacity(&self) -> usize {
