@@ -3,8 +3,8 @@ use std::ops::Range;
 use crate::{
     base_buffers::inline::InlineBuffer,
     interface::{
-        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, resize_error::ResizeError,
-        Buffer,
+        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+        resize_error::ResizeError, Buffer,
     },
 };
 
@@ -125,6 +125,31 @@ where
         self.inner.mut_ptr(index)
     }
 }
+
+impl<T, B, const SMALL_SIZE: usize> RefBuffer for SvoBuffer<T, B, SMALL_SIZE>
+where
+    B: Buffer<Element = T> + Default,
+    for<'a> B: RefBuffer<ConstantReference<'a> = &'a T, MutableReference<'a> = &'a mut T> + 'a,
+{
+    type ConstantReference<'a> = &'a T
+    where
+        Self: 'a;
+
+    type MutableReference<'a> = &'a mut T
+    where
+        Self: 'a;
+
+    unsafe fn index<'a>(&'a self, index: usize) -> Self::ConstantReference<'a> {
+        // self.inner.index(index)
+        todo!()
+    }
+
+    unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
+        // self.inner.mut_index(index)
+        todo!()
+    }
+}
+
 impl<T, B, const SMALL_SIZE: usize> ContinuousMemoryBuffer for SvoBuffer<T, B, SMALL_SIZE> where
     B: Buffer<Element = T> + Default + ContinuousMemoryBuffer
 {
