@@ -36,11 +36,12 @@ pub trait ContinuousMemoryBuffer: Buffer {
             Unbounded => 0,
         };
         let end: usize = match range.end_bound() {
-            Included(index) => *index,
-            Excluded(index) => *index - 1,
+            Included(index) => *index + 1,
+            Excluded(index) => *index,
             Unbounded => self.capacity(),
         };
-        // std::slice::from_raw_parts(, len)
-        todo!()
+
+        let size = if start <= end { 0 } else { end - start };
+        std::slice::from_raw_parts(self.ptr(start), size)
     }
 }
