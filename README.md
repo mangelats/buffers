@@ -47,6 +47,7 @@ Bufferes are seperated in 3 parts:
 
 ## To be done
   - [ ] Better naming (help please)
+  - [ ] More tests
   - [ ] Add the most commonly used methods
   - [ ] Upload to Cargo
   - [ ] Create prelude (?)
