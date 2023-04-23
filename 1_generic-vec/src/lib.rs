@@ -226,11 +226,13 @@ where
 {
     /// Extracts a slice containing the entire vector
     pub fn as_slice(&self) -> &[T] {
+        // SAFETY: values up to len exist
         unsafe { self.buffer.slice(0..self.len) }
     }
 
     /// Extracts a mutable slice containing the entire vector
     pub fn as_mut_slice(&mut self) -> &mut [T] {
+        // SAFETY: values up to len exist
         unsafe { self.buffer.mut_slice(0..self.len) }
     }
 }
