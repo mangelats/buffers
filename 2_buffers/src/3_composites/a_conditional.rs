@@ -19,7 +19,12 @@ pub struct ConditionalBuffer<T, A: Buffer<Element = T>, B: Buffer<Element = T>, 
     _m: PhantomData<(T, S)>,
 }
 
-impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> ConditionalBuffer<T, A, B, S> {
+impl<T, A, B, S> ConditionalBuffer<T, A, B, S>
+where
+    A: Buffer<Element = T>,
+    B: Buffer<Element = T>,
+    S: Selector,
+{
     pub fn new(a: A, b: B) -> Self {
         Self {
             a,
