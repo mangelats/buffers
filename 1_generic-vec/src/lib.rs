@@ -1,6 +1,9 @@
 use std::marker::PhantomData;
 
-use buffers::{interface::Buffer, DefaultBuffer};
+use buffers::{
+    interface::{ptrs::PtrBuffer, Buffer},
+    DefaultBuffer,
+};
 
 /// Implementation of a vector
 pub struct Vector<T, B: Buffer<Element = T> = DefaultBuffer<T>> {
@@ -115,6 +118,8 @@ impl<T, B: Buffer<Element = T> + Default> Vector<T, B> {
         Self::from_buffer(Default::default())
     }
 }
+
+impl<T, B> Vector<T, B> where B: Buffer<Element = T> + PtrBuffer {}
 
 impl<T, B: Buffer<Element = T> + Default> Default for Vector<T, B> {
     fn default() -> Self {
