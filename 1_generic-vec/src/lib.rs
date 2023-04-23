@@ -133,7 +133,8 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// The removed element is replaced by the last element of the vector.
     ///
     /// This does not preserve ordering, but is O(1). If you need to preserve the element order, use remove instead.
-    /// Panics
+    ///
+    /// # Panics
     ///
     /// Panics if index is out of bounds.
     pub fn swap_remove(&mut self, index: usize) -> T {
@@ -156,6 +157,24 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         current
     }
 
+    /// Inserts an element at position index within the vector, shifting all elements after it to the right.
+    ///
+    /// #Panics
+    ///     
+    /// Panics if index > len.
+    pub fn insert(&mut self, index: usize, element: T) {
+        if index > self.len {
+            panic!("Index out of bounds")
+        }
+
+        if self.len >= self.buffer.capacity() {
+            let resize_result = unsafe { self.buffer.try_grow(self.next_size()) };
+            resize_result.expect("Cannot grow the buffer when trying to insert a new value")
+        }
+
+        todo!()
+    }
+
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
     /// space and the buffer cannot grow.
     ///
@@ -172,7 +191,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         let index = self.len;
         if index >= self.buffer.capacity() {
             unsafe {
-                self.buffer.try_grow(self.len + 1).map_err(|_| ())?;
+                self.buffer.try_grow(self.next_size()).map_err(|_| ())?;
             }
         }
         unsafe {
@@ -219,6 +238,10 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         } else {
             None
         }
+    }
+
+    fn next_size(&self) -> usize {
+        self.len + 1
     }
 }
 
