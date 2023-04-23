@@ -2,7 +2,8 @@ use std::marker::PhantomData;
 
 use buffers::{
     interface::{
-        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer, Buffer,
+        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+        resize_error::ResizeError, Buffer,
     },
     DefaultBuffer,
 };
@@ -47,6 +48,42 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Queries the buffer for its capacity
     pub fn capacity(&self) -> usize {
         self.buffer.capacity()
+    }
+
+    /// Reserves capacity for at least `additional` more elements to be inserted.
+    /// It can request more memory in some cases, as this is meant to be optimized for
+    /// conscutive inserts.
+    ///
+    /// Note that some buffers (like `InlineBuffer`) can't really grow.
+    ///
+    /// # Panics
+    /// Panics if it cannot grow
+    pub fn reserve(&mut self, additional: usize) {
+        // TODO Grow exponentially
+        self.reserve_exact(additional)
+    }
+
+    /// Reserves capacity for at least `additional` more elements to be inserted.
+    ///
+    /// Note that unlike `reserve`, this will request exactly the additional size to the buffer.
+    ///
+    /// # Panics
+    /// Panics if it cannot grow
+    pub fn reserve_exact(&mut self, additional: usize) {
+        self.try_reserve_exact(additional)
+            .expect("Couldn't reserve the necessary space")
+    }
+
+    /// Tries reserves capacity for at least `additional` more elements to be inserted.
+    ///
+    /// Note that unlike `try_reserve`, this will request exactly the additional size to the buffer.
+    pub fn try_reserve_exact(&mut self, additional: usize) -> Result<(), ResizeError> {
+        let target = self.len() + additional;
+        if target > self.capacity() {
+            unsafe { self.buffer.try_grow(target) }
+        } else {
+            Ok(())
+        }
     }
 
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
