@@ -1,3 +1,4 @@
+use std::ops::Bound::*;
 use std::ops::RangeBounds;
 
 use super::Buffer;
@@ -21,11 +22,23 @@ pub trait BufferShift: Buffer {
 
 pub trait ShiftOneByOne: Buffer {}
 impl<T: ShiftOneByOne> BufferShift for T {
-    unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        todo!()
-    }
+    unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {}
 
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
         todo!()
     }
+}
+
+fn start_end<B: Buffer + ?Sized, R: RangeBounds<usize>>(buffer: &B, range: R) -> (usize, usize) {
+    let start: usize = match range.start_bound() {
+        Included(index) => *index,
+        Excluded(index) => *index + 1,
+        Unbounded => 0,
+    };
+    let end: usize = match range.end_bound() {
+        Included(index) => *index + 1,
+        Excluded(index) => *index,
+        Unbounded => buffer.capacity(),
+    };
+    (start, end)
 }
