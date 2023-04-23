@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-buffers = { path = "../2_buffers" }
+buffers = { path = "../2_buffers", default-features = false }
 test_utils = { path = "../a_test_utils" }
 
 [features]
