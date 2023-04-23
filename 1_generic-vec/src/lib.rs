@@ -276,5 +276,7 @@ mod tests {
         for i in 0..SIZE {
             vec.push(i.try_into().unwrap());
         }
+
+        assert_eq!(*vec.index(3), 3);
     }
 }
