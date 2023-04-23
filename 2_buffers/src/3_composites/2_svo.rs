@@ -107,11 +107,11 @@ where
     B: Buffer<Element = T> + Default + ContinuousMemoryBuffer,
 {
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
-        todo!()
+        self.inner.ptr(index)
     }
 
     unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
-        todo!()
+        self.inner.mut_ptr(index)
     }
 }
 
