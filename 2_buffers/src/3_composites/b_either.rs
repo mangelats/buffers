@@ -19,8 +19,10 @@ where
     _InternalMarker(Never, PhantomData<T>),
 }
 
-impl<T, A: Buffer<Element = T> + Default, B: Buffer<Element = T>> Default
-    for EitherBuffer<T, A, B>
+impl<T, A, B> Default for EitherBuffer<T, A, B>
+where
+    A: Buffer<Element = T> + Default,
+    B: Buffer<Element = T>,
 {
     fn default() -> Self {
         Self::First(Default::default())
