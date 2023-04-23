@@ -28,9 +28,17 @@ pub trait RefBuffer: Buffer {
     unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_>;
 }
 
+pub trait DefaultRefBuffer:
+    PtrBuffer<
+    ConstantPointer = *const <Self as Buffer>::Element,
+    MutablePointer = *mut <Self as Buffer>::Element,
+>
+{
+}
+
 // impl<B> RefBuffer for B
 // where
-//     B: PtrBuffer<ConstantPointer = *const Self::Element, MutablePointer = *mut Self::Element>,
+//     B: DefaultRefBuffer,
 // {
 //     type ConstantReference<'a> = &'a Self::Element
 //     where
