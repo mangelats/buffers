@@ -52,7 +52,7 @@ impl<T> ContinuousMemoryBuffer for ZstBuffer<T> {
     }
 
     unsafe fn mut_ptr(&mut self, _index: usize) -> *mut Self::Element {
-        todo!()
+        std::ptr::NonNull::dangling().as_ptr()
     }
 }
 
