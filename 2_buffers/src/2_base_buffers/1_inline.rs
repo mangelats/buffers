@@ -58,6 +58,7 @@ impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
 
 impl<T, const SIZE: usize> ContinuousMemoryBuffer for InlineBuffer<T, SIZE> {
     unsafe fn ptr(&self, index: usize) -> *const T {
+        debug_assert!(index < SIZE);
         self.index(index).as_ptr()
     }
 
