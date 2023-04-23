@@ -1,4 +1,6 @@
-use crate::interface::Buffer;
+use crate::interface::{
+    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer, Buffer,
+};
 use std::mem::MaybeUninit;
 
 /// Buffer based on a fixed-sized array, so it cannot grow or shrink.
@@ -19,7 +21,7 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
 
     /// Get a contant reference maybe-uninit value in the specified index.
     ///
-    /// ## SAFETY
+    /// # SAFETY
     /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
     pub fn index(&self, index: usize) -> &MaybeUninit<T> {
         debug_assert!(index < SIZE);
@@ -33,26 +35,6 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
     pub fn mut_index(&mut self, index: usize) -> &mut MaybeUninit<T> {
         debug_assert!(index < SIZE);
         &mut self.array[index]
-    }
-
-    /// Get a contant pointer to the value in the specified index.
-    ///
-    /// ## SAFETY
-    /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
-    ///
-    /// The pointer may point to unitialized or garbage data. It's the responsability of the caller to keep track of the state.
-    pub unsafe fn ptr(&self, index: usize) -> *const T {
-        self.index(index).as_ptr()
-    }
-
-    /// Get a mutable pointer to the value in the specified index.
-    ///
-    /// ## SAFETY
-    /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
-    ///
-    /// The pointer may point to unitialized or garbage data. It's the responsability of the caller to keep track of the state.
-    pub unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
-        self.mut_index(index).as_mut_ptr()
     }
 }
 
@@ -75,6 +57,24 @@ impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
         std::ptr::drop_in_place(self.mut_ptr(index));
     }
 }
+
+impl<T, const SIZE: usize> PtrBuffer for InlineBuffer<T, SIZE> {
+    type ConstantPointer = *const T;
+    type MutablePointer = *mut T;
+
+    unsafe fn ptr(&self, index: usize) -> *const T {
+        debug_assert!(index < SIZE);
+        self.index(index).as_ptr()
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
+        debug_assert!(index < SIZE);
+        self.mut_index(index).as_mut_ptr()
+    }
+}
+
+impl<T, const SIZE: usize> ContinuousMemoryBuffer for InlineBuffer<T, SIZE> {}
+impl<T, const SIZE: usize> DefaultRefBuffer for InlineBuffer<T, SIZE> {}
 
 impl<T, const SIZE: usize> Default for InlineBuffer<T, SIZE> {
     fn default() -> Self {

@@ -4,7 +4,10 @@ use std::{
     ptr::NonNull,
 };
 
-use crate::interface::{resize_error::ResizeError, Buffer};
+use crate::interface::{
+    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer,
+    resize_error::ResizeError, Buffer,
+};
 
 /// Similar buffer to HeapBuffer but it uses Allocators instead
 pub struct AllocatorBuffer<T, A: Allocator = Global> {
@@ -30,16 +33,6 @@ impl<T, A: Allocator> AllocatorBuffer<T, A> {
             alloc,
             _marker: PhantomData,
         }
-    }
-
-    /// Get a constant pointer to the specified index
-    pub unsafe fn ptr(&self, index: usize) -> *const T {
-        self.ptr.as_ptr().add(index)
-    }
-
-    /// Get a mutable pointer to the specified index
-    pub unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
-        self.ptr.as_ptr().add(index)
     }
 
     /// Internal function that sets the capacity and raw buffer pointer
@@ -90,6 +83,21 @@ impl<T, A: Allocator> Buffer for AllocatorBuffer<T, A> {
         }
     }
 }
+
+impl<T, A: Allocator> PtrBuffer for AllocatorBuffer<T, A> {
+    type ConstantPointer = *const T;
+    type MutablePointer = *mut T;
+
+    unsafe fn ptr(&self, index: usize) -> *const Self::Element {
+        self.ptr.as_ptr().add(index)
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
+        self.ptr.as_ptr().add(index)
+    }
+}
+impl<T, A: Allocator> ContinuousMemoryBuffer for AllocatorBuffer<T, A> {}
+impl<T, A: Allocator> DefaultRefBuffer for AllocatorBuffer<T, A> {}
 
 impl<T, A: Allocator + Default> Default for AllocatorBuffer<T, A> {
     fn default() -> Self {

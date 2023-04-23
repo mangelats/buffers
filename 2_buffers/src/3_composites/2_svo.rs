@@ -2,22 +2,37 @@ use std::ops::Range;
 
 use crate::{
     base_buffers::inline::InlineBuffer,
-    interface::{resize_error::ResizeError, Buffer},
+    interface::{
+        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+        resize_error::ResizeError, Buffer,
+    },
 };
 
 use super::either::EitherBuffer;
 
 /// Buffer composite that adds small vector optimization (SVO) to a given buffer.
-pub struct SvoBuffer<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> {
+///
+/// This means that it can work with both an inline buffer (which is usually left on the stack)
+/// but can automatically grow into a bigger buffer (usually a heap-allocated one).
+pub struct SvoBuffer<T, B, const SMALL_SIZE: usize>
+where
+    B: Buffer<Element = T> + Default,
+{
     inner: EitherBuffer<T, InlineBuffer<T, SMALL_SIZE>, B>,
 }
 
-impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE> {
+impl<T, B, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE>
+where
+    B: Buffer<Element = T> + Default,
+{
     /// Creates a new empty buffer
     pub fn new() -> Self {
         Default::default()
     }
 
+    /// Internal only.
+    ///
+    /// Move all data from the small vector into the big one
     unsafe fn move_into_big(&mut self, target: usize) -> Result<(), ResizeError> {
         let EitherBuffer::First(ref current_buf) = self.inner else {
             // SAFETY: This is only called when we grow from small to big.
@@ -41,8 +56,9 @@ impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, 
     }
 }
 
-impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> Default
-    for SvoBuffer<T, B, SMALL_SIZE>
+impl<T, B, const SMALL_SIZE: usize> Default for SvoBuffer<T, B, SMALL_SIZE>
+where
+    B: Buffer<Element = T> + Default,
 {
     fn default() -> Self {
         Self {
@@ -51,8 +67,9 @@ impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> Default
     }
 }
 
-impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> Buffer
-    for SvoBuffer<T, B, SMALL_SIZE>
+impl<T, B, const SMALL_SIZE: usize> Buffer for SvoBuffer<T, B, SMALL_SIZE>
+where
+    B: Buffer<Element = T> + Default,
 {
     type Element = T;
 
@@ -89,6 +106,61 @@ impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> Buffer
             EitherBuffer::_InternalMarker(_, _) => unreachable!(),
         }
     }
+}
+
+impl<T, B, const SMALL_SIZE: usize> PtrBuffer for SvoBuffer<T, B, SMALL_SIZE>
+where
+    B: Buffer<Element = T>
+        + Default
+        + PtrBuffer<ConstantPointer = *const T, MutablePointer = *mut T>,
+{
+    type ConstantPointer = *const T;
+    type MutablePointer = *mut T;
+
+    unsafe fn ptr(&self, index: usize) -> *const Self::Element {
+        self.inner.ptr(index)
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
+        self.inner.mut_ptr(index)
+    }
+}
+
+impl<T, B, const SMALL_SIZE: usize> RefBuffer for SvoBuffer<T, B, SMALL_SIZE>
+where
+    B: Buffer<Element = T> + Default,
+    for<'a> B: RefBuffer<ConstantReference<'a> = &'a T, MutableReference<'a> = &'a mut T> + 'a,
+{
+    type ConstantReference<'a> = &'a T
+    where
+        Self: 'a;
+
+    type MutableReference<'a> = &'a mut T
+    where
+        Self: 'a;
+
+    unsafe fn index<'a>(&'a self, index: usize) -> Self::ConstantReference<'a> {
+        // For some reason the borrow checker can't check `self.inner.index(index)`
+        match self.inner {
+            EitherBuffer::First(ref b) => RefBuffer::index(b, index),
+            EitherBuffer::Second(ref b) => RefBuffer::index(b, index),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
+    }
+
+    unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
+        // For some reason the borrow checker can't check `self.inner.mut_index(index)`
+        match self.inner {
+            EitherBuffer::First(ref mut b) => RefBuffer::mut_index(b, index),
+            EitherBuffer::Second(ref mut b) => RefBuffer::mut_index(b, index),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
+    }
+}
+
+impl<T, B, const SMALL_SIZE: usize> ContinuousMemoryBuffer for SvoBuffer<T, B, SMALL_SIZE> where
+    B: Buffer<Element = T> + Default + ContinuousMemoryBuffer
+{
 }
 
 #[cfg(test)]

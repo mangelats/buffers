@@ -1,6 +1,11 @@
 use std::marker::PhantomData;
 
-use buffers::{interface::Buffer, DefaultBuffer};
+use buffers::{
+    interface::{
+        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer, Buffer,
+    },
+    DefaultBuffer,
+};
 
 /// Implementation of a vector
 pub struct Vector<T, B: Buffer<Element = T> = DefaultBuffer<T>> {
@@ -109,14 +114,73 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     }
 }
 
-impl<T, B: Buffer<Element = T> + Default> Vector<T, B> {
+impl<T, B> Vector<T, B>
+where
+    B: Buffer<Element = T> + Default,
+{
     /// Creates a new vector by default-constructing the underlying buffer.
     pub fn new() -> Vector<T, B> {
         Self::from_buffer(Default::default())
     }
 }
 
-impl<T, B: Buffer<Element = T> + Default> Default for Vector<T, B> {
+impl<T, B> Vector<T, B>
+where
+    B: Buffer<Element = T> + PtrBuffer,
+{
+    /// Returns an unsafe pointer to the start of the vector's buffer
+    pub fn as_ptr(&self) -> B::ConstantPointer {
+        unsafe { self.buffer.ptr(0) }
+    }
+
+    /// Returns an unsafe mutable pointer to the start of the vector's buffer
+    pub fn as_mut_ptr(&mut self) -> B::MutablePointer {
+        unsafe { self.buffer.mut_ptr(0) }
+    }
+}
+
+impl<T, B> Vector<T, B>
+where
+    B: Buffer<Element = T> + RefBuffer,
+{
+    /// Get a reference to the element in index
+    ///
+    /// # Safety
+    /// index < self.len()
+    pub fn index(&self, index: usize) -> B::ConstantReference<'_> {
+        debug_assert!(index < self.len());
+        unsafe { self.buffer.index(index) }
+    }
+
+    /// Get a mutable reference to the element in index
+    ///
+    /// # Safety
+    /// index < self.len()
+    pub fn mut_index(&mut self, index: usize) -> B::MutableReference<'_> {
+        debug_assert!(index < self.len());
+        unsafe { self.buffer.mut_index(index) }
+    }
+}
+
+impl<T, B> Vector<T, B>
+where
+    B: Buffer<Element = T> + ContinuousMemoryBuffer,
+{
+    /// Extracts a slice containing the entire vector
+    pub fn as_slice(&self) -> &[T] {
+        unsafe { self.buffer.slice(0..self.len) }
+    }
+
+    /// Extracts a mutable slice containing the entire vector
+    pub fn as_mut_slice(&mut self) -> &mut [T] {
+        unsafe { self.buffer.mut_slice(0..self.len) }
+    }
+}
+
+impl<T, B> Default for Vector<T, B>
+where
+    B: Buffer<Element = T> + Default,
+{
     fn default() -> Self {
         Self::new()
     }
@@ -203,5 +267,29 @@ mod tests {
         assert_eq!(vec.capacity(), vec.len());
 
         vec.push(123);
+    }
+
+    #[test]
+    fn should_be_able_to_get_a_reference() {
+        const SIZE: usize = 10;
+        let mut vec: Vector<u32, InlineBuffer<u32, SIZE>> = Vector::new();
+        for i in 0..SIZE {
+            vec.push(i.try_into().unwrap());
+        }
+
+        assert_eq!(*vec.index(3), 3);
+    }
+
+    #[test]
+    fn should_be_able_to_get_a_mutable_reference() {
+        const SIZE: usize = 10;
+        let mut vec: Vector<u32, InlineBuffer<u32, SIZE>> = Vector::new();
+        for i in 0..SIZE {
+            vec.push(i.try_into().unwrap());
+        }
+
+        assert_eq!(*vec.index(3), 3);
+        *vec.mut_index(3) = 4;
+        assert_eq!(*vec.index(3), 4);
     }
 }
