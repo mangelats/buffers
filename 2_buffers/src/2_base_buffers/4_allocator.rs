@@ -92,6 +92,7 @@ impl<T, A: Allocator> PtrBuffer for AllocatorBuffer<T, A> {
         self.ptr.as_ptr().add(index)
     }
 }
+impl<T, A: Allocator> ContinuousMemoryBuffer for AllocatorBuffer<T, A> {}
 
 impl<T, A: Allocator + Default> Default for AllocatorBuffer<T, A> {
     fn default() -> Self {
