@@ -95,11 +95,11 @@ impl<T, A: Allocator> Buffer for AllocatorBuffer<T, A> {
 
 impl<T, A: Allocator> ContinuousMemoryBuffer for AllocatorBuffer<T, A> {
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
-        todo!()
+        self.ptr.as_ptr().add(index)
     }
 
     unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
-        todo!()
+        self.ptr.as_ptr().add(index)
     }
 }
 
