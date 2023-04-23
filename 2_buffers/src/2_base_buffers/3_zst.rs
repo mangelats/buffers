@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::interface::{continuous_memory::ContinuousMemoryBuffer, Buffer};
+use crate::interface::Buffer;
 
 /// Buffer optimized for zero-sized types.
 ///
