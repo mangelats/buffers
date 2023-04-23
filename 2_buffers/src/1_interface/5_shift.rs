@@ -24,6 +24,13 @@ pub trait ShiftOneByOne: Buffer {}
 impl<T: ShiftOneByOne> BufferShift for T {
     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
         let (start, end) = start_end(self, to_move);
+        let size = end - start;
+        let new_end = end + positions;
+        for current in 0..size {
+            let new_pos = new_end - current;
+            let old_pos = end - current;
+            self.write_value(new_pos, self.read_value(old_pos));
+        }
     }
 
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
