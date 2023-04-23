@@ -5,7 +5,11 @@ use crate::interface::{resize_error::ResizeError, Buffer};
 /// Utility buffer that may contain one of two buffers.
 ///
 /// It's a Buffer itself, forwarding the requests to the currently selected.
-pub enum EitherBuffer<T, A: Buffer<Element = T>, B: Buffer<Element = T>> {
+pub enum EitherBuffer<T, A, B>
+where
+    A: Buffer<Element = T>,
+    B: Buffer<Element = T>,
+{
     /// First option (A buffer)
     First(A),
     /// Second option (B buffer)
