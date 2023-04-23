@@ -4,7 +4,7 @@ use super::Buffer;
 ///
 /// Note that in some cases the elements themselves may not ahve a unique pointers (eg. zero-sized types)
 pub trait RefBuffer: Buffer {
-    type Constantreference<'a>
+    type ConstantReference<'a>
     where
         Self: 'a;
     type MutableReference<'a>
@@ -17,7 +17,7 @@ pub trait RefBuffer: Buffer {
     /// `index` needs to be in bounds (`0 <= index < capacity`). It's undefined behaviour when not.
     ///
     /// The pointer may point to unitialized or garbage data. It's the responsability of the caller to keep track of the state.
-    unsafe fn index(&self, index: usize) -> Self::Constantreference<'_>;
+    unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_>;
 
     /// Get a mutable pointer to the value in the specified index.
     ///
