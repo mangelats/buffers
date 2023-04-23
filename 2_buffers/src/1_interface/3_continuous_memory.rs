@@ -1,7 +1,7 @@
 use super::Buffer;
 
 /// Trait for buffers which ensures that:
-///   1. All elements have an address (but may not be unique in some cases like in ZSTs)
+///   1. All elements have an address
 ///   2. All the memory is allocated continuously
 ///
 /// All common allocators actually fulfill this requirements but in some cases –like in a SoA– this may not be the case
