@@ -101,7 +101,11 @@ where
     B: Buffer<Element = T> + ContinuousMemoryBuffer,
 {
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
-        todo!()
+        match self {
+            EitherBuffer::First(buf) => buf.ptr(index),
+            EitherBuffer::Second(buf) => buf.ptr(index),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 
     unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
