@@ -13,7 +13,12 @@ pub trait Selector {
 ///
 /// Note that this uses both buffers but only uses one. This may be able to change
 /// with generic const expressions.
-pub struct ConditionalBuffer<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> {
+pub struct ConditionalBuffer<T, A, B, S>
+where
+    A: Buffer<Element = T>,
+    B: Buffer<Element = T>,
+    S: Selector,
+{
     a: A,
     b: B,
     _m: PhantomData<(T, S)>,
