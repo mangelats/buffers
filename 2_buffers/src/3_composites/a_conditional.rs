@@ -97,8 +97,12 @@ impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> Buffer
     }
 }
 
-impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> ContinuousMemoryBuffer
-    for ConditionalBuffer<T, A, B, S>
+impl<
+        T,
+        A: Buffer<Element = T> + ContinuousMemoryBuffer,
+        B: Buffer<Element = T> + ContinuousMemoryBuffer,
+        S: Selector,
+    > ContinuousMemoryBuffer for ConditionalBuffer<T, A, B, S>
 {
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
         todo!()
