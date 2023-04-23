@@ -102,7 +102,7 @@ where
 {
     type ConstantPointer = A::ConstantPointer;
 
-    unsafe fn ptr(&self, index: usize) -> *const Self::Element {
+    unsafe fn ptr(&self, index: usize) -> Self::ConstantPointer {
         match self {
             EitherBuffer::First(buf) => buf.ptr(index),
             EitherBuffer::Second(buf) => buf.ptr(index),

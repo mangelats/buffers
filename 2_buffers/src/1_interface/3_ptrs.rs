@@ -12,7 +12,7 @@ pub trait PtrBuffer: Buffer {
     /// `index` needs to be in bounds (`0 <= index < capacity`). It's undefined behaviour when not.
     ///
     /// The pointer may point to unitialized or garbage data. It's the responsability of the caller to keep track of the state.
-    unsafe fn ptr(&self, index: usize) -> *const Self::Element;
+    unsafe fn ptr(&self, index: usize) -> Self::ConstantPointer;
 
     /// Get a mutable pointer to the value in the specified index.
     ///

@@ -121,7 +121,7 @@ where
 {
     type ConstantPointer = A::ConstantPointer;
 
-    unsafe fn ptr(&self, index: usize) -> *const Self::Element {
+    unsafe fn ptr(&self, index: usize) -> Self::ConstantPointer {
         if S::SELECT_A {
             self.a.ptr(index)
         } else {
