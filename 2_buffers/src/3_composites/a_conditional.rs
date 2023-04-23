@@ -160,7 +160,11 @@ where
         Self: 'a;
 
     unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
-        todo!()
+        if S::SELECT_A {
+            self.a.index(index)
+        } else {
+            self.b.index(index)
+        }
     }
 
     unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
