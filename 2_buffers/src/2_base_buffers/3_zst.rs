@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::interface::Buffer;
+use crate::interface::{ptrs::PtrBuffer, Buffer};
 
 /// Buffer optimized for zero-sized types.
 ///
@@ -50,5 +50,15 @@ impl<T> Buffer for ZstBuffer<T> {
 impl<T> Default for ZstBuffer<T> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl<T> PtrBuffer for ZstBuffer<T> {
+    unsafe fn ptr(&self, _index: usize) -> *const Self::Element {
+        std::ptr::NonNull::dangling().as_ptr()
+    }
+
+    unsafe fn mut_ptr(&mut self, _index: usize) -> *mut Self::Element {
+        std::ptr::NonNull::dangling().as_ptr()
     }
 }
