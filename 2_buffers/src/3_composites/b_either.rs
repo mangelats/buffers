@@ -1,7 +1,7 @@
 use std::{marker::PhantomData, ops::Range};
 
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, resize_error::ResizeError, Buffer,
+    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, resize_error::ResizeError, Buffer,
 };
 
 /// Utility buffer that may contain one of two buffers.
@@ -95,10 +95,10 @@ where
     }
 }
 
-impl<T, A, B> ContinuousMemoryBuffer for EitherBuffer<T, A, B>
+impl<T, A, B> PtrBuffer for EitherBuffer<T, A, B>
 where
-    A: Buffer<Element = T> + ContinuousMemoryBuffer,
-    B: Buffer<Element = T> + ContinuousMemoryBuffer,
+    A: Buffer<Element = T> + PtrBuffer,
+    B: Buffer<Element = T> + PtrBuffer,
 {
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
         match self {

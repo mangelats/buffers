@@ -2,7 +2,10 @@ use std::ops::Range;
 
 use crate::{
     base_buffers::inline::InlineBuffer,
-    interface::{continuous_memory::ContinuousMemoryBuffer, resize_error::ResizeError, Buffer},
+    interface::{
+        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, resize_error::ResizeError,
+        Buffer,
+    },
 };
 
 use super::either::EitherBuffer;
@@ -105,9 +108,9 @@ where
     }
 }
 
-impl<T, B, const SMALL_SIZE: usize> ContinuousMemoryBuffer for SvoBuffer<T, B, SMALL_SIZE>
+impl<T, B, const SMALL_SIZE: usize> PtrBuffer for SvoBuffer<T, B, SMALL_SIZE>
 where
-    B: Buffer<Element = T> + Default + ContinuousMemoryBuffer,
+    B: Buffer<Element = T> + Default + PtrBuffer,
 {
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
         self.inner.ptr(index)
