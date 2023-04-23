@@ -2,7 +2,7 @@ use std::ops::Range;
 
 use crate::{
     base_buffers::inline::InlineBuffer,
-    interface::{resize_error::ResizeError, Buffer},
+    interface::{continuous_memory::ContinuousMemoryBuffer, resize_error::ResizeError, Buffer},
 };
 
 use super::either::EitherBuffer;
@@ -99,6 +99,19 @@ where
             EitherBuffer::Second(ref mut buf) => buf.try_shrink(target),
             EitherBuffer::_InternalMarker(_, _) => unreachable!(),
         }
+    }
+}
+
+impl<T, B, const SMALL_SIZE: usize> ContinuousMemoryBuffer for SvoBuffer<T, B, SMALL_SIZE>
+where
+    B: Buffer<Element = T> + Default + ContinuousMemoryBuffer,
+{
+    unsafe fn ptr(&self, index: usize) -> *const Self::Element {
+        todo!()
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
+        todo!()
     }
 }
 
