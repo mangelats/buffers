@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::interface::{ptrs::PtrBuffer, Buffer};
+use crate::interface::{ptrs::PtrBuffer, refs::DefaultRefBuffer, Buffer};
 
 /// Buffer optimized for zero-sized types.
 ///
@@ -65,3 +65,4 @@ impl<T> PtrBuffer for ZstBuffer<T> {
         std::ptr::NonNull::dangling().as_ptr()
     }
 }
+impl<T> DefaultRefBuffer for ZstBuffer<T> {}
