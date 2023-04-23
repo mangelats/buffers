@@ -35,11 +35,6 @@ impl<T> HeapBuffer<T> {
         self.buffer_start.as_ptr().add(index)
     }
 
-    /// Get a mutable pointer to the specified index
-    pub unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
-        self.buffer_start.as_ptr().add(index)
-    }
-
     /// Internal function that allocates a new array into the heap
     ///
     /// # Safety
