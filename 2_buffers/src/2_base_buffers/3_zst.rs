@@ -32,7 +32,7 @@ impl<T> Buffer for ZstBuffer<T> {
         usize::MAX
     }
 
-    unsafe fn read_value(&self, index: usize) -> T {
+    unsafe fn read_value(&self, _index: usize) -> T {
         // SAFETY: This type has no size. Null should work as well as any other pointer.
         // TODO: adding an intrinsics::assume for the size of T may be worth
         std::ptr::read(std::ptr::NonNull::dangling().as_ptr())
