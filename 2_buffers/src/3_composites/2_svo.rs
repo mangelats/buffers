@@ -18,6 +18,9 @@ impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, 
         Default::default()
     }
 
+    /// Internal only.
+    ///
+    /// Move all data from the small vector into the big one
     unsafe fn move_into_big(&mut self, target: usize) -> Result<(), ResizeError> {
         let EitherBuffer::First(ref current_buf) = self.inner else {
             // SAFETY: This is only called when we grow from small to big.
