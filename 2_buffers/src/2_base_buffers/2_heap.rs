@@ -116,6 +116,7 @@ impl<T> PtrBuffer for HeapBuffer<T> {
         self.buffer_start.as_ptr().add(index)
     }
 }
+impl<T> ContinuousMemoryBuffer for HeapBuffer<T> {}
 
 impl<T> Default for HeapBuffer<T> {
     fn default() -> Self {
