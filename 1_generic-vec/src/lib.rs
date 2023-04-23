@@ -129,6 +129,7 @@ where
     pub fn as_ptr(&self) -> *const T {
         unsafe { self.buffer.ptr(0) }
     }
+
     pub fn as_mut_ptr(&mut self) -> *const T {
         unsafe { self.buffer.mut_ptr(0) }
     }
