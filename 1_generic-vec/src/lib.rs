@@ -1,7 +1,9 @@
 use std::marker::PhantomData;
 
 use buffers::{
-    interface::{continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, Buffer},
+    interface::{
+        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer, Buffer,
+    },
     DefaultBuffer,
 };
 
@@ -134,6 +136,21 @@ where
     /// Returns an unsafe mutable pointer to the start of the vector's buffer
     pub fn as_mut_ptr(&mut self) -> B::MutablePointer {
         unsafe { self.buffer.mut_ptr(0) }
+    }
+}
+
+impl<T, B> Vector<T, B>
+where
+    B: Buffer<Element = T> + RefBuffer,
+{
+    /// Returns an unsafe pointer to the start of the vector's buffer
+    pub fn index(&self, index: usize) -> B::ConstantReference<'_> {
+        unsafe { self.buffer.index(index) }
+    }
+
+    /// Returns an unsafe mutable pointer to the start of the vector's buffer
+    pub fn mut_index(&mut self, index: usize) -> B::MutableReference<'_> {
+        unsafe { self.buffer.mut_index(index) }
     }
 }
 
