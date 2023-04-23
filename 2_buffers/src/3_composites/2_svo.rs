@@ -50,8 +50,9 @@ where
     }
 }
 
-impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> Default
-    for SvoBuffer<T, B, SMALL_SIZE>
+impl<T, B, const SMALL_SIZE: usize> Default for SvoBuffer<T, B, SMALL_SIZE>
+where
+    B: Buffer<Element = T> + Default,
 {
     fn default() -> Self {
         Self {
