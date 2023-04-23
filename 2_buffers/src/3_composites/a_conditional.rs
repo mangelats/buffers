@@ -37,8 +37,11 @@ impl<T, A: Buffer<Element = T> + Default, B: Buffer<Element = T> + Default, S: S
     }
 }
 
-impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> Buffer
-    for ConditionalBuffer<T, A, B, S>
+impl<T, A, B, S> Buffer for ConditionalBuffer<T, A, B, S>
+where
+    A: Buffer<Element = T>,
+    B: Buffer<Element = T>,
+    S: Selector,
 {
     type Element = T;
     fn capacity(&self) -> usize {
