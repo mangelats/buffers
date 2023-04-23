@@ -158,6 +158,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// ```
     pub fn pop(&mut self) -> Option<T> {
         if self.len > 0 {
+            // SAFETY: self.len-1 is the last element
             self.len -= 1;
             let value = unsafe { self.buffer.read_value(self.len) };
             Some(value)
