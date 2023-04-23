@@ -47,11 +47,11 @@ impl<T> Buffer for ZstBuffer<T> {
     }
 }
 impl<T> ContinuousMemoryBuffer for ZstBuffer<T> {
-    unsafe fn ptr(&self, index: usize) -> *const Self::Element {
+    unsafe fn ptr(&self, _index: usize) -> *const Self::Element {
         todo!()
     }
 
-    unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
+    unsafe fn mut_ptr(&mut self, _index: usize) -> *mut Self::Element {
         todo!()
     }
 }
