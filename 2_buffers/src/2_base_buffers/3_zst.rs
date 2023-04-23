@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::interface::Buffer;
+use crate::interface::{continuous_memory::ContinuousMemoryBuffer, Buffer};
 
 /// Buffer optimized for zero-sized types.
 ///
@@ -44,6 +44,15 @@ impl<T> Buffer for ZstBuffer<T> {
 
     unsafe fn manually_drop(&mut self, _index: usize) {
         // Do nothing
+    }
+}
+impl<T> ContinuousMemoryBuffer for ZstBuffer<T> {
+    unsafe fn ptr(&self, index: usize) -> *const Self::Element {
+        todo!()
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
+        todo!()
     }
 }
 
