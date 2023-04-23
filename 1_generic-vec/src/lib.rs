@@ -142,7 +142,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         }
         self.len -= 1;
 
-        /// SAFETY: index is in bounds
+        // SAFETY: index is in bounds
         let current = unsafe { self.buffer.read_value(index) };
 
         // Move only when necessary
