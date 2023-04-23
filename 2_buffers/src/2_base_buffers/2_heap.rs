@@ -82,12 +82,12 @@ impl<T> HeapBuffer<T> {
 impl<T> ContinuousMemoryBuffer for HeapBuffer<T> {
     unsafe fn ptr(&self, index: usize) -> *const T {
         debug_assert!(index < self.capacity());
-        todo!()
+        self.buffer_start.as_ptr().add(index)
     }
 
     unsafe fn mut_ptr(&mut self, index: usize) -> *mut T {
         debug_assert!(index < self.capacity());
-        todo!()
+        self.buffer_start.as_ptr().add(index)
     }
 }
 
