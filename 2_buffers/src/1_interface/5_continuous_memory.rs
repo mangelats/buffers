@@ -10,7 +10,11 @@ use super::Buffer;
 ///
 /// All common allocators actually fulfill this requirements but in some cases –like in a SoA– this may not be the case
 pub trait ContinuousMemoryBuffer:
-    Buffer + PtrBuffer<ConstantPointer = *const <Self as Buffer>::Element>
+    Buffer
+    + PtrBuffer<
+        ConstantPointer = *const <Self as Buffer>::Element,
+        MutablePointer = *mut <Self as Buffer>::Element,
+    >
 {
     /// Get the slice represanted by the range
     ///

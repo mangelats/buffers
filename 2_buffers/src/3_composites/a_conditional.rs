@@ -116,10 +116,12 @@ where
 impl<T, A, B, S> PtrBuffer for ConditionalBuffer<T, A, B, S>
 where
     A: Buffer<Element = T> + PtrBuffer,
-    B: Buffer<Element = T> + PtrBuffer<ConstantPointer = A::ConstantPointer>,
+    B: Buffer<Element = T>
+        + PtrBuffer<ConstantPointer = A::ConstantPointer, MutablePointer = A::MutablePointer>,
     S: Selector,
 {
     type ConstantPointer = A::ConstantPointer;
+    type MutablePointer = A::MutablePointer;
 
     unsafe fn ptr(&self, index: usize) -> Self::ConstantPointer {
         if S::SELECT_A {
@@ -129,7 +131,7 @@ where
         }
     }
 
-    unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
+    unsafe fn mut_ptr(&mut self, index: usize) -> Self::MutablePointer {
         if S::SELECT_A {
             self.a.mut_ptr(index)
         } else {

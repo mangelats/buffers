@@ -5,6 +5,7 @@ use super::Buffer;
 /// Note that in some cases the elements themselves may not ahve a unique pointers (eg. zero-sized types)
 pub trait PtrBuffer: Buffer {
     type ConstantPointer;
+    type MutablePointer;
 
     /// Get a contant pointer to the value in the specified index.
     ///
@@ -20,5 +21,5 @@ pub trait PtrBuffer: Buffer {
     /// `index` needs to be in bounds (`0 <= index < capacity`). It's undefined behaviour when not.
     ///
     /// The pointer may point to unitialized or garbage data. It's the responsability of the caller to keep track of the state.
-    unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element;
+    unsafe fn mut_ptr(&mut self, index: usize) -> Self::MutablePointer;
 }

@@ -85,6 +85,7 @@ impl<T, A: Allocator> Buffer for AllocatorBuffer<T, A> {
 
 impl<T, A: Allocator> PtrBuffer for AllocatorBuffer<T, A> {
     type ConstantPointer = *const T;
+    type MutablePointer = *mut T;
 
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
         self.ptr.as_ptr().add(index)

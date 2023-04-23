@@ -58,6 +58,7 @@ impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
 
 impl<T, const SIZE: usize> PtrBuffer for InlineBuffer<T, SIZE> {
     type ConstantPointer = *const T;
+    type MutablePointer = *mut T;
 
     unsafe fn ptr(&self, index: usize) -> *const T {
         debug_assert!(index < SIZE);

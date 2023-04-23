@@ -55,6 +55,7 @@ impl<T> Default for ZstBuffer<T> {
 
 impl<T> PtrBuffer for ZstBuffer<T> {
     type ConstantPointer = *const T;
+    type MutablePointer = *mut T;
 
     unsafe fn ptr(&self, _index: usize) -> *const Self::Element {
         std::ptr::NonNull::dangling().as_ptr()

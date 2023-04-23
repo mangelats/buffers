@@ -110,9 +110,12 @@ where
 
 impl<T, B, const SMALL_SIZE: usize> PtrBuffer for SvoBuffer<T, B, SMALL_SIZE>
 where
-    B: Buffer<Element = T> + Default + PtrBuffer<ConstantPointer = *const T>,
+    B: Buffer<Element = T>
+        + Default
+        + PtrBuffer<ConstantPointer = *const T, MutablePointer = *mut T>,
 {
     type ConstantPointer = *const T;
+    type MutablePointer = *mut T;
 
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
         self.inner.ptr(index)
@@ -123,10 +126,7 @@ where
     }
 }
 impl<T, B, const SMALL_SIZE: usize> ContinuousMemoryBuffer for SvoBuffer<T, B, SMALL_SIZE> where
-    B: Buffer<Element = T>
-        + Default
-        + PtrBuffer<ConstantPointer = *const T>
-        + ContinuousMemoryBuffer
+    B: Buffer<Element = T> + Default + ContinuousMemoryBuffer
 {
 }
 

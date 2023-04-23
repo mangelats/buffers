@@ -132,7 +132,7 @@ where
     }
 
     /// Returns an unsafe mutable pointer to the start of the vector's buffer
-    pub fn as_mut_ptr(&mut self) -> *const T {
+    pub fn as_mut_ptr(&mut self) -> B::MutablePointer {
         unsafe { self.buffer.mut_ptr(0) }
     }
 }
