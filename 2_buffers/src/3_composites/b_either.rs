@@ -109,7 +109,11 @@ where
     }
 
     unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
-        todo!()
+        match self {
+            EitherBuffer::First(buf) => buf.mut_ptr(index),
+            EitherBuffer::Second(buf) => buf.mut_ptr(index),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 }
 
