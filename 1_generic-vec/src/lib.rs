@@ -2,7 +2,8 @@ use std::marker::PhantomData;
 
 use buffers::{
     interface::{
-        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer, Buffer,
+        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+        resize_error::ResizeError, Buffer,
     },
     DefaultBuffer,
 };
@@ -47,6 +48,112 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Queries the buffer for its capacity
     pub fn capacity(&self) -> usize {
         self.buffer.capacity()
+    }
+
+    /// Reserves capacity for at least `additional` more elements to be inserted.
+    /// It can request more memory in some cases, as this is meant to be optimized for
+    /// conscutive inserts.
+    ///
+    /// Note that some buffers (like `InlineBuffer`) can't really grow.
+    ///
+    /// # Panics
+    /// Panics if it cannot grow
+    pub fn reserve(&mut self, additional: usize) {
+        self.try_reserve(additional)
+            .expect("Couldn't reserve the necessary space")
+    }
+
+    /// Reserves capacity for at least `additional` more elements to be inserted.
+    ///
+    /// Note that unlike `reserve`, this will request exactly the additional size to the buffer.
+    ///
+    /// # Panics
+    /// Panics if it cannot grow
+    pub fn reserve_exact(&mut self, additional: usize) {
+        self.try_reserve_exact(additional)
+            .expect("Couldn't reserve the necessary space")
+    }
+
+    /// Tries reserves capacity for at least `additional` more elements to be inserted.
+    ///
+    /// Note that unlike `try_reserve`, this will request exactly the additional size to the buffer.
+    pub fn try_reserve(&mut self, additional: usize) -> Result<(), ResizeError> {
+        // TODO Grow exponentially
+        self.try_reserve_exact(additional)
+    }
+
+    /// Tries reserves capacity for at least `additional` more elements to be inserted.
+    ///
+    /// Note that unlike `try_reserve`, this will request exactly the additional size to the buffer.
+    pub fn try_reserve_exact(&mut self, additional: usize) -> Result<(), ResizeError> {
+        let target = self.len() + additional;
+        if target > self.capacity() {
+            // SAFETY: It's bigger than the current size
+            unsafe { self.buffer.try_grow(target) }
+        } else {
+            Ok(())
+        }
+    }
+
+    /// Shrinks the capacity of the vector as much as possible.
+    pub fn shrink_to_fit(&mut self) {
+        self.shrink_to(self.len())
+    }
+
+    /// Shrinks the capacity of the vector with a lower bound.
+    ///
+    /// The capacity will remain at least as large as both the length and the supplied value.
+    ///
+    /// If the current capacity is less than the lower limit, this is a no-op.
+    pub fn shrink_to(&mut self, min_capacity: usize) {
+        let target = std::cmp::max(min_capacity, self.len());
+        if target < self.capacity() {
+            // SAFETY: it should get OOM but the buffer may not be able to shrink (eg. InlineBuffer)
+            // this still is considered successful in that case
+            let _ = unsafe { self.buffer.try_shrink(min_capacity) };
+        }
+    }
+
+    /// Shortens the vector, keeping the first len elements and dropping the rest.
+    ///
+    /// If len is greater than the vector’s current length, this has no effect.
+    ///
+    /// Note that this method has no effect on the allocated capacity of the vector.
+    pub fn truncate(&mut self, keep_n_first: usize) {
+        if keep_n_first < self.len {
+            // SAFETY: the values from keep to len exist
+            unsafe {
+                self.buffer.manually_drop_range(keep_n_first..self.len);
+            }
+            self.len = keep_n_first
+        }
+    }
+    /// Removes an element from the vector and returns it.
+    ///
+    /// The removed element is replaced by the last element of the vector.
+    ///
+    /// This does not preserve ordering, but is O(1). If you need to preserve the element order, use remove instead.
+    /// Panics
+    ///
+    /// Panics if index is out of bounds.
+    pub fn swap_remove(&mut self, index: usize) -> T {
+        if index >= self.len {
+            panic!("Index out of bounds")
+        }
+        self.len -= 1;
+
+        // SAFETY: index is in bounds
+        let current = unsafe { self.buffer.read_value(index) };
+
+        // Move only when necessary
+        if self.len != index {
+            unsafe {
+                let value = self.buffer.read_value(self.len);
+                self.buffer.write_value(index, value);
+            }
+        }
+
+        current
     }
 
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
@@ -105,6 +212,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// ```
     pub fn pop(&mut self) -> Option<T> {
         if self.len > 0 {
+            // SAFETY: self.len-1 is the last element, which we will pop
             self.len -= 1;
             let value = unsafe { self.buffer.read_value(self.len) };
             Some(value)
@@ -130,11 +238,13 @@ where
 {
     /// Returns an unsafe pointer to the start of the vector's buffer
     pub fn as_ptr(&self) -> B::ConstantPointer {
+        // SAFETY: even if empty, the (unsafe) pointer is corrent
         unsafe { self.buffer.ptr(0) }
     }
 
     /// Returns an unsafe mutable pointer to the start of the vector's buffer
     pub fn as_mut_ptr(&mut self) -> B::MutablePointer {
+        // SAFETY: even if empty, the (unsafe) pointer is corrent
         unsafe { self.buffer.mut_ptr(0) }
     }
 }
@@ -149,6 +259,7 @@ where
     /// index < self.len()
     pub fn index(&self, index: usize) -> B::ConstantReference<'_> {
         debug_assert!(index < self.len());
+        // SAFETY: values up to len exist
         unsafe { self.buffer.index(index) }
     }
 
@@ -158,6 +269,7 @@ where
     /// index < self.len()
     pub fn mut_index(&mut self, index: usize) -> B::MutableReference<'_> {
         debug_assert!(index < self.len());
+        // SAFETY: values up to len exist
         unsafe { self.buffer.mut_index(index) }
     }
 }
@@ -168,11 +280,13 @@ where
 {
     /// Extracts a slice containing the entire vector
     pub fn as_slice(&self) -> &[T] {
+        // SAFETY: values up to len exist
         unsafe { self.buffer.slice(0..self.len) }
     }
 
     /// Extracts a mutable slice containing the entire vector
     pub fn as_mut_slice(&mut self) -> &mut [T] {
+        // SAFETY: values up to len exist
         unsafe { self.buffer.mut_slice(0..self.len) }
     }
 }
