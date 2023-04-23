@@ -205,6 +205,7 @@ where
     /// index < self.len()
     pub fn index(&self, index: usize) -> B::ConstantReference<'_> {
         debug_assert!(index < self.len());
+        // SAFETY: values up to len exist
         unsafe { self.buffer.index(index) }
     }
 
@@ -214,6 +215,7 @@ where
     /// index < self.len()
     pub fn mut_index(&mut self, index: usize) -> B::MutableReference<'_> {
         debug_assert!(index < self.len());
+        // SAFETY: values up to len exist
         unsafe { self.buffer.mut_index(index) }
     }
 }
