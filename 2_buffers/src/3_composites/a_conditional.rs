@@ -1,6 +1,8 @@
 use std::{marker::PhantomData, ops::Range};
 
-use crate::interface::{resize_error::ResizeError, Buffer};
+use crate::interface::{
+    continuous_memory::ContinuousMemoryBuffer, resize_error::ResizeError, Buffer,
+};
 
 /// Trait used to choose between buffer A or buffer B
 pub trait Selector {
@@ -92,5 +94,17 @@ impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> Buffer
         } else {
             self.b.try_shrink(target)
         }
+    }
+}
+
+impl<T, A: Buffer<Element = T>, B: Buffer<Element = T>, S: Selector> ContinuousMemoryBuffer
+    for ConditionalBuffer<T, A, B, S>
+{
+    unsafe fn ptr(&self, index: usize) -> *const Self::Element {
+        todo!()
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
+        todo!()
     }
 }
