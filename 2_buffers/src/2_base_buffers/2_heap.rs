@@ -30,11 +30,6 @@ impl<T> HeapBuffer<T> {
         }
     }
 
-    /// Get a constant pointer to the specified index
-    pub unsafe fn ptr(&self, index: usize) -> *const T {
-        self.buffer_start.as_ptr().add(index)
-    }
-
     /// Internal function that allocates a new array into the heap
     ///
     /// # Safety
