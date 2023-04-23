@@ -59,8 +59,8 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Panics
     /// Panics if it cannot grow
     pub fn reserve(&mut self, additional: usize) {
-        // TODO Grow exponentially
-        self.reserve_exact(additional)
+        self.try_reserve(additional)
+            .expect("Couldn't reserve the necessary space")
     }
 
     /// Reserves capacity for at least `additional` more elements to be inserted.
@@ -72,6 +72,14 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     pub fn reserve_exact(&mut self, additional: usize) {
         self.try_reserve_exact(additional)
             .expect("Couldn't reserve the necessary space")
+    }
+
+    /// Tries reserves capacity for at least `additional` more elements to be inserted.
+    ///
+    /// Note that unlike `try_reserve`, this will request exactly the additional size to the buffer.
+    pub fn try_reserve(&mut self, additional: usize) -> Result<(), ResizeError> {
+        // TODO Grow exponentially
+        self.try_reserve_exact(additional)
     }
 
     /// Tries reserves capacity for at least `additional` more elements to be inserted.
