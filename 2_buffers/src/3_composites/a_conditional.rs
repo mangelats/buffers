@@ -120,7 +120,11 @@ where
     S: Selector,
 {
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
-        todo!()
+        if S::SELECT_A {
+            self.a.ptr(index)
+        } else {
+            self.b.ptr(index)
+        }
     }
 
     unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
