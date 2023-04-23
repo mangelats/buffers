@@ -4,7 +4,9 @@ use std::{
     ptr::NonNull,
 };
 
-use crate::interface::{resize_error::ResizeError, Buffer};
+use crate::interface::{
+    continuous_memory::ContinuousMemoryBuffer, resize_error::ResizeError, Buffer,
+};
 
 /// Similar buffer to HeapBuffer but it uses Allocators instead
 pub struct AllocatorBuffer<T, A: Allocator = Global> {
@@ -88,6 +90,16 @@ impl<T, A: Allocator> Buffer for AllocatorBuffer<T, A> {
             self.update_buffer(ptr, target);
             Ok(())
         }
+    }
+}
+
+impl<T, A: Allocator> ContinuousMemoryBuffer for AllocatorBuffer<T, A> {
+    unsafe fn ptr(&self, index: usize) -> *const Self::Element {
+        todo!()
+    }
+
+    unsafe fn mut_ptr(&mut self, index: usize) -> *mut Self::Element {
+        todo!()
     }
 }
 
