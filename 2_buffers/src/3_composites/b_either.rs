@@ -1,7 +1,8 @@
 use std::{marker::PhantomData, ops::Range};
 
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, resize_error::ResizeError, Buffer,
+    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+    resize_error::ResizeError, Buffer,
 };
 
 /// Utility buffer that may contain one of two buffers.
@@ -118,6 +119,32 @@ where
             EitherBuffer::Second(buf) => buf.mut_ptr(index),
             EitherBuffer::_InternalMarker(_, _) => unreachable!(),
         }
+    }
+}
+
+impl<T, A, B> RefBuffer for EitherBuffer<T, A, B>
+where
+    A: Buffer<Element = T> + RefBuffer,
+    B: Buffer<Element = T>,
+    for<'a> B: RefBuffer<
+            ConstantReference<'a> = A::ConstantReference<'a>,
+            MutableReference<'a> = A::MutableReference<'a>,
+        > + 'a,
+{
+    type ConstantReference<'a> = A::ConstantReference<'a>
+    where
+        Self: 'a;
+
+    type MutableReference<'a> = A::MutableReference<'a>
+    where
+        Self: 'a;
+
+    unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
+        todo!()
+    }
+
+    unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
+        todo!()
     }
 }
 
