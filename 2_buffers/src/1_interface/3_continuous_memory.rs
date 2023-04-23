@@ -35,7 +35,7 @@ pub trait ContinuousMemoryBuffer: Buffer {
         std::slice::from_raw_parts(self.ptr(start), len)
     }
 
-    /// Get the slice represanted by the range
+    /// Get the mutable slice represanted by the range
     ///
     /// # SAFETY
     /// The range must be a subset of the current capacity.
