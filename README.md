@@ -46,9 +46,9 @@ Bufferes are seperated in 3 parts:
   1. `composites`: Buffers that compose with others. All the optimizations (SVO and ZSTO) are here.
 
 ## To be done
-    [ ] Better naming (help please)
-    [ ] Add the most commonly used methods
-    [ ] Upload to Cargo
-    [ ] Create prelude (?)
-    [ ] Add optimizations (mainly forcing/avoiding some inlines and adding some hints)
-    [ ] Achieve parity with std
+  - [ ] Better naming (help please)
+  - [ ] Add the most commonly used methods
+  - [ ] Upload to Cargo
+  - [ ] Create prelude (?)
+  - [ ] Add optimizations (mainly forcing/avoiding some inlines and adding some hints)
+  - [ ] Achieve parity with std
