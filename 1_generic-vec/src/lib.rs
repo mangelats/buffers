@@ -112,7 +112,10 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     }
 }
 
-impl<T, B: Buffer<Element = T> + Default> Vector<T, B> {
+impl<T, B> Vector<T, B>
+where
+    B: Buffer<Element = T> + Default,
+{
     /// Creates a new vector by default-constructing the underlying buffer.
     pub fn new() -> Vector<T, B> {
         Self::from_buffer(Default::default())
@@ -121,7 +124,10 @@ impl<T, B: Buffer<Element = T> + Default> Vector<T, B> {
 
 impl<T, B> Vector<T, B> where B: Buffer<Element = T> + PtrBuffer {}
 
-impl<T, B: Buffer<Element = T> + Default> Default for Vector<T, B> {
+impl<T, B> Default for Vector<T, B>
+where
+    B: Buffer<Element = T> + Default,
+{
     fn default() -> Self {
         Self::new()
     }
