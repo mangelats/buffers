@@ -135,3 +135,11 @@ where
         }
     }
 }
+
+impl<T, A, B, S> ContinuousMemoryBuffer for ConditionalBuffer<T, A, B, S>
+where
+    A: Buffer<Element = T> + ContinuousMemoryBuffer,
+    B: Buffer<Element = T> + ContinuousMemoryBuffer,
+    S: Selector,
+{
+}
