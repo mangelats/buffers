@@ -8,7 +8,10 @@ use crate::{
 use super::either::EitherBuffer;
 
 /// Buffer composite that adds small vector optimization (SVO) to a given buffer.
-pub struct SvoBuffer<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> {
+pub struct SvoBuffer<T, B, const SMALL_SIZE: usize>
+where
+    B: Buffer<Element = T> + Default,
+{
     inner: EitherBuffer<T, InlineBuffer<T, SMALL_SIZE>, B>,
 }
 
