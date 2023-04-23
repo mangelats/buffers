@@ -5,7 +5,7 @@ use std::{
 };
 
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, resize_error::ResizeError, Buffer,
+    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, resize_error::ResizeError, Buffer,
 };
 
 /// Buffer implementation using a heap-allocated continuous array.
@@ -105,7 +105,7 @@ impl<T> Buffer for HeapBuffer<T> {
     }
 }
 
-impl<T> ContinuousMemoryBuffer for HeapBuffer<T> {
+impl<T> PtrBuffer for HeapBuffer<T> {
     unsafe fn ptr(&self, index: usize) -> *const T {
         debug_assert!(index < self.capacity());
         self.buffer_start.as_ptr().add(index)
