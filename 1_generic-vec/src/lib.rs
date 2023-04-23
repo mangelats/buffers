@@ -128,6 +128,33 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
             self.len = keep_n_first
         }
     }
+    /// Removes an element from the vector and returns it.
+    ///
+    /// The removed element is replaced by the last element of the vector.
+    ///
+    /// This does not preserve ordering, but is O(1). If you need to preserve the element order, use remove instead.
+    /// Panics
+    ///
+    /// Panics if index is out of bounds.
+    pub fn swap_remove(&mut self, index: usize) -> T {
+        if index >= self.len {
+            panic!("Index out of bounds")
+        }
+        self.len -= 1;
+
+        /// SAFETY: index is in bounds
+        let current = unsafe { self.buffer.read_value(index) };
+
+        // Move only when necessary
+        if self.len != index {
+            unsafe {
+                self.buffer
+                    .write_value(index, self.buffer.read_value(self.len))
+            }
+        }
+
+        current
+    }
 
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
     /// space and the buffer cannot grow.
