@@ -140,11 +140,19 @@ where
         Self: 'a;
 
     unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
-        todo!()
+        match self {
+            EitherBuffer::First(buf) => buf.index(index),
+            EitherBuffer::Second(buf) => buf.index(index),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 
     unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
-        todo!()
+        match self {
+            EitherBuffer::First(buf) => buf.mut_index(index),
+            EitherBuffer::Second(buf) => buf.mut_index(index),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 }
 
