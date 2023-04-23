@@ -155,7 +155,7 @@ where
     where
         Self: 'a;
 
-    type MutableReference<'a> = A::ConstantReference<'a>
+    type MutableReference<'a> = A::MutableReference<'a>
     where
         Self: 'a;
 
@@ -168,7 +168,11 @@ where
     }
 
     unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
-        todo!()
+        if S::SELECT_A {
+            self.a.mut_index(index)
+        } else {
+            self.b.mut_index(index)
+        }
     }
 }
 
