@@ -94,6 +94,13 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         }
     }
 
+    /// Shrinks the capacity of the vector as much as possible.
+    pub fn shrink_to_fit(&mut self) {
+        // SAFETY: it should get OOM but the buffer may not be able to shrink (eg. InlineBuffer)
+        // this still is considered successful in that case
+        let _ = unsafe { self.buffer.try_shrink(self.len()) };
+    }
+
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
     /// space and the buffer cannot grow.
     ///
