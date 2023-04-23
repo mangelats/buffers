@@ -140,14 +140,21 @@ where
         Self: 'a;
 
     unsafe fn index<'a>(&'a self, index: usize) -> Self::ConstantReference<'a> {
-        // self.inner.index(index)
-        let buffer = &self.inner;
-        todo!()
+        // For some reason the borrow checker can't check `self.inner.index(index)`
+        match self.inner {
+            EitherBuffer::First(ref b) => RefBuffer::index(b, index),
+            EitherBuffer::Second(ref b) => RefBuffer::index(b, index),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 
     unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
-        // self.inner.mut_index(index)
-        todo!()
+        // For some reason the borrow checker can't check `self.inner.mut_index(index)`
+        match self.inner {
+            EitherBuffer::First(ref mut b) => RefBuffer::mut_index(b, index),
+            EitherBuffer::Second(ref mut b) => RefBuffer::mut_index(b, index),
+            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+        }
     }
 }
 
