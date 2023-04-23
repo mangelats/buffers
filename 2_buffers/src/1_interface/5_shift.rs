@@ -26,6 +26,9 @@ impl<T: ShiftOneByOne> BufferShift for T {
         let (start, end) = start_end(self, to_move);
         let size = end - start;
         let new_end = end + positions;
+
+        debug_assert!(new_end < self.capacity());
+
         for current in 0..size {
             let new_pos = new_end - current;
             let old_pos = end - current;
