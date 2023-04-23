@@ -127,7 +127,7 @@ where
     B: Buffer<Element = T> + PtrBuffer,
 {
     /// Returns an unsafe pointer to the start of the vector's buffer
-    pub fn as_ptr(&self) -> *const T {
+    pub fn as_ptr(&self) -> B::ConstantPointer {
         unsafe { self.buffer.ptr(0) }
     }
 
