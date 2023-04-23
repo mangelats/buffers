@@ -18,3 +18,14 @@ pub trait BufferShift: Buffer {
     /// There should be enough space to the left
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize);
 }
+
+pub trait ShiftOneByOne: Buffer {}
+impl<T: ShiftOneByOne> BufferShift for T {
+    unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+        todo!()
+    }
+
+    unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+        todo!()
+    }
+}
