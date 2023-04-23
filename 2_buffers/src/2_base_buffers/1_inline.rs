@@ -67,6 +67,7 @@ impl<T, const SIZE: usize> PtrBuffer for InlineBuffer<T, SIZE> {
         self.mut_index(index).as_mut_ptr()
     }
 }
+impl<T, const SIZE: usize> ContinuousMemoryBuffer for InlineBuffer<T, SIZE> {}
 
 impl<T, const SIZE: usize> Default for InlineBuffer<T, SIZE> {
     fn default() -> Self {
