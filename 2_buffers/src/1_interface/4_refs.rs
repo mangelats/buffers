@@ -1,4 +1,4 @@
-use super::Buffer;
+use super::{ptrs::PtrBuffer, Buffer};
 
 /// Represents a buffer which has pointers to its elements
 ///
@@ -26,4 +26,24 @@ pub trait RefBuffer: Buffer {
     ///
     /// The pointer may point to unitialized or garbage data. It's the responsability of the caller to keep track of the state.
     unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_>;
+}
+
+impl<B> RefBuffer for B
+where
+    B: PtrBuffer<ConstantPointer = *const Self::Element, MutablePointer = *mut Self::Element>,
+{
+    type ConstantReference<'a> = &'a Self::Element
+    where
+        Self: 'a;
+    type MutableReference<'a> = &'a mut Self::Element
+    where
+        Self: 'a;
+
+    unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
+        &*self.ptr(index)
+    }
+
+    unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
+        &mut *self.mut_ptr(index)
+    }
 }
