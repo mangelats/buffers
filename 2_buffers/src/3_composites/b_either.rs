@@ -117,6 +117,13 @@ where
     }
 }
 
+impl<T, A, B> ContinuousMemoryBuffer for EitherBuffer<T, A, B>
+where
+    A: Buffer<Element = T> + ContinuousMemoryBuffer,
+    B: Buffer<Element = T> + ContinuousMemoryBuffer,
+{
+}
+
 /// A type that can never exist.
 ///
 /// Equivalent to the never type (!) which is experimental
