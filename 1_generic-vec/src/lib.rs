@@ -268,4 +268,12 @@ mod tests {
 
         vec.push(123);
     }
+
+    #[test]
+    fn should_be_able_to_get_reference() {
+        let mut vec: Vector<u32, InlineBuffer<u32, 10>> = Vector::new();
+        for i in 0..10 {
+            vec.push(i.try_into().unwrap());
+        }
+    }
 }
