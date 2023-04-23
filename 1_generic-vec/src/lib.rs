@@ -121,7 +121,15 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// The drain method can emulate truncate, but causes the excess elements to be returned instead of dropped.
     ///
     /// Note that this method has no effect on the allocated capacity of the vector.
-    pub fn truncate(&mut self, keep_n_first: usize) {}
+    pub fn truncate(&mut self, keep_n_first: usize) {
+        if keep_n_first < self.len {
+            // SAFETY: the values from keep to len exist
+            unsafe {
+                self.buffer.manually_drop_range(keep_n_first..self.len);
+            }
+            self.len = keep_n_first
+        }
+    }
 
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
     /// space and the buffer cannot grow.
