@@ -122,7 +122,14 @@ where
     }
 }
 
-impl<T, B> Vector<T, B> where B: Buffer<Element = T> + PtrBuffer {}
+impl<T, B> Vector<T, B>
+where
+    B: Buffer<Element = T> + PtrBuffer,
+{
+    pub fn as_ptr(&self) -> *const T {
+        unsafe { self.buffer.ptr(0) }
+    }
+}
 
 impl<T, B> Default for Vector<T, B>
 where
