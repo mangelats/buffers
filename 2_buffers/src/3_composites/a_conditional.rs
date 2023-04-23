@@ -1,7 +1,7 @@
 use std::{marker::PhantomData, ops::Range};
 
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, resize_error::ResizeError, Buffer,
+    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, resize_error::ResizeError, Buffer,
 };
 
 /// Trait used to choose between buffer A or buffer B
@@ -113,10 +113,10 @@ where
     }
 }
 
-impl<T, A, B, S> ContinuousMemoryBuffer for ConditionalBuffer<T, A, B, S>
+impl<T, A, B, S> PtrBuffer for ConditionalBuffer<T, A, B, S>
 where
-    A: Buffer<Element = T> + ContinuousMemoryBuffer,
-    B: Buffer<Element = T> + ContinuousMemoryBuffer,
+    A: Buffer<Element = T> + PtrBuffer,
+    B: Buffer<Element = T> + PtrBuffer,
     S: Selector,
 {
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
