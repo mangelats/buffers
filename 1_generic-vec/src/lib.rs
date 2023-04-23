@@ -270,7 +270,7 @@ mod tests {
     }
 
     #[test]
-    fn should_be_able_to_get_reference() {
+    fn should_be_able_to_get_a_reference() {
         const SIZE: usize = 10;
         let mut vec: Vector<u32, InlineBuffer<u32, SIZE>> = Vector::new();
         for i in 0..SIZE {
@@ -278,5 +278,18 @@ mod tests {
         }
 
         assert_eq!(*vec.index(3), 3);
+    }
+
+    #[test]
+    fn should_be_able_to_get_a_mutable_reference() {
+        const SIZE: usize = 10;
+        let mut vec: Vector<u32, InlineBuffer<u32, SIZE>> = Vector::new();
+        for i in 0..SIZE {
+            vec.push(i.try_into().unwrap());
+        }
+
+        assert_eq!(*vec.index(3), 3);
+        *vec.mut_index(3) = 4;
+        assert_eq!(*vec.index(3), 4);
     }
 }
