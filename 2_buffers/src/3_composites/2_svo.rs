@@ -15,7 +15,10 @@ where
     inner: EitherBuffer<T, InlineBuffer<T, SMALL_SIZE>, B>,
 }
 
-impl<T, B: Buffer<Element = T> + Default, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE> {
+impl<T, B, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE>
+where
+    B: Buffer<Element = T> + Default,
+{
     /// Creates a new empty buffer
     pub fn new() -> Self {
         Default::default()
