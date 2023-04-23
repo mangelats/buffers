@@ -28,22 +28,22 @@ pub trait RefBuffer: Buffer {
     unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_>;
 }
 
-impl<B> RefBuffer for B
-where
-    B: PtrBuffer<ConstantPointer = *const Self::Element, MutablePointer = *mut Self::Element>,
-{
-    type ConstantReference<'a> = &'a Self::Element
-    where
-        Self: 'a;
-    type MutableReference<'a> = &'a mut Self::Element
-    where
-        Self: 'a;
+// impl<B> RefBuffer for B
+// where
+//     B: PtrBuffer<ConstantPointer = *const Self::Element, MutablePointer = *mut Self::Element>,
+// {
+//     type ConstantReference<'a> = &'a Self::Element
+//     where
+//         Self: 'a;
+//     type MutableReference<'a> = &'a mut Self::Element
+//     where
+//         Self: 'a;
 
-    unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
-        &*self.ptr(index)
-    }
+//     unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
+//         &*self.ptr(index)
+//     }
 
-    unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
-        &mut *self.mut_ptr(index)
-    }
-}
+//     unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
+//         &mut *self.mut_ptr(index)
+//     }
+// }
