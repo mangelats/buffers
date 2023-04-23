@@ -22,7 +22,9 @@ pub trait BufferShift: Buffer {
 
 pub trait ShiftOneByOne: Buffer {}
 impl<T: ShiftOneByOne> BufferShift for T {
-    unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {}
+    unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+        let (start, end) = start_end(self, to_move);
+    }
 
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
         todo!()
