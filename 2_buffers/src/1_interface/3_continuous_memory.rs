@@ -1,5 +1,5 @@
 use std::ops::Bound::*;
-use std::ops::{Range, RangeBounds};
+use std::ops::RangeBounds;
 
 use super::Buffer;
 
@@ -30,23 +30,12 @@ pub trait ContinuousMemoryBuffer: Buffer {
     /// # SAFETY
     ///
     unsafe fn slice<R: RangeBounds<usize>>(&self, range: R) -> &[Self::Element] {
-        let start: usize = match range.start_bound() {
-            Included(index) => *index,
-            Excluded(index) => *index + 1,
-            Unbounded => 0,
-        };
-        let end: usize = match range.end_bound() {
-            Included(index) => *index + 1,
-            Excluded(index) => *index,
-            Unbounded => self.capacity(),
-        };
-
-        let size = if start <= end { 0 } else { end - start };
-        std::slice::from_raw_parts(self.ptr(start), size)
+        let (start, len) = start_len(self, range);
+        std::slice::from_raw_parts(self.ptr(start), len)
     }
 }
 
-fn start_len<B: Buffer, R: RangeBounds<usize>>(buffer: &B, range: R) -> (usize, usize) {
+fn start_len<B: Buffer + ?Sized, R: RangeBounds<usize>>(buffer: &B, range: R) -> (usize, usize) {
     let start: usize = match range.start_bound() {
         Included(index) => *index,
         Excluded(index) => *index + 1,
