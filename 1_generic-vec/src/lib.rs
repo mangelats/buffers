@@ -88,6 +88,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     pub fn try_reserve_exact(&mut self, additional: usize) -> Result<(), ResizeError> {
         let target = self.len() + additional;
         if target > self.capacity() {
+            // SAFETY: It's bigger than the current size
             unsafe { self.buffer.try_grow(target) }
         } else {
             Ok(())
