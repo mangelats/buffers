@@ -162,7 +162,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// #Panics
     ///     
     /// Panics if index > len.
-    pub fn insert(&mut self, index: usize, _element: T) {
+    pub fn insert(&mut self, index: usize, element: T) {
         if index > self.len {
             panic!("Index out of bounds")
         }
@@ -174,7 +174,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
 
         unsafe {
             self.buffer.shift_right(index..self.len, 1);
-            self.buffer.write_value(index, _element)
+            self.buffer.write_value(index, element)
         }
     }
 
