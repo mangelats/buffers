@@ -24,13 +24,14 @@ pub trait BufferShift: Buffer {
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize);
 }
 
-#[derive(Copy, Clone)]
 pub enum BufferShiftAlg {
-    ShiftInBlock = 1,
-    ShiftOneByOne = 2,
+    ShiftInBlock,
+    ShiftOneByOne,
 }
 
-pub trait ShiftImpl<const alg: u8>: Buffer {}
+pub trait ShiftImpl: Buffer {
+    const ALG: BufferShiftAlg;
+}
 
 // /// Automatically implement `BufferShift` by copying the values one by one.
 // ///
@@ -75,8 +76,7 @@ pub trait ShiftImpl<const alg: u8>: Buffer {}
 /// Automatically implement `BufferShift` by copying the values one by one.
 ///
 /// This should work for any buffer, but some can have an optimized version (see `ShiftInBlock`).
-const SHIFT_BY_ONE: u8 = BufferShiftAlg::ShiftOneByOne as u8;
-impl<T: ShiftImpl<SHIFT_BY_ONE>> BufferShift for T {
+impl<T: ShiftImpl> BufferShift for T {
     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
         let (start, end) = start_end(self, to_move);
 
