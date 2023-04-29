@@ -174,8 +174,22 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
 
         unsafe {
             self.buffer.shift_right(index..self.len, 1);
-            self.buffer.write_value(index, element)
+            self.buffer.write_value(index, element);
         }
+        self.len += 1;
+    }
+
+    pub fn remove(&mut self, index: usize) -> T {
+        if index >= self.len {
+            panic!("Index out of bounds")
+        }
+
+        let result = unsafe { self.buffer.read_value(index) };
+        unsafe {
+            self.buffer.shift_left(index..self.len, 1);
+        }
+        self.len -= 1;
+        result
     }
 
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
