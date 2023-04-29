@@ -25,7 +25,7 @@ pub trait BufferShift: Buffer {
 }
 
 trait BufferShiftImpl {
-    type B;
+    type B: Buffer + ?Sized;
     unsafe fn shift_right<R: RangeBounds<usize>>(buff: &mut Self::B, to_move: R, positions: usize);
     unsafe fn shift_left<R: RangeBounds<usize>>(buff: &mut Self::B, to_move: R, positions: usize);
 }
