@@ -88,7 +88,7 @@ pub trait Buffer {
         let size = range.end - range.start;
         let new_end = range.end + positions;
 
-        debug_assert!(new_end < self.capacity());
+        debug_assert!(range.end + positions < self.capacity());
 
         for current in 0..size {
             let new_pos = new_end - current;
