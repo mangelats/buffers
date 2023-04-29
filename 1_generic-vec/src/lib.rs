@@ -157,11 +157,11 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         current
     }
 
-    /// Inserts an element at position index within the vector, shifting all elements after it to the right.
+    /// Inserts an element at position `index` within the vector, shifting all elements after it to the right.
     ///
     /// #Panics
     ///     
-    /// Panics if index > len.
+    /// Panics if `index > len`.
     pub fn insert(&mut self, index: usize, element: T) {
         if index > self.len {
             panic!("Index out of bounds")
