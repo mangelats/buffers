@@ -21,8 +21,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
-    /// # type ExampleBuffer = InlineBuffer<u32, 1>;
-    /// let _vec = Vector::from_buffer(ExampleBuffer::new());
+    /// let _vec = Vector::from_buffer(InlineBuffer::<u32, 1>::new());
     /// ```
     pub fn from_buffer(buffer: B) -> Vector<T, B> {
         Vector {
