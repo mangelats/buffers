@@ -29,7 +29,7 @@ pub trait ForwardBufferShiftImpl {
     type Impl: BufferShiftImpl;
 }
 
-trait BufferShiftImpl {
+pub trait BufferShiftImpl {
     type Buff: Buffer + ?Sized;
     unsafe fn shift_right<R: RangeBounds<usize>>(
         buff: &mut Self::Buff,
