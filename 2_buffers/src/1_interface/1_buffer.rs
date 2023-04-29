@@ -83,7 +83,7 @@ pub trait Buffer {
     ///
     /// There should be enough space to the right
     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        let (start, end) = start_end(self, to_move);
+        let (start, end) = clamp_range(self, to_move);
 
         let size = end - start;
         let new_end = end + positions;
@@ -106,7 +106,7 @@ pub trait Buffer {
     ///
     /// There should be enough space to the left
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        let (start, end) = start_end(self, to_move);
+        let (start, end) = clamp_range(self, to_move);
 
         debug_assert!(start >= positions);
 
@@ -123,7 +123,7 @@ pub trait Buffer {
     }
 }
 
-fn start_end<B: Buffer + ?Sized, R: RangeBounds<usize>>(buffer: &B, range: R) -> (usize, usize) {
+fn clamp_range<B: Buffer + ?Sized, R: RangeBounds<usize>>(buffer: &B, range: R) -> (usize, usize) {
     let start: usize = match range.start_bound() {
         Included(index) => *index,
         Excluded(index) => *index + 1,
