@@ -43,9 +43,7 @@ trait BufferShiftImpl {
     );
 }
 
-pub struct ShiftInBlock<B>(PhantomData<B>)
-where
-    B: Buffer + ?Sized;
+pub struct ShiftInBlock<B: Buffer + ?Sized>(PhantomData<B>);
 impl<B: Buffer + ?Sized> BufferShiftImpl for ShiftInBlock<B> {
     type Buff = B;
 
