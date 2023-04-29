@@ -172,7 +172,10 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
             resize_result.expect("Cannot grow the buffer when trying to insert a new value")
         }
 
-        todo!()
+        unsafe {
+            self.buffer.shift_right(index..self.len, 1);
+            self.buffer.write_value(index, _element)
+        }
     }
 
     /// Tries to add a value at the end of the vector. This may fail if there is not enough
