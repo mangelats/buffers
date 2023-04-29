@@ -89,8 +89,9 @@ pub trait Buffer {
 
         debug_assert!(range.end + positions < self.capacity());
 
-        for i in range.into_iter().rev() {
-            self.write_value(i + positions, self.read_value(i));
+        for old_pos in range.into_iter().rev() {
+            let new_pos = old_pos + positions;
+            self.write_value(new_pos, self.read_value(old_pos));
         }
 
         // Old values left as is, since the bytes themselves are considered garbage
