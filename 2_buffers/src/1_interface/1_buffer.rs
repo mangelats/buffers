@@ -51,8 +51,8 @@ pub trait Buffer {
     ///
     /// # Safety
     /// All the positions in `values_range` must not be empty.
-    unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
-        for index in values_range {
+    unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
+        for index in clamp_buffer_range(self, values_range) {
             self.manually_drop(index);
         }
     }

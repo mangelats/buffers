@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::ops::RangeBounds;
 
 use crate::{
     base_buffers::inline::InlineBuffer,
@@ -89,7 +89,7 @@ where
         self.inner.manually_drop(index)
     }
 
-    unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
+    unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
         self.inner.manually_drop_range(values_range)
     }
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {

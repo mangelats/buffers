@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, ops::Range};
+use std::{marker::PhantomData, ops::RangeBounds};
 
 use crate::interface::{
     continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
@@ -71,7 +71,7 @@ where
         }
     }
 
-    unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
+    unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
         match self {
             EitherBuffer::First(buf) => buf.manually_drop_range(values_range),
             EitherBuffer::Second(buf) => buf.manually_drop_range(values_range),
