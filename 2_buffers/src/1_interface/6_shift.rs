@@ -26,11 +26,11 @@ pub trait BufferShift: Buffer {
 }
 
 pub trait ForwardBufferShiftImpl: Buffer {
-    type Impl: BufferShiftImpl;
+    type Impl: BufferShiftImpl<Buff = Self>;
 }
 impl<B: ForwardBufferShiftImpl + ?Sized> BufferShift for B {
     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        todo!()
+        <Self as ForwardBufferShiftImpl>::Impl::shift_right(self, to_move, positions)
     }
 
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
