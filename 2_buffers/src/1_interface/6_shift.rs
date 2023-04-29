@@ -8,6 +8,8 @@ use super::Buffer;
 /// Trait that defines how to shift values in the buffer.
 ///
 /// This are usually used to `insert` or `remove` values from the middle of the buffer.
+///
+/// By default this is done by copying element by element.
 pub trait BufferShift: Buffer {
     /// Shift a range of values to the right.
     /// # Safety
