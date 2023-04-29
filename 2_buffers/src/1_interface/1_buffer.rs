@@ -46,7 +46,7 @@ pub trait Buffer {
 
     /// Manually drops all the values specified by the position range and empties it.
     ///
-    /// By default it calls [`manually_drop`] one by one, but in most cases it can be overridden for a more performant
+    /// By default it calls `manually_drop` one by one, but in most cases it can be overridden for a more performant
     /// version.
     ///
     /// # Safety
