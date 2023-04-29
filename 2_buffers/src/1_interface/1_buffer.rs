@@ -86,14 +86,11 @@ pub trait Buffer {
         let range = clamp_range(self, to_move);
 
         let size = range.end - range.start;
-        let new_end = range.end + positions;
 
         debug_assert!(range.end + positions < self.capacity());
 
-        for current in 0..size {
-            let new_pos = new_end - current;
-            let old_pos = range.end - current;
-            self.write_value(new_pos, self.read_value(old_pos));
+        for i in range.into_iter().rev() {
+            self.write_value(i + positions, self.read_value(i));
         }
 
         // Old values left as is, since the bytes themselves are considered garbage
