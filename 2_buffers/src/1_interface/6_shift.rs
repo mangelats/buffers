@@ -1,8 +1,12 @@
 use std::ops::Bound::*;
 use std::ops::RangeBounds;
 
+use super::continuous_memory::ContinuousMemoryBuffer;
 use super::Buffer;
 
+/// Trait that defines how to shift values in the buffer.
+///
+/// This are usually used to `insert` or `remove` values from the middle of the buffer.
 pub trait BufferShift: Buffer {
     /// Shift a range of values to the right.
     /// # Safety
@@ -20,6 +24,49 @@ pub trait BufferShift: Buffer {
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize);
 }
 
+// /// Automatically implement `BufferShift` by copying the values one by one.
+// ///
+// /// This should work for any buffer, but some can have an optimized version (see `ShiftInBlock`).
+// pub trait ShiftInBlock: ContinuousMemoryBuffer {}
+// impl<T: ShiftInBlock> BufferShift for T {
+//     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+//         let (start, end) = start_end(self, to_move);
+
+//         let size = end - start;
+//         let new_end = end + positions;
+
+//         debug_assert!(new_end < self.capacity());
+
+//         for current in 0..size {
+//             let new_pos = new_end - current;
+//             let old_pos = end - current;
+//             self.write_value(new_pos, self.read_value(old_pos));
+//         }
+
+//         // Old values left as is, since the bytes themselves are considered garbage
+//     }
+
+//     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+//         let (start, end) = start_end(self, to_move);
+
+//         debug_assert!(start >= positions);
+
+//         let size = end - start;
+//         let new_start = start - positions;
+
+//         for current in 0..size {
+//             let new_pos = new_start + current;
+//             let old_pos = start + current;
+//             self.write_value(new_pos, self.read_value(old_pos));
+//         }
+
+//         // Old values left as is, since the bytes themselves are considered garbage
+//     }
+// }
+
+/// Automatically implement `BufferShift` by copying the values one by one.
+///
+/// This should work for any buffer, but some can have an optimized version (see `ShiftInBlock`).
 pub trait ShiftOneByOne: Buffer {}
 impl<T: ShiftOneByOne> BufferShift for T {
     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
