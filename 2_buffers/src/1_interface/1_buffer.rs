@@ -83,7 +83,7 @@ pub trait Buffer {
     ///
     /// There should be enough space to the right
     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        let range = clamp_range(self, to_move);
+        let range = clamp_buffer_range(self, to_move);
 
         debug_assert!(range.end + positions < self.capacity());
 
@@ -102,7 +102,7 @@ pub trait Buffer {
     ///
     /// There should be enough space to the left
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        let range = clamp_range(self, to_move);
+        let range = clamp_buffer_range(self, to_move);
 
         debug_assert!(range.end >= positions);
 
@@ -115,7 +115,13 @@ pub trait Buffer {
     }
 }
 
-fn clamp_range<B: Buffer + ?Sized, R: RangeBounds<usize>>(buffer: &B, range: R) -> Range<usize> {
+/// Utility function that clamps a range into a buffer cappacity.
+///
+/// Useful for allowing open-ended ranges on buffer methods
+fn clamp_buffer_range<B: Buffer + ?Sized, R: RangeBounds<usize>>(
+    buffer: &B,
+    range: R,
+) -> Range<usize> {
     let start: usize = match range.start_bound() {
         Included(index) => *index,
         Excluded(index) => *index + 1,
