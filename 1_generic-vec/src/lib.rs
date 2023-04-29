@@ -182,15 +182,6 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Removes and returns the element at position `index` within the vector,
     /// shifting all elements after it to the left.
     ///
-    /// Note: Because this shifts over the remaining elements, it has a
-    /// worst-case performance of *O*(*n*). If you don't need the order of elements
-    /// to be preserved, use [`swap_remove`] instead. If you'd like to remove
-    /// elements from the beginning of the `Vec`, consider using
-    /// [`VecDeque::pop_front`] instead.
-    ///
-    /// [`swap_remove`]: Vec::swap_remove
-    /// [`VecDeque::pop_front`]: crate::collections::VecDeque::pop_front
-    ///
     /// # Panics
     ///
     /// Panics if `index` is out of bounds.
