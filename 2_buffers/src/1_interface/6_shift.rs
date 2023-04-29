@@ -34,7 +34,7 @@ impl<B: ForwardBufferShiftImpl + ?Sized> BufferShift for B {
     }
 
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        todo!()
+        <Self as ForwardBufferShiftImpl>::Impl::shift_left(self, to_move, positions)
     }
 }
 
