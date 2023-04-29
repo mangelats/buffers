@@ -37,7 +37,22 @@ pub trait BufferShift: Buffer {
     /// The values must exist and the new location should be itself or an empty spot
     ///
     /// There should be enough space to the left
-    unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize);
+    unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+        let (start, end) = start_end(self, to_move);
+
+        debug_assert!(start >= positions);
+
+        let size = end - start;
+        let new_start = start - positions;
+
+        for current in 0..size {
+            let new_pos = new_start + current;
+            let old_pos = start + current;
+            self.write_value(new_pos, self.read_value(old_pos));
+        }
+
+        // Old values left as is, since the bytes themselves are considered garbage
+    }
 }
 
 pub trait ForwardBufferShiftImpl: Buffer {
