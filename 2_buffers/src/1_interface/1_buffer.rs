@@ -1,4 +1,6 @@
+use std::ops::Bound::*;
 use std::ops::Range;
+use std::ops::RangeBounds;
 
 use super::resize_error::ResizeError;
 
@@ -49,8 +51,8 @@ pub trait Buffer {
     ///
     /// # Safety
     /// All the positions in `values_range` must not be empty.
-    unsafe fn manually_drop_range(&mut self, values_range: Range<usize>) {
-        for index in values_range {
+    unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
+        for index in clamp_buffer_range(self, values_range) {
             self.manually_drop(index);
         }
     }
@@ -74,4 +76,61 @@ pub trait Buffer {
     unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
         Err(ResizeError::UnsupportedOperation)
     }
+
+    /// Shift a range of values to the right. By default it copies element by element.
+    /// # Safety
+    /// The values must exist and the new location should be itself or an empty spot
+    ///
+    /// There should be enough space to the right
+    unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+        let range = clamp_buffer_range(self, to_move);
+
+        debug_assert!(range.end + positions < self.capacity());
+
+        for old_pos in range.into_iter().rev() {
+            let new_pos = old_pos + positions;
+            self.write_value(new_pos, self.read_value(old_pos));
+        }
+
+        // Old values left as is, since the bytes themselves are considered garbage
+    }
+
+    /// Shift a range of values to the left. By default it copies element by element.
+    ///
+    /// # Safety
+    /// The values must exist and the new location should be itself or an empty spot
+    ///
+    /// There should be enough space to the left
+    unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+        let range = clamp_buffer_range(self, to_move);
+
+        debug_assert!(range.end >= positions);
+
+        for old_pos in range.into_iter() {
+            let new_pos = old_pos - positions;
+            self.write_value(new_pos, self.read_value(old_pos));
+        }
+
+        // Old values left as is, since the bytes themselves are considered garbage
+    }
+}
+
+/// Utility function that clamps a range into a buffer cappacity.
+///
+/// Useful for allowing open-ended ranges on buffer methods
+fn clamp_buffer_range<B: Buffer + ?Sized, R: RangeBounds<usize>>(
+    buffer: &B,
+    range: R,
+) -> Range<usize> {
+    let start: usize = match range.start_bound() {
+        Included(index) => *index,
+        Excluded(index) => *index + 1,
+        Unbounded => 0,
+    };
+    let end: usize = match range.end_bound() {
+        Included(index) => *index + 1,
+        Excluded(index) => *index,
+        Unbounded => buffer.capacity(),
+    };
+    start..end
 }
