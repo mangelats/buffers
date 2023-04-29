@@ -83,16 +83,16 @@ pub trait Buffer {
     ///
     /// There should be enough space to the right
     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        let (start, end) = clamp_range(self, to_move);
+        let range = clamp_range(self, to_move);
 
-        let size = end - start;
-        let new_end = end + positions;
+        let size = range.end - range.start;
+        let new_end = range.end + positions;
 
         debug_assert!(new_end < self.capacity());
 
         for current in 0..size {
             let new_pos = new_end - current;
-            let old_pos = end - current;
+            let old_pos = range.end - current;
             self.write_value(new_pos, self.read_value(old_pos));
         }
 
@@ -106,16 +106,16 @@ pub trait Buffer {
     ///
     /// There should be enough space to the left
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        let (start, end) = clamp_range(self, to_move);
+        let range = clamp_range(self, to_move);
 
-        debug_assert!(start >= positions);
+        debug_assert!(range.start >= positions);
 
-        let size = end - start;
-        let new_start = start - positions;
+        let size = range.end - range.start;
+        let new_start = range.start - positions;
 
         for current in 0..size {
             let new_pos = new_start + current;
-            let old_pos = start + current;
+            let old_pos = range.start + current;
             self.write_value(new_pos, self.read_value(old_pos));
         }
 
@@ -123,7 +123,7 @@ pub trait Buffer {
     }
 }
 
-fn clamp_range<B: Buffer + ?Sized, R: RangeBounds<usize>>(buffer: &B, range: R) -> (usize, usize) {
+fn clamp_range<B: Buffer + ?Sized, R: RangeBounds<usize>>(buffer: &B, range: R) -> Range<usize> {
     let start: usize = match range.start_bound() {
         Included(index) => *index,
         Excluded(index) => *index + 1,
@@ -134,5 +134,5 @@ fn clamp_range<B: Buffer + ?Sized, R: RangeBounds<usize>>(buffer: &B, range: R) 
         Excluded(index) => *index,
         Unbounded => buffer.capacity(),
     };
-    (start, end)
+    start..end
 }
