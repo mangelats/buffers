@@ -13,7 +13,4 @@ pub mod refs;
 #[path = "5_continuous_memory.rs"]
 pub mod continuous_memory;
 
-#[path = "6_shift.rs"]
-pub mod shift;
-
 pub use self::buffer::Buffer;
