@@ -308,6 +308,21 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Panics
     ///
     /// Panics if `index` is out of bounds.
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::heap::HeapBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
+    /// vec.reserve(4);
+    /// vec.push(0);
+    /// vec.push(1);
+    /// vec.push(2);
+    /// vec.push(3);
+    ///
+    ///
+    /// assert_eq!(*vec.index(0), 0);
+    /// ```
     pub fn remove(&mut self, index: usize) -> T {
         if index >= self.len {
             panic!("Index out of bounds")
