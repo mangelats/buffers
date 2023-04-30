@@ -112,7 +112,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// assert!(vec.capacity() >= 150);
     /// ```
     ///
-    ///
+    /// Or if it fails:
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
