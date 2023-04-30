@@ -320,7 +320,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// vec.push(2);
     /// vec.push(3);
     ///
-    ///
+    /// vec.remove(2);
     /// assert_eq!(*vec.index(0), 0);
     /// ```
     pub fn remove(&mut self, index: usize) -> T {
