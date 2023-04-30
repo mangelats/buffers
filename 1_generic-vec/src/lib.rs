@@ -104,6 +104,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Note that unlike `try_reserve`, this will request exactly the additional size to the buffer.
     ///
     /// # Examples
+    /// Ok case:
     /// ```
     /// # use generic_vec::Vector;
     /// let mut vec = Vector::<u32>::new();
@@ -112,7 +113,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// assert!(vec.capacity() >= 150);
     /// ```
     ///
-    /// Or if it fails:
+    /// Failing case:
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
