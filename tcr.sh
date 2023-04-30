@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 function tcr() {
-    cargo test --workspace --quiet --offline -- --show-output \
+    cargo test --workspace  --doc --quiet --offline -- --show-output \
+    && cargo test --workspace --quiet --offline \
     && git add -A \
     && git commit -m 'TCR' --quiet \
     || git reset --hard --quiet
