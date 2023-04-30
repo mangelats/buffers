@@ -18,6 +18,7 @@ pub struct Vector<T, B: Buffer<Element = T> = DefaultBuffer<T>> {
 impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Create a new vector using the given buffer.
     ///
+    /// # Example
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
@@ -33,6 +34,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
 
     /// Returns the number of elements currently in the Vector
     ///
+    /// # Example
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
@@ -46,6 +48,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
 
     /// Queries the buffer for its capacity
     ///
+    /// # Example
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
@@ -65,6 +68,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Panics
     /// Panics if it cannot grow
     ///
+    /// # Example
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
