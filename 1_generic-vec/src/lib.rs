@@ -129,6 +129,25 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Tries reserves capacity for at least `additional` more elements to be inserted.
     ///
     /// Note that unlike `try_reserve`, this will request exactly the additional size to the buffer.
+    ///
+    /// # Examples
+    /// Ok case:
+    /// ```
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32>::new();
+    /// let result = vec.try_reserve_exact(150);
+    /// assert_eq!(result.is_ok(), true);
+    /// assert!(vec.capacity() >= 150);
+    /// ```
+    ///
+    /// Failing case (an inline buffer cannot grow):
+    /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, InlineBuffer<_, 10>>::new();
+    /// let result = vec.try_reserve_exact(150);
+    /// assert_eq!(result.is_err(), true);
+    /// ```
     pub fn try_reserve_exact(&mut self, additional: usize) -> Result<(), ResizeError> {
         let target = self.len() + additional;
         if target > self.capacity() {
