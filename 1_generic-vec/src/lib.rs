@@ -272,6 +272,13 @@ where
     B: Buffer<Element = T> + Default,
 {
     /// Creates a new vector by default-constructing the underlying buffer.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use generic_vec::Vector;
+    /// let _vec = Vector::<u32>::new();
+    /// ```
     pub fn new() -> Vector<T, B> {
         Self::from_buffer(Default::default())
     }
