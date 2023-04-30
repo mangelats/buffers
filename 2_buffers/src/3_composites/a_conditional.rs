@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, ops::RangeBounds};
+use std::{marker::PhantomData, mem::MaybeUninit, ops::RangeBounds};
 
 use crate::interface::{
     continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
@@ -20,8 +20,8 @@ where
     B: Buffer<Element = T>,
     S: Selector,
 {
-    a: A,
-    b: B,
+    a: MaybeUninit<A>,
+    b: MaybeUninit<B>,
     _m: PhantomData<(T, S)>,
 }
 
@@ -31,10 +31,25 @@ where
     B: Buffer<Element = T>,
     S: Selector,
 {
-    pub fn new(a: A, b: B) -> Self {
+    pub fn with_a(a: A) -> Self {
+        debug_assert!(
+            S::SELECT_A,
+            "Should select A to create ConditionalBuffer with A"
+        );
         Self {
-            a,
-            b,
+            a: MaybeUninit::new(a),
+            b: MaybeUninit::uninit(),
+            _m: PhantomData,
+        }
+    }
+    pub fn with_b(b: B) -> Self {
+        debug_assert!(
+            !S::SELECT_A,
+            "Should not select A to create ConditionalBuffer with B"
+        );
+        Self {
+            a: MaybeUninit::uninit(),
+            b: MaybeUninit::new(b),
             _m: PhantomData,
         }
     }
@@ -47,7 +62,11 @@ where
     S: Selector,
 {
     fn default() -> Self {
-        Self::new(Default::default(), Default::default())
+        if S::SELECT_A {
+            Self::with_a(Default::default())
+        } else {
+            Self::with_b(Default::default())
+        }
     }
 }
 
@@ -60,56 +79,56 @@ where
     type Element = T;
     fn capacity(&self) -> usize {
         if S::SELECT_A {
-            self.a.capacity()
+            unsafe { self.a.assume_init_ref() }.capacity()
         } else {
-            self.b.capacity()
+            unsafe { self.b.assume_init_ref() }.capacity()
         }
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
         if S::SELECT_A {
-            self.a.read_value(index)
+            unsafe { self.a.assume_init_ref() }.read_value(index)
         } else {
-            self.b.read_value(index)
+            unsafe { self.b.assume_init_ref() }.read_value(index)
         }
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
         if S::SELECT_A {
-            self.a.write_value(index, value)
+            unsafe { self.a.assume_init_mut() }.write_value(index, value)
         } else {
-            self.b.write_value(index, value)
+            unsafe { self.b.assume_init_mut() }.write_value(index, value)
         }
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
         if S::SELECT_A {
-            self.a.manually_drop(index)
+            unsafe { self.a.assume_init_mut() }.manually_drop(index)
         } else {
-            self.b.manually_drop(index)
+            unsafe { self.b.assume_init_mut() }.manually_drop(index)
         }
     }
 
     unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
         if S::SELECT_A {
-            self.a.manually_drop_range(values_range)
+            unsafe { self.a.assume_init_mut() }.manually_drop_range(values_range)
         } else {
-            self.b.manually_drop_range(values_range)
+            unsafe { self.b.assume_init_mut() }.manually_drop_range(values_range)
         }
     }
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
         if S::SELECT_A {
-            self.a.try_grow(target)
+            unsafe { self.a.assume_init_mut() }.try_grow(target)
         } else {
-            self.b.try_grow(target)
+            unsafe { self.b.assume_init_mut() }.try_grow(target)
         }
     }
 
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
         if S::SELECT_A {
-            self.a.try_shrink(target)
+            unsafe { self.a.assume_init_mut() }.try_shrink(target)
         } else {
-            self.b.try_shrink(target)
+            unsafe { self.b.assume_init_mut() }.try_shrink(target)
         }
     }
 }
@@ -126,17 +145,17 @@ where
 
     unsafe fn ptr(&self, index: usize) -> Self::ConstantPointer {
         if S::SELECT_A {
-            self.a.ptr(index)
+            unsafe { self.a.assume_init_ref() }.ptr(index)
         } else {
-            self.b.ptr(index)
+            unsafe { self.b.assume_init_ref() }.ptr(index)
         }
     }
 
     unsafe fn mut_ptr(&mut self, index: usize) -> Self::MutablePointer {
         if S::SELECT_A {
-            self.a.mut_ptr(index)
+            unsafe { self.a.assume_init_mut() }.mut_ptr(index)
         } else {
-            self.b.mut_ptr(index)
+            unsafe { self.b.assume_init_mut() }.mut_ptr(index)
         }
     }
 }
@@ -161,17 +180,17 @@ where
 
     unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
         if S::SELECT_A {
-            self.a.index(index)
+            unsafe { self.a.assume_init_ref() }.index(index)
         } else {
-            self.b.index(index)
+            unsafe { self.b.assume_init_ref() }.index(index)
         }
     }
 
     unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
         if S::SELECT_A {
-            self.a.mut_index(index)
+            unsafe { self.a.assume_init_mut() }.mut_index(index)
         } else {
-            self.b.mut_index(index)
+            unsafe { self.b.assume_init_mut() }.mut_index(index)
         }
     }
 }
@@ -182,4 +201,19 @@ where
     B: Buffer<Element = T> + ContinuousMemoryBuffer,
     S: Selector,
 {
+}
+
+impl<T, A, B, S> Drop for ConditionalBuffer<T, A, B, S>
+where
+    A: Buffer<Element = T>,
+    B: Buffer<Element = T>,
+    S: Selector,
+{
+    fn drop(&mut self) {
+        if S::SELECT_A {
+            unsafe { self.a.assume_init_drop() }
+        } else {
+            unsafe { self.b.assume_init_drop() }
+        }
+    }
 }
