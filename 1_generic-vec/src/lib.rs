@@ -355,7 +355,9 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         let index = self.len;
         if index >= self.buffer.capacity() {
             unsafe {
-                self.buffer.try_grow(self.next_size()).map_err(|_| ())?;
+                self.buffer
+                    .try_grow(Self::at_least(self.len + 1))
+                    .map_err(|_| ())?;
             }
         }
         unsafe {
