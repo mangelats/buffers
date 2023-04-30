@@ -70,7 +70,6 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Example
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
     /// let mut vec = Vector::<u32>::new();
     /// vec.reserve(150);
@@ -90,7 +89,6 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Example
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
     /// let mut vec = Vector::<u32>::new();
     /// vec.reserve_exact(150);
@@ -104,6 +102,23 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Tries reserves capacity for at least `additional` more elements to be inserted.
     ///
     /// Note that unlike `try_reserve`, this will request exactly the additional size to the buffer.
+    ///
+    /// # Examples
+    /// ```
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32>::new();
+    /// let result = vec.try_reserve(150);
+    /// assert_eq!(result.is_ok(), true);
+    /// assert!(vec.capacity() >= 150);
+    /// ```
+    ///
+    /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, InlineBuffer<_, 10>>::new();
+    /// let result = vec.try_reserve(150);
+    /// assert_eq!(result.is_err(), true);
+    /// ```
     pub fn try_reserve(&mut self, additional: usize) -> Result<(), ResizeError> {
         // TODO Grow exponentially
         self.try_reserve_exact(additional)
