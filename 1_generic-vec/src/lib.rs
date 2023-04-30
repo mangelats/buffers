@@ -320,7 +320,8 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// vec.push(2);
     /// vec.push(3);
     ///
-    /// vec.remove(2);
+    /// vec.remove(1);
+    ///
     /// assert_eq!(*vec.index(0), 0);
     /// ```
     pub fn remove(&mut self, index: usize) -> T {
@@ -330,7 +331,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
 
         let result = unsafe { self.buffer.read_value(index) };
         unsafe {
-            self.buffer.shift_left(index..self.len, 1);
+            self.buffer.shift_left((index + 1)..self.len, 1);
         }
         self.len -= 1;
         result
