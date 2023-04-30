@@ -116,7 +116,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
     /// let mut vec = Vector::<u32, InlineBuffer<_, 10>>::new();
-    /// let result = vec.try_reserve(150);
+    /// let result = vec.try_reserve(150);  // Inline buffer cannot grow
     /// assert_eq!(result.is_err(), true);
     /// ```
     pub fn try_reserve(&mut self, additional: usize) -> Result<(), ResizeError> {
