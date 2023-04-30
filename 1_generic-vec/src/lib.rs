@@ -323,6 +323,8 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// vec.remove(1);
     ///
     /// assert_eq!(*vec.index(0), 0);
+    /// assert_eq!(*vec.index(1), 2);
+    /// assert_eq!(*vec.index(2), 3);
     /// ```
     pub fn remove(&mut self, index: usize) -> T {
         if index >= self.len {
