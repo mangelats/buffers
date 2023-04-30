@@ -45,6 +45,13 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     }
 
     /// Queries the buffer for its capacity
+    ///
+    /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// let vec = Vector::<_, InlineBuffer::<u32, 150>>::new();
+    /// assert_eq!(vec.capacity(), 150);
+    /// ```
     pub fn capacity(&self) -> usize {
         self.buffer.capacity()
     }
