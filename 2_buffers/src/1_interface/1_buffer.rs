@@ -85,7 +85,7 @@ pub trait Buffer {
     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
         let range = clamp_buffer_range(self, to_move);
 
-        debug_assert!(range.end + positions < self.capacity());
+        debug_assert!(range.end + positions <= self.capacity());
 
         for old_pos in range.into_iter().rev() {
             let new_pos = old_pos + positions;

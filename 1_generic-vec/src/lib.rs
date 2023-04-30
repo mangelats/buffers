@@ -18,6 +18,7 @@ pub struct Vector<T, B: Buffer<Element = T> = DefaultBuffer<T>> {
 impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Create a new vector using the given buffer.
     ///
+    /// # Example
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
@@ -33,6 +34,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
 
     /// Returns the number of elements currently in the Vector
     ///
+    /// # Example
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
     /// # use generic_vec::Vector;
@@ -45,6 +47,14 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     }
 
     /// Queries the buffer for its capacity
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// let vec = Vector::<_, InlineBuffer::<u32, 150>>::new();
+    /// assert_eq!(vec.capacity(), 150);
+    /// ```
     pub fn capacity(&self) -> usize {
         self.buffer.capacity()
     }
@@ -57,6 +67,14 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Panics
     /// Panics if it cannot grow
+    ///
+    /// # Example
+    /// ```
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32>::new();
+    /// vec.reserve(150);
+    /// assert!(vec.capacity() >= 150);
+    /// ```
     pub fn reserve(&mut self, additional: usize) {
         self.try_reserve(additional)
             .expect("Couldn't reserve the necessary space")
@@ -68,6 +86,14 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Panics
     /// Panics if it cannot grow
+    ///
+    /// # Example
+    /// ```
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32>::new();
+    /// vec.reserve_exact(150);
+    /// assert!(vec.capacity() >= 150);
+    /// ```
     pub fn reserve_exact(&mut self, additional: usize) {
         self.try_reserve_exact(additional)
             .expect("Couldn't reserve the necessary space")
@@ -76,6 +102,25 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Tries reserves capacity for at least `additional` more elements to be inserted.
     ///
     /// Note that unlike `try_reserve`, this will request exactly the additional size to the buffer.
+    ///
+    /// # Examples
+    /// Ok case:
+    /// ```
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32>::new();
+    /// let result = vec.try_reserve(150);
+    /// assert_eq!(result.is_ok(), true);
+    /// assert!(vec.capacity() >= 150);
+    /// ```
+    ///
+    /// Failing case (an inline buffer cannot grow):
+    /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, InlineBuffer<_, 10>>::new();
+    /// let result = vec.try_reserve(150);
+    /// assert_eq!(result.is_err(), true);
+    /// ```
     pub fn try_reserve(&mut self, additional: usize) -> Result<(), ResizeError> {
         // TODO Grow exponentially
         self.try_reserve_exact(additional)
@@ -84,6 +129,25 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Tries reserves capacity for at least `additional` more elements to be inserted.
     ///
     /// Note that unlike `try_reserve`, this will request exactly the additional size to the buffer.
+    ///
+    /// # Examples
+    /// Ok case:
+    /// ```
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32>::new();
+    /// let result = vec.try_reserve_exact(150);
+    /// assert_eq!(result.is_ok(), true);
+    /// assert!(vec.capacity() >= 150);
+    /// ```
+    ///
+    /// Failing case (an inline buffer cannot grow):
+    /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, InlineBuffer<_, 10>>::new();
+    /// let result = vec.try_reserve_exact(150);
+    /// assert_eq!(result.is_err(), true);
+    /// ```
     pub fn try_reserve_exact(&mut self, additional: usize) -> Result<(), ResizeError> {
         let target = self.len() + additional;
         if target > self.capacity() {
@@ -95,15 +159,39 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     }
 
     /// Shrinks the capacity of the vector as much as possible.
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::heap::HeapBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
+    /// vec.reserve(10);
+    /// assert!(vec.capacity() >= 10);
+    ///
+    /// vec.shrink_to_fit();
+    /// assert_eq!(vec.capacity(), 0);
+    /// ```
     pub fn shrink_to_fit(&mut self) {
         self.shrink_to(self.len())
     }
 
-    /// Shrinks the capacity of the vector with a lower bound.
+    /// Hints the vector that it may shrink up to a lower bound.
     ///
     /// The capacity will remain at least as large as both the length and the supplied value.
     ///
     /// If the current capacity is less than the lower limit, this is a no-op.
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::heap::HeapBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
+    /// vec.reserve(10);
+    /// assert!(vec.capacity() >= 10);
+    ///
+    /// vec.shrink_to(0);
+    /// assert_eq!(vec.capacity(), 0);
+    /// ```
     pub fn shrink_to(&mut self, min_capacity: usize) {
         let target = std::cmp::max(min_capacity, self.len());
         if target < self.capacity() {
@@ -136,6 +224,24 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Panics
     ///
     /// Panics if index is out of bounds.
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::heap::HeapBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
+    /// vec.reserve(4);
+    /// vec.push(0);
+    /// vec.push(1);
+    /// vec.push(2);
+    /// vec.push(3);
+    ///
+    /// vec.swap_remove(1);
+    ///
+    /// assert_eq!(*vec.index(0), 0);
+    /// assert_eq!(*vec.index(1), 3);
+    /// assert_eq!(*vec.index(2), 2);
+    /// ```
     pub fn swap_remove(&mut self, index: usize) -> T {
         if index >= self.len {
             panic!("Index out of bounds")
@@ -161,13 +267,31 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// #Panics
     ///     
     /// Panics if `index > len`.
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::heap::HeapBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
+    /// vec.reserve(4);
+    /// vec.push(0);
+    /// vec.push(1);
+    /// vec.push(2);
+    ///
+    /// vec.insert(1, 5);
+    ///
+    /// assert_eq!(*vec.index(0), 0);
+    /// assert_eq!(*vec.index(1), 5);
+    /// assert_eq!(*vec.index(2), 1);
+    /// assert_eq!(*vec.index(3), 2);
+    /// ```
     pub fn insert(&mut self, index: usize, element: T) {
         if index > self.len {
             panic!("Index out of bounds")
         }
 
         if self.len >= self.buffer.capacity() {
-            let resize_result = unsafe { self.buffer.try_grow(self.next_size()) };
+            let resize_result = unsafe { self.buffer.try_grow(Self::at_least(self.len + 1)) };
             resize_result.expect("Cannot grow the buffer when trying to insert a new value")
         }
 
@@ -184,6 +308,24 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Panics
     ///
     /// Panics if `index` is out of bounds.
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::heap::HeapBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
+    /// vec.reserve(4);
+    /// vec.push(0);
+    /// vec.push(1);
+    /// vec.push(2);
+    /// vec.push(3);
+    ///
+    /// vec.remove(1);
+    ///
+    /// assert_eq!(*vec.index(0), 0);
+    /// assert_eq!(*vec.index(1), 2);
+    /// assert_eq!(*vec.index(2), 3);
+    /// ```
     pub fn remove(&mut self, index: usize) -> T {
         if index >= self.len {
             panic!("Index out of bounds")
@@ -191,7 +333,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
 
         let result = unsafe { self.buffer.read_value(index) };
         unsafe {
-            self.buffer.shift_left(index..self.len, 1);
+            self.buffer.shift_left((index + 1)..self.len, 1);
         }
         self.len -= 1;
         result
@@ -213,7 +355,9 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         let index = self.len;
         if index >= self.buffer.capacity() {
             unsafe {
-                self.buffer.try_grow(self.next_size()).map_err(|_| ())?;
+                self.buffer
+                    .try_grow(Self::at_least(self.len + 1))
+                    .map_err(|_| ())?;
             }
         }
         unsafe {
@@ -262,8 +406,9 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         }
     }
 
-    fn next_size(&self) -> usize {
-        self.len + 1
+    fn at_least(min: usize) -> usize {
+        // TODO: grow more than necessary for performance reasons
+        min
     }
 }
 
