@@ -175,11 +175,23 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         self.shrink_to(self.len())
     }
 
-    /// Shrinks the capacity of the vector with a lower bound.
+    /// Hints the vector that it may shrink up to a lower bound.
     ///
     /// The capacity will remain at least as large as both the length and the supplied value.
     ///
     /// If the current capacity is less than the lower limit, this is a no-op.
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::heap::HeapBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
+    /// vec.reserve(10);
+    /// assert!(vec.capacity() >= 10);
+    ///
+    /// vec.shrink_to(0);
+    /// assert_eq!(vec.capacity(), 0);
+    /// ```
     pub fn shrink_to(&mut self, min_capacity: usize) {
         let target = std::cmp::max(min_capacity, self.len());
         if target < self.capacity() {
