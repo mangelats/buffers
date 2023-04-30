@@ -159,6 +159,15 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     }
 
     /// Shrinks the capacity of the vector as much as possible.
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::heap::HeapBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
+    /// vec.reserve(10);
+    /// assert!(vec.capacity() >= 10);
+    /// ```
     pub fn shrink_to_fit(&mut self) {
         self.shrink_to(self.len())
     }
