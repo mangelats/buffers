@@ -406,10 +406,6 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         }
     }
 
-    fn next_size(&self) -> usize {
-        Self::at_least(self.len + 1)
-    }
-
     fn at_least(min: usize) -> usize {
         // TODO: grow more than necessary for performance reasons
         min
