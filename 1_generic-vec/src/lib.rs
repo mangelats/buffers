@@ -267,6 +267,24 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// #Panics
     ///     
     /// Panics if `index > len`.
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::heap::HeapBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
+    /// vec.reserve(4);
+    /// vec.push(0);
+    /// vec.push(1);
+    /// vec.push(2);
+    ///
+    /// vec.insert(1, 5);
+    ///
+    /// assert_eq!(*vec.index(0), 0);
+    /// assert_eq!(*vec.index(1), 5);
+    /// assert_eq!(*vec.index(2), 1);
+    /// assert_eq!(*vec.index(3), 2);
+    /// ```
     pub fn insert(&mut self, index: usize, element: T) {
         if index > self.len {
             panic!("Index out of bounds")
