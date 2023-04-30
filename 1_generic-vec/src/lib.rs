@@ -167,6 +167,9 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(10);
     /// assert!(vec.capacity() >= 10);
+    ///
+    /// vec.shrink_to_fit();
+    /// assert_eq!(vec.capacity(), 0);
     /// ```
     pub fn shrink_to_fit(&mut self) {
         self.shrink_to(self.len())
