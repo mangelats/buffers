@@ -239,6 +239,8 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// vec.swap_remove(1);
     ///
     /// assert_eq!(*vec.index(0), 0);
+    /// assert_eq!(*vec.index(1), 3);
+    /// assert_eq!(*vec.index(2), 2);
     /// ```
     pub fn swap_remove(&mut self, index: usize) -> T {
         if index >= self.len {
