@@ -87,6 +87,15 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Panics
     /// Panics if it cannot grow
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// let mut vec = Vector::<u32>::new();
+    /// vec.reserve_exact(150);
+    /// assert!(vec.capacity() >= 150);
+    /// ```
     pub fn reserve_exact(&mut self, additional: usize) {
         self.try_reserve_exact(additional)
             .expect("Couldn't reserve the necessary space")
