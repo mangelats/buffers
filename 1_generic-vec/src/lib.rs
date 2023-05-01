@@ -462,7 +462,6 @@ impl<T, B> Vector<T, B>
 where
     B: Buffer<Element = T> + RefBuffer,
 {
-    #[allow(clippy::should_implement_trait)]
     /// Get a reference to the element in index
     ///
     /// # Safety
