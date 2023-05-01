@@ -46,6 +46,20 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         self.len
     }
 
+    /// Returns of the element is empty (doesn't have any elements).
+    ///
+    /// # Example
+    /// ```
+    /// # use buffers::base_buffers::inline::InlineBuffer;
+    /// # use generic_vec::Vector;
+    /// # type ExampleBuffer = InlineBuffer<u32, 1>;
+    /// let vec = Vector::<_, ExampleBuffer>::new();
+    /// assert_eq!(vec.is_empty(), true);
+    /// ```
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
     /// Queries the buffer for its capacity
     ///
     /// # Example
