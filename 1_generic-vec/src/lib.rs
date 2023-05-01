@@ -466,6 +466,7 @@ where
     ///
     /// # Safety
     /// index < self.len()
+    #[allow(clippy::should_implement_trait)]
     pub fn index(&self, index: usize) -> B::ConstantReference<'_> {
         debug_assert!(index < self.len());
         // SAFETY: values up to len exist
