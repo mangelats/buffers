@@ -18,7 +18,7 @@ pub trait ContinuousMemoryBuffer:
 {
     /// Get the slice represanted by the range
     ///
-    /// # SAFETY
+    /// # Safety
     /// The range must be a subset of the current capacity.
     /// The memory may not be written yet, so working with it may be UB.
     unsafe fn slice<R: RangeBounds<usize>>(&self, range: R) -> &[Self::Element] {
@@ -28,7 +28,7 @@ pub trait ContinuousMemoryBuffer:
 
     /// Get the mutable slice represanted by the range
     ///
-    /// # SAFETY
+    /// # Safety
     /// The range must be a subset of the current capacity.
     /// The memory may not be written yet, so working with it may be UB.
     unsafe fn mut_slice<R: RangeBounds<usize>>(&mut self, range: R) -> &mut [Self::Element] {
