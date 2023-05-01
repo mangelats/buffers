@@ -365,13 +365,11 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// let length = vec.len(); // Length is 1
     /// # assert_eq!(length, 1);
     /// ```
-    pub fn try_push(&mut self, value: T) -> Result<usize, ()> {
+    pub fn try_push(&mut self, value: T) -> Result<usize, ResizeError> {
         let index = self.len;
         if index >= self.buffer.capacity() {
             unsafe {
-                self.buffer
-                    .try_grow(Self::at_least(self.len + 1))
-                    .map_err(|_| ())?;
+                self.buffer.try_grow(Self::at_least(self.len + 1))?;
             }
         }
         unsafe {
