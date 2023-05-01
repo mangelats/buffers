@@ -462,11 +462,11 @@ impl<T, B> Vector<T, B>
 where
     B: Buffer<Element = T> + RefBuffer,
 {
+    #[allow(clippy::should_implement_trait)]
     /// Get a reference to the element in index
     ///
     /// # Safety
     /// index < self.len()
-    #[allow(clippy::should_implement_trait)]
     pub fn index(&self, index: usize) -> B::ConstantReference<'_> {
         debug_assert!(index < self.len());
         // SAFETY: values up to len exist
