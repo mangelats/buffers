@@ -139,7 +139,7 @@ where
     where
         Self: 'a;
 
-    unsafe fn index<'a>(&'a self, index: usize) -> Self::ConstantReference<'a> {
+    unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
         // For some reason the borrow checker can't check `self.inner.index(index)`
         match self.inner {
             EitherBuffer::First(ref b) => RefBuffer::index(b, index),
