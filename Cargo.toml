@@ -4,3 +4,4 @@ members = [
     "2_buffers",
     "a_test_utils"
 ]
+resolver = "2"
