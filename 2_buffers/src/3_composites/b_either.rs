@@ -1,8 +1,11 @@
 use std::{marker::PhantomData, ops::RangeBounds};
 
-use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
-    resize_error::ResizeError, Buffer,
+use crate::{
+    interface::{
+        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+        resize_error::ResizeError, Buffer,
+    },
+    never::Never,
 };
 
 /// Utility buffer that may contain one of two buffers.
@@ -162,9 +165,3 @@ where
     B: Buffer<Element = T> + ContinuousMemoryBuffer,
 {
 }
-
-/// A type that can never exist.
-///
-/// Equivalent to the never type (!) which is experimental
-/// (see issue #35121 <https://github.com/rust-lang/rust/issues/35121>).
-pub enum Never {}

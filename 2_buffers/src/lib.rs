@@ -14,5 +14,8 @@ pub mod base_buffers;
 #[path = "3_composites/_mod.rs"]
 pub mod composites;
 
+#[path = "a_never.rs"]
+pub mod never;
+
 pub type DefaultBuffer<T, const SMALL_VECTOR_SIZE: usize = 256> =
     ZstOptBuffer<T, SvoBuffer<T, HeapBuffer<T>, SMALL_VECTOR_SIZE>>;
