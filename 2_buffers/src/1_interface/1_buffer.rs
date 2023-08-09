@@ -62,7 +62,7 @@ pub trait Buffer {
     /// This operation may fail a number of ways depending on the implementation and `Self::Element`
     ///
     /// # Safety
-    /// Target size must be bigger than the current capacity (and thus, also 0)
+    /// Target size must be bigger than the current capacity (and thus, also bigger than 0)
     unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
         Err(ResizeError::UnsupportedOperation)
     }
