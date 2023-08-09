@@ -6,6 +6,7 @@ use crate::interface::{buffer_mod::BufferMod, resize_error::ResizeError, Buffer}
 pub struct ExponentGrowthBuffer<B: Buffer>(B);
 
 impl<B: Buffer> ExponentGrowthBuffer<B> {
+    /// Make a new [`ExponentGrowthBuffer<B>`] given `B`.
     pub fn from(b: B) -> Self {
         Self(b)
     }
@@ -13,7 +14,7 @@ impl<B: Buffer> ExponentGrowthBuffer<B> {
 
 impl<B: Buffer + Default> Default for ExponentGrowthBuffer<B> {
     fn default() -> Self {
-        Self(Default::default())
+        Self::from(Default::default())
     }
 }
 

@@ -9,6 +9,8 @@ use crate::interface::{buffer_mod::BufferMod, resize_error::ResizeError, Buffer}
 pub struct AtLeastBuffer<const MIN_SIZE: usize, B: Buffer>(B);
 
 impl<const MIN_SIZE: usize, B: Buffer> AtLeastBuffer<MIN_SIZE, B> {
+    /// Make a new [`AtLeastBuffer<MIN_SIZE, B>`] given `B`.
+    /// Note that you should specify `MIN_SIZE` in the typing.
     pub fn from(buff: B) -> Self {
         Self(buff)
     }
@@ -16,7 +18,7 @@ impl<const MIN_SIZE: usize, B: Buffer> AtLeastBuffer<MIN_SIZE, B> {
 
 impl<const MIN_SIZE: usize, B: Buffer + Default> Default for AtLeastBuffer<MIN_SIZE, B> {
     fn default() -> Self {
-        Self(Default::default())
+        Self::from(Default::default())
     }
 }
 
