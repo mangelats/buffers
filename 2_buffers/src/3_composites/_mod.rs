@@ -7,6 +7,9 @@ pub mod svo;
 #[path = "3_exponential_growth.rs"]
 pub mod exponential_growth;
 
+#[path = "4_at_least.rs"]
+pub mod at_least;
+
 #[path = "a_conditional.rs"]
 pub mod conditional;
 
