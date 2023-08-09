@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "1_generic-vec",
-    "2_buffers",
+    "1_buffers",
+    "2_buffers-collections",
     "a_test_utils"
 ]
 resolver = "2"

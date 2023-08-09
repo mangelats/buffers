@@ -21,7 +21,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let _vec = Vector::from_buffer(InlineBuffer::<u32, 1>::new());
     /// ```
     pub fn from_buffer(buffer: B) -> Vector<T, B> {
@@ -37,7 +37,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let vec = Vector::<_, ExampleBuffer>::new();
     /// assert_eq!(vec.len(), 0);
@@ -51,7 +51,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let vec = Vector::<_, ExampleBuffer>::new();
     /// assert_eq!(vec.is_empty(), true);
@@ -65,7 +65,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let vec = Vector::<_, InlineBuffer::<u32, 150>>::new();
     /// assert_eq!(vec.capacity(), 150);
     /// ```
@@ -84,7 +84,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Example
     /// ```
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32>::new();
     /// vec.reserve(150);
     /// assert!(vec.capacity() >= 150);
@@ -103,7 +103,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Example
     /// ```
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32>::new();
     /// vec.reserve_exact(150);
     /// assert!(vec.capacity() >= 150);
@@ -120,7 +120,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Examples
     /// Ok case:
     /// ```
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32>::new();
     /// let result = vec.try_reserve(150);
     /// assert_eq!(result.is_ok(), true);
@@ -130,7 +130,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Failing case (an inline buffer cannot grow):
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32, InlineBuffer<_, 10>>::new();
     /// let result = vec.try_reserve(150);
     /// assert_eq!(result.is_err(), true);
@@ -147,7 +147,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Examples
     /// Ok case:
     /// ```
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32>::new();
     /// let result = vec.try_reserve_exact(150);
     /// assert_eq!(result.is_ok(), true);
@@ -157,7 +157,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Failing case (an inline buffer cannot grow):
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32, InlineBuffer<_, 10>>::new();
     /// let result = vec.try_reserve_exact(150);
     /// assert_eq!(result.is_err(), true);
@@ -177,7 +177,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(10);
     /// assert!(vec.capacity() >= 10);
@@ -198,7 +198,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(10);
     /// assert!(vec.capacity() >= 10);
@@ -242,7 +242,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(4);
     /// vec.push(0);
@@ -285,7 +285,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(4);
     /// vec.push(0);
@@ -326,7 +326,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(4);
     /// vec.push(0);
@@ -358,7 +358,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let mut vec = Vector::<u32, ExampleBuffer>::new();
     /// vec.try_push(1);
@@ -384,7 +384,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let mut vec = Vector::<u32, ExampleBuffer>::new();
     /// vec.push(1);
@@ -400,7 +400,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// ```
     /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let mut vec = Vector::<u32, ExampleBuffer>::new();
     /// vec.push(123);
@@ -433,7 +433,7 @@ where
     /// # Example
     ///
     /// ```
-    /// # use generic_vec::Vector;
+    /// # use buffers_collections::Vector;
     /// let _vec = Vector::<u32>::new();
     /// ```
     pub fn new() -> Vector<T, B> {
