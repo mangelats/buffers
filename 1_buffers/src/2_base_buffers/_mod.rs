@@ -1,3 +1,6 @@
+//! This module contains the base buffers, or the buffers that contain data by
+//! themselves.
+
 #[path = "1_inline.rs"]
 pub mod inline;
 

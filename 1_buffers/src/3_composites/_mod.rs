@@ -1,3 +1,7 @@
+//! This module contains buffers which use one or more base buffers but change
+//! their behaviour. This may be optimizations, change how the buffer grows,
+//! etc.
+
 #[path = "1_zsto.rs"]
 pub mod zsto;
 
