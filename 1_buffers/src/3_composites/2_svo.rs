@@ -14,14 +14,14 @@ use super::either::EitherBuffer;
 ///
 /// This means that it can work with both an inline buffer (which is usually left on the stack)
 /// but can automatically grow into a bigger buffer (usually a heap-allocated one).
-pub struct SvoBuffer<T, B, const SMALL_SIZE: usize>
+pub struct SvoBuffer<T, const SMALL_SIZE: usize, B>
 where
     B: Buffer<Element = T> + Default,
 {
     inner: EitherBuffer<T, InlineBuffer<T, SMALL_SIZE>, B>,
 }
 
-impl<T, B, const SMALL_SIZE: usize> SvoBuffer<T, B, SMALL_SIZE>
+impl<T, const SMALL_SIZE: usize, B> SvoBuffer<T, SMALL_SIZE, B>
 where
     B: Buffer<Element = T> + Default,
 {
@@ -56,7 +56,7 @@ where
     }
 }
 
-impl<T, B, const SMALL_SIZE: usize> Default for SvoBuffer<T, B, SMALL_SIZE>
+impl<T, const SMALL_SIZE: usize, B> Default for SvoBuffer<T, SMALL_SIZE, B>
 where
     B: Buffer<Element = T> + Default,
 {
@@ -67,7 +67,7 @@ where
     }
 }
 
-impl<T, B, const SMALL_SIZE: usize> Buffer for SvoBuffer<T, B, SMALL_SIZE>
+impl<T, const SMALL_SIZE: usize, B> Buffer for SvoBuffer<T, SMALL_SIZE, B>
 where
     B: Buffer<Element = T> + Default,
 {
@@ -108,7 +108,7 @@ where
     }
 }
 
-impl<T, B, const SMALL_SIZE: usize> PtrBuffer for SvoBuffer<T, B, SMALL_SIZE>
+impl<T, const SMALL_SIZE: usize, B> PtrBuffer for SvoBuffer<T, SMALL_SIZE, B>
 where
     B: Buffer<Element = T>
         + Default
@@ -126,7 +126,7 @@ where
     }
 }
 
-impl<T, B, const SMALL_SIZE: usize> RefBuffer for SvoBuffer<T, B, SMALL_SIZE>
+impl<T, const SMALL_SIZE: usize, B> RefBuffer for SvoBuffer<T, SMALL_SIZE, B>
 where
     B: Buffer<Element = T> + Default,
     for<'a> B: RefBuffer<ConstantReference<'a> = &'a T, MutableReference<'a> = &'a mut T> + 'a,
@@ -158,7 +158,7 @@ where
     }
 }
 
-impl<T, B, const SMALL_SIZE: usize> ContinuousMemoryBuffer for SvoBuffer<T, B, SMALL_SIZE> where
+impl<T, const SMALL_SIZE: usize, B> ContinuousMemoryBuffer for SvoBuffer<T, SMALL_SIZE, B> where
     B: Buffer<Element = T> + Default + ContinuousMemoryBuffer
 {
 }
@@ -171,7 +171,7 @@ mod tests {
 
     #[test]
     fn should_be_able_to_grow() {
-        let mut buffer: SvoBuffer<u32, HeapBuffer<u32>, 1> = Default::default();
+        let mut buffer: SvoBuffer<u32, 1, HeapBuffer<u32>> = Default::default();
         assert_eq!(buffer.capacity(), 1);
         unsafe { buffer.try_grow(32) }.expect("Should be able to grow");
         assert!(buffer.capacity() >= 32)
@@ -179,7 +179,7 @@ mod tests {
 
     #[test]
     fn should_move_elements_when_growing() {
-        let mut buffer: SvoBuffer<u32, HeapBuffer<u32>, 1> = Default::default();
+        let mut buffer: SvoBuffer<u32, 1, HeapBuffer<u32>> = Default::default();
         unsafe {
             buffer.write_value(0, 123);
             buffer.try_grow(32).expect("Should be able to grow");
