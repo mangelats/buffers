@@ -1,68 +1,59 @@
 use std::ops::RangeBounds;
 
-use crate::{
-    interface::{
-        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
-        resize_error::ResizeError, Buffer,
-    },
-    never::PhantomNever,
+use crate::interface::{
+    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+    resize_error::ResizeError, Buffer,
 };
 
 /// Utility buffer that may contain one of two buffers.
 ///
 /// It's a Buffer itself, forwarding the requests to the currently selected.
-pub enum EitherBuffer<T, A, B>
+pub enum EitherBuffer<A, B>
 where
-    A: Buffer<Element = T>,
-    B: Buffer<Element = T>,
+    A: Buffer,
+    B: Buffer<Element = A::Element>,
 {
     /// First option (A buffer)
     First(A),
     /// Second option (B buffer)
     Second(B),
-
-    /// Internal option that never can be selected which holds PhantomData to T
-    _InternalMarker(PhantomNever<T>),
 }
 
-impl<T, A, B> Default for EitherBuffer<T, A, B>
+impl<A, B> Default for EitherBuffer<A, B>
 where
-    A: Buffer<Element = T> + Default,
-    B: Buffer<Element = T>,
+    A: Buffer + Default,
+    B: Buffer<Element = A::Element>,
 {
     fn default() -> Self {
         Self::First(Default::default())
     }
 }
 
-impl<T, A, B> Buffer for EitherBuffer<T, A, B>
+impl<A, B> Buffer for EitherBuffer<A, B>
 where
-    A: Buffer<Element = T>,
-    B: Buffer<Element = T>,
+    A: Buffer,
+    B: Buffer<Element = A::Element>,
 {
-    type Element = T;
+    type Element = A::Element;
 
     fn capacity(&self) -> usize {
         match self {
             EitherBuffer::First(buf) => buf.capacity(),
             EitherBuffer::Second(buf) => buf.capacity(),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
-    unsafe fn read_value(&self, index: usize) -> T {
+    unsafe fn read_value(&self, index: usize) -> Self::Element {
         match self {
             EitherBuffer::First(buf) => buf.read_value(index),
             EitherBuffer::Second(buf) => buf.read_value(index),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: T) {
+    unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
         match self {
             EitherBuffer::First(buf) => buf.write_value(index, value),
             EitherBuffer::Second(buf) => buf.write_value(index, value),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -70,7 +61,6 @@ where
         match self {
             EitherBuffer::First(buf) => buf.manually_drop(index),
             EitherBuffer::Second(buf) => buf.manually_drop(index),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -78,7 +68,6 @@ where
         match self {
             EitherBuffer::First(buf) => buf.manually_drop_range(values_range),
             EitherBuffer::Second(buf) => buf.manually_drop_range(values_range),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -86,7 +75,6 @@ where
         match self {
             EitherBuffer::First(buf) => buf.try_grow(target),
             EitherBuffer::Second(buf) => buf.try_grow(target),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -94,15 +82,14 @@ where
         match self {
             EitherBuffer::First(buf) => buf.try_shrink(target),
             EitherBuffer::Second(buf) => buf.try_shrink(target),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 }
 
-impl<T, A, B> PtrBuffer for EitherBuffer<T, A, B>
+impl<A, B> PtrBuffer for EitherBuffer<A, B>
 where
-    A: Buffer<Element = T> + PtrBuffer,
-    B: Buffer<Element = T>
+    A: PtrBuffer,
+    B: Buffer<Element = A::Element>
         + PtrBuffer<ConstantPointer = A::ConstantPointer, MutablePointer = A::MutablePointer>,
 {
     type ConstantPointer = A::ConstantPointer;
@@ -112,7 +99,6 @@ where
         match self {
             EitherBuffer::First(buf) => buf.ptr(index),
             EitherBuffer::Second(buf) => buf.ptr(index),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -120,15 +106,15 @@ where
         match self {
             EitherBuffer::First(buf) => buf.mut_ptr(index),
             EitherBuffer::Second(buf) => buf.mut_ptr(index),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 }
 
-impl<T, A, B> RefBuffer for EitherBuffer<T, A, B>
+impl<A, B> RefBuffer for EitherBuffer<A, B>
 where
-    A: Buffer<Element = T> + RefBuffer,
-    B: Buffer<Element = T>,
+    A: RefBuffer,
+    B: Buffer<Element = A::Element>,
+
     for<'a> B: RefBuffer<
             ConstantReference<'a> = A::ConstantReference<'a>,
             MutableReference<'a> = A::MutableReference<'a>,
@@ -146,7 +132,6 @@ where
         match self {
             EitherBuffer::First(buf) => buf.index(index),
             EitherBuffer::Second(buf) => buf.index(index),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -154,14 +139,13 @@ where
         match self {
             EitherBuffer::First(buf) => buf.mut_index(index),
             EitherBuffer::Second(buf) => buf.mut_index(index),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 }
 
-impl<T, A, B> ContinuousMemoryBuffer for EitherBuffer<T, A, B>
+impl<A, B> ContinuousMemoryBuffer for EitherBuffer<A, B>
 where
-    A: Buffer<Element = T> + ContinuousMemoryBuffer,
-    B: Buffer<Element = T> + ContinuousMemoryBuffer,
+    A: ContinuousMemoryBuffer,
+    B: Buffer<Element = A::Element> + ContinuousMemoryBuffer,
 {
 }

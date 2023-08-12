@@ -4,12 +4,9 @@ Another way of looking at memory management for collections.
 To define a buffer, compose the parts you'd like, and then use a collection:
 ```rust
 type ExampleBuffer<T> = ZstoBuffer<  // Optimize if T is a Zero-Sized Type
-  T,
   ExponentGrowthBuffer< // Make the buffer to grow exponentially (powers of 2)
-    T,
     SvoBuffer<          // Add Small Vector Optimization
-      T,
-      128,              // Size of the small vector
+      128,              // Size of the small vector (in number of elements)
       HeapBuffer<T>,    // Save the values on the heap (base buffer)
     >
   >
@@ -17,10 +14,6 @@ type ExampleBuffer<T> = ZstoBuffer<  // Optimize if T is a Zero-Sized Type
 
 let mut example_vector: Vector<u32, ExampleBuffer<_>> = Vector::new()
 ```
-
-Unfortunately you have to add the generic type (`T` in this example) to every
-single buffer. Usually you can elide them with underscore (`_`) if you specify
-the first one.
 
 ## The model
 Currently when using collections the collection is the responsible for managing

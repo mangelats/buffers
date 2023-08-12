@@ -18,4 +18,4 @@ pub mod composites;
 pub mod never;
 
 pub type DefaultBuffer<T, const SMALL_VECTOR_SIZE: usize = 256> =
-    ZstoBuffer<T, SvoBuffer<T, SMALL_VECTOR_SIZE, HeapBuffer<T>>>;
+    ZstoBuffer<SvoBuffer<SMALL_VECTOR_SIZE, HeapBuffer<T>>>;

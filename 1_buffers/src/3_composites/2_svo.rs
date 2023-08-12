@@ -14,16 +14,16 @@ use super::either::EitherBuffer;
 ///
 /// This means that it can work with both an inline buffer (which is usually left on the stack)
 /// but can automatically grow into a bigger buffer (usually a heap-allocated one).
-pub struct SvoBuffer<T, const SMALL_SIZE: usize, B>
+pub struct SvoBuffer<const SMALL_SIZE: usize, B>
 where
-    B: Buffer<Element = T> + Default,
+    B: Buffer + Default,
 {
-    inner: EitherBuffer<T, InlineBuffer<T, SMALL_SIZE>, B>,
+    inner: EitherBuffer<InlineBuffer<B::Element, SMALL_SIZE>, B>,
 }
 
-impl<T, const SMALL_SIZE: usize, B> SvoBuffer<T, SMALL_SIZE, B>
+impl<const SMALL_SIZE: usize, B> SvoBuffer<SMALL_SIZE, B>
 where
-    B: Buffer<Element = T> + Default,
+    B: Buffer + Default,
 {
     /// Creates a new empty buffer
     pub fn new() -> Self {
@@ -56,9 +56,9 @@ where
     }
 }
 
-impl<T, const SMALL_SIZE: usize, B> Default for SvoBuffer<T, SMALL_SIZE, B>
+impl<const SMALL_SIZE: usize, B> Default for SvoBuffer<SMALL_SIZE, B>
 where
-    B: Buffer<Element = T> + Default,
+    B: Buffer + Default,
 {
     fn default() -> Self {
         Self {
@@ -67,21 +67,21 @@ where
     }
 }
 
-impl<T, const SMALL_SIZE: usize, B> Buffer for SvoBuffer<T, SMALL_SIZE, B>
+impl<const SMALL_SIZE: usize, B> Buffer for SvoBuffer<SMALL_SIZE, B>
 where
-    B: Buffer<Element = T> + Default,
+    B: Buffer + Default,
 {
-    type Element = T;
+    type Element = B::Element;
 
     fn capacity(&self) -> usize {
         self.inner.capacity()
     }
 
-    unsafe fn read_value(&self, index: usize) -> T {
+    unsafe fn read_value(&self, index: usize) -> Self::Element {
         self.inner.read_value(index)
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: T) {
+    unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
         self.inner.write_value(index, value)
     }
 
@@ -96,26 +96,27 @@ where
         match self.inner {
             EitherBuffer::First(_) => self.move_into_big(target),
             EitherBuffer::Second(ref mut buf) => buf.try_grow(target),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
         match self.inner {
             EitherBuffer::First(_) => Ok(()),
             EitherBuffer::Second(ref mut buf) => buf.try_shrink(target),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 }
 
-impl<T, const SMALL_SIZE: usize, B> PtrBuffer for SvoBuffer<T, SMALL_SIZE, B>
+impl<const SMALL_SIZE: usize, B> PtrBuffer for SvoBuffer<SMALL_SIZE, B>
 where
-    B: Buffer<Element = T>
+    B: Buffer
         + Default
-        + PtrBuffer<ConstantPointer = *const T, MutablePointer = *mut T>,
+        + PtrBuffer<
+            ConstantPointer = *const <B as Buffer>::Element,
+            MutablePointer = *mut <B as Buffer>::Element,
+        >,
 {
-    type ConstantPointer = *const T;
-    type MutablePointer = *mut T;
+    type ConstantPointer = B::ConstantPointer;
+    type MutablePointer = B::MutablePointer;
 
     unsafe fn ptr(&self, index: usize) -> *const Self::Element {
         self.inner.ptr(index)
@@ -126,25 +127,23 @@ where
     }
 }
 
-impl<T, const SMALL_SIZE: usize, B> RefBuffer for SvoBuffer<T, SMALL_SIZE, B>
+impl<const SMALL_SIZE: usize, B> RefBuffer for SvoBuffer<SMALL_SIZE, B>
 where
-    B: Buffer<Element = T> + Default,
-    for<'a> B: RefBuffer<ConstantReference<'a> = &'a T, MutableReference<'a> = &'a mut T> + 'a,
+    B: Buffer + Default,
+    for<'a> B: RefBuffer<
+            ConstantReference<'a> = &'a <B as Buffer>::Element,
+            MutableReference<'a> = &'a mut <B as Buffer>::Element,
+        > + 'a,
 {
-    type ConstantReference<'a> = &'a T
-    where
-        Self: 'a;
+    type ConstantReference<'a> = B::ConstantReference<'a>;
 
-    type MutableReference<'a> = &'a mut T
-    where
-        Self: 'a;
+    type MutableReference<'a> = B::MutableReference<'a>;
 
     unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
         // For some reason the borrow checker can't check `self.inner.index(index)`
         match self.inner {
             EitherBuffer::First(ref b) => RefBuffer::index(b, index),
             EitherBuffer::Second(ref b) => RefBuffer::index(b, index),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -153,13 +152,12 @@ where
         match self.inner {
             EitherBuffer::First(ref mut b) => RefBuffer::mut_index(b, index),
             EitherBuffer::Second(ref mut b) => RefBuffer::mut_index(b, index),
-            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 }
 
-impl<T, const SMALL_SIZE: usize, B> ContinuousMemoryBuffer for SvoBuffer<T, SMALL_SIZE, B> where
-    B: Buffer<Element = T> + Default + ContinuousMemoryBuffer
+impl<const SMALL_SIZE: usize, B> ContinuousMemoryBuffer for SvoBuffer<SMALL_SIZE, B> where
+    B: Buffer + Default + ContinuousMemoryBuffer
 {
 }
 
@@ -171,7 +169,7 @@ mod tests {
 
     #[test]
     fn should_be_able_to_grow() {
-        let mut buffer: SvoBuffer<u32, 1, HeapBuffer<u32>> = Default::default();
+        let mut buffer: SvoBuffer<1, HeapBuffer<u32>> = Default::default();
         assert_eq!(buffer.capacity(), 1);
         unsafe { buffer.try_grow(32) }.expect("Should be able to grow");
         assert!(buffer.capacity() >= 32)
@@ -179,7 +177,7 @@ mod tests {
 
     #[test]
     fn should_move_elements_when_growing() {
-        let mut buffer: SvoBuffer<u32, 1, HeapBuffer<u32>> = Default::default();
+        let mut buffer: SvoBuffer<1, HeapBuffer<u32>> = Default::default();
         unsafe {
             buffer.write_value(0, 123);
             buffer.try_grow(32).expect("Should be able to grow");

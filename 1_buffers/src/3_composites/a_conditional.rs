@@ -14,21 +14,21 @@ pub trait Selector {
 ///
 /// Note that this uses both buffers but only uses one. This may be able to change
 /// with generic const expressions.
-pub struct ConditionalBuffer<T, A, B, S>
+pub struct ConditionalBuffer<A, B, S>
 where
-    A: Buffer<Element = T>,
-    B: Buffer<Element = T>,
+    A: Buffer,
+    B: Buffer<Element = A::Element>,
     S: Selector,
 {
     a: MaybeUninit<A>,
     b: MaybeUninit<B>,
-    _m: PhantomData<(T, S)>,
+    _m: PhantomData<S>,
 }
 
-impl<T, A, B, S> ConditionalBuffer<T, A, B, S>
+impl<A, B, S> ConditionalBuffer<A, B, S>
 where
-    A: Buffer<Element = T>,
-    B: Buffer<Element = T>,
+    A: Buffer,
+    B: Buffer<Element = A::Element>,
     S: Selector,
 {
     pub fn with_a(a: A) -> Self {
@@ -55,10 +55,10 @@ where
     }
 }
 
-impl<T, A, B, S> Default for ConditionalBuffer<T, A, B, S>
+impl<A, B, S> Default for ConditionalBuffer<A, B, S>
 where
-    A: Buffer<Element = T> + Default,
-    B: Buffer<Element = T> + Default,
+    A: Buffer + Default,
+    B: Buffer<Element = A::Element> + Default,
     S: Selector,
 {
     fn default() -> Self {
@@ -70,13 +70,13 @@ where
     }
 }
 
-impl<T, A, B, S> Buffer for ConditionalBuffer<T, A, B, S>
+impl<A, B, S> Buffer for ConditionalBuffer<A, B, S>
 where
-    A: Buffer<Element = T>,
-    B: Buffer<Element = T>,
+    A: Buffer,
+    B: Buffer<Element = A::Element>,
     S: Selector,
 {
-    type Element = T;
+    type Element = A::Element;
     fn capacity(&self) -> usize {
         if S::SELECT_A {
             unsafe { self.a.assume_init_ref() }.capacity()
@@ -85,7 +85,7 @@ where
         }
     }
 
-    unsafe fn read_value(&self, index: usize) -> T {
+    unsafe fn read_value(&self, index: usize) -> Self::Element {
         if S::SELECT_A {
             unsafe { self.a.assume_init_ref() }.read_value(index)
         } else {
@@ -93,7 +93,7 @@ where
         }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: T) {
+    unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
         if S::SELECT_A {
             unsafe { self.a.assume_init_mut() }.write_value(index, value)
         } else {
@@ -133,10 +133,10 @@ where
     }
 }
 
-impl<T, A, B, S> PtrBuffer for ConditionalBuffer<T, A, B, S>
+impl<A, B, S> PtrBuffer for ConditionalBuffer<A, B, S>
 where
-    A: Buffer<Element = T> + PtrBuffer,
-    B: Buffer<Element = T>
+    A: PtrBuffer,
+    B: Buffer<Element = A::Element>
         + PtrBuffer<ConstantPointer = A::ConstantPointer, MutablePointer = A::MutablePointer>,
     S: Selector,
 {
@@ -160,10 +160,11 @@ where
     }
 }
 
-impl<T, A, B, S> RefBuffer for ConditionalBuffer<T, A, B, S>
+impl<A, B, S> RefBuffer for ConditionalBuffer<A, B, S>
 where
-    A: Buffer<Element = T> + RefBuffer,
-    B: Buffer<Element = T>,
+    A: RefBuffer,
+    B: Buffer<Element = A::Element>,
+
     for<'a> B: RefBuffer<
             ConstantReference<'a> = A::ConstantReference<'a>,
             MutableReference<'a> = A::MutableReference<'a>,
@@ -195,18 +196,18 @@ where
     }
 }
 
-impl<T, A, B, S> ContinuousMemoryBuffer for ConditionalBuffer<T, A, B, S>
+impl<A, B, S> ContinuousMemoryBuffer for ConditionalBuffer<A, B, S>
 where
-    A: Buffer<Element = T> + ContinuousMemoryBuffer,
-    B: Buffer<Element = T> + ContinuousMemoryBuffer,
+    A: ContinuousMemoryBuffer,
+    B: Buffer<Element = A::Element> + ContinuousMemoryBuffer,
     S: Selector,
 {
 }
 
-impl<T, A, B, S> Drop for ConditionalBuffer<T, A, B, S>
+impl<A, B, S> Drop for ConditionalBuffer<A, B, S>
 where
-    A: Buffer<Element = T>,
-    B: Buffer<Element = T>,
+    A: Buffer,
+    B: Buffer<Element = A::Element>,
     S: Selector,
 {
     fn drop(&mut self) {
