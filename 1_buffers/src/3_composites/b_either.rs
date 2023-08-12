@@ -1,11 +1,11 @@
-use std::{marker::PhantomData, ops::RangeBounds};
+use std::ops::RangeBounds;
 
 use crate::{
     interface::{
         continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
         resize_error::ResizeError, Buffer,
     },
-    never::Never,
+    never::PhantomNever,
 };
 
 /// Utility buffer that may contain one of two buffers.
@@ -22,7 +22,7 @@ where
     Second(B),
 
     /// Internal option that never can be selected which holds PhantomData to T
-    _InternalMarker(Never, PhantomData<T>),
+    _InternalMarker(PhantomNever<T>),
 }
 
 impl<T, A, B> Default for EitherBuffer<T, A, B>
@@ -46,7 +46,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.capacity(),
             EitherBuffer::Second(buf) => buf.capacity(),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -54,7 +54,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.read_value(index),
             EitherBuffer::Second(buf) => buf.read_value(index),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -62,7 +62,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.write_value(index, value),
             EitherBuffer::Second(buf) => buf.write_value(index, value),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -70,7 +70,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.manually_drop(index),
             EitherBuffer::Second(buf) => buf.manually_drop(index),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -78,7 +78,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.manually_drop_range(values_range),
             EitherBuffer::Second(buf) => buf.manually_drop_range(values_range),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -86,7 +86,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.try_grow(target),
             EitherBuffer::Second(buf) => buf.try_grow(target),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -94,7 +94,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.try_shrink(target),
             EitherBuffer::Second(buf) => buf.try_shrink(target),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 }
@@ -112,7 +112,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.ptr(index),
             EitherBuffer::Second(buf) => buf.ptr(index),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -120,7 +120,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.mut_ptr(index),
             EitherBuffer::Second(buf) => buf.mut_ptr(index),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 }
@@ -146,7 +146,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.index(index),
             EitherBuffer::Second(buf) => buf.index(index),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -154,7 +154,7 @@ where
         match self {
             EitherBuffer::First(buf) => buf.mut_index(index),
             EitherBuffer::Second(buf) => buf.mut_index(index),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 }

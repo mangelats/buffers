@@ -96,14 +96,14 @@ where
         match self.inner {
             EitherBuffer::First(_) => self.move_into_big(target),
             EitherBuffer::Second(ref mut buf) => buf.try_grow(target),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
         match self.inner {
             EitherBuffer::First(_) => Ok(()),
             EitherBuffer::Second(ref mut buf) => buf.try_shrink(target),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 }
@@ -144,7 +144,7 @@ where
         match self.inner {
             EitherBuffer::First(ref b) => RefBuffer::index(b, index),
             EitherBuffer::Second(ref b) => RefBuffer::index(b, index),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 
@@ -153,7 +153,7 @@ where
         match self.inner {
             EitherBuffer::First(ref mut b) => RefBuffer::mut_index(b, index),
             EitherBuffer::Second(ref mut b) => RefBuffer::mut_index(b, index),
-            EitherBuffer::_InternalMarker(_, _) => unreachable!(),
+            EitherBuffer::_InternalMarker(_) => unreachable!(),
         }
     }
 }
