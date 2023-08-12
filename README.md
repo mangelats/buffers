@@ -1,58 +1,118 @@
-# Buffers (proof of concept)
-This is a new representation on how to conceptialize how a vector (and other containers) manage their data.
+# Buffers
+Another way of looking at memory management for collections.
 
-Currently it is expected that the data is saved in a continuous slice of memory from the heap. The addition of Allocators means that you may control how this slice of memory is managed, but the underlying assumption keeps being the same.
-
-In this project I add an abstraction in between the container (vector) and the actual memory, which splits the responsabilities in different interfaces:
-
- - [Allocator](https://doc.rust-lang.org/std/alloc/trait.Allocator.html) (or [`std::alloc`](https://doc.rust-lang.org/std/alloc/) global allocation functions): Its responsible to manage slices of memory on the heap.
- - Buffer: Its responsability is to read and write values to memory, and aquire and release memory (if it can) but doesn't track what values have been writen, or removed.
- - Container (Vector): Is responsible to manage where the values are
-
-Note that a buffer will only use an allocator when allocating to the heap. Buffers like `ZstBuffer` or `InlineBuffer` never do so.
-
-At first this abstraction seems a bit unnecessary, but the original need for this split came from trying to make a struct of arrays (SoA) by only managing memory ([see soa_derive's issue](https://github.com/lumol-org/soa-derive/issues/19)). This case is special because the data needs to be split into multiple slices of memory (which is the whole point of a SoA), so the stadard aproach doesn't work. Once this case was covered I discovered the the new abstraction became composable and could compose optimizations to a buffer really simply. One such optimization is an Small Vector Optimization (SVO) which could be really hard to add into the standard (which, in fact, doesn't). It also make it possible to use buffers without allocation like `InlineBuffer`.
-
-Most of the working have been heavily inspired by the standard [`Vec`](https://doc.rust-lang.org/std/vec/struct.Vec.html), `RawVec` (internal only), and [the Rustonomicon's `RawVec`](https://doc.rust-lang.org/nomicon/vec/vec-raw.html).
-
-## How using it looks like
-Actually you can just import `Vector` and use the default configuration:
+To define a buffer, compose the parts you'd like, and then use a collection:
 ```rust
-use generic_vec::Vector;
+type ExampleBuffer<T> = ZstoBuffer<  // Optimize if T is a Zero-Sized Type
+  T,
+  ExponentGrowthBuffer< // Make the buffer to grow exponentially (powers of 2)
+    T,
+    SvoBuffer<          // Add Small Vector Optimization
+      T,
+      128,              // Size of the small vector
+      HeapBuffer<T>,    // Save the values on the heap (base buffer)
+    >
+  >
+>;
 
-let vector: Vector<usize> = Vector::new();
+let mut example_vector: Vector<u32, ExampleBuffer<_>> = Vector::new()
 ```
 
-This project will try to make it as similar as [`Vec`](https://doc.rust-lang.org/std/vec/struct.Vec.html) but a lot of work is still missing, so only a few methods are actually implemented.
+Unfortunately you have to add the generic type (`T` in this example) to every
+single buffer. Usually you can elide them with underscore (`_`) if you specify
+the first one.
 
-Note though that some [`Vec`](https://doc.rust-lang.org/std/vec/struct.Vec.html) methods are now responsibility of the buffer, and thus may never be available.
+## The model
+Currently when using collections the collection is the responsible for managing
+its memory. If you want a different layout than the provided, you must
+reimplement the entire collection. A good example (an the one started it all) of
+this is [SoA derive](https://github.com/lumol-org/soa-derive) which has to
+reimplement `Vec` and all its functions, a lot of times by simply copying the
+source code with some type annotation change. This is also visible in the
+standard library: they have an undocumented `RawVec`, which has a lot of common
+functions for memory management.
 
-You can also create your own buffer stack. For example an inline buffer:
-```rust
-use generic_vec::Vector;
-use buffers::inline::InlineBuffer;
+If you squint a bit, you may see that what's common in this cases is that the
+collections have multiple responsibilities:
+  1. Saving and retrieving objects and values with some properties.
+  2. Managing the memory necessary to do so.
 
-type StackBuffer = InlineBuffer<usize, 200>; // Has a 200 elements limit but it's on the stack
-let vector: Vector<usize, StackBuffer> = Vector::new();
-```
+Multiple collections may use the same underlying layout (eg. `Vec` and
+`VecDeque`), so what would happen if we made an abstraction for just it? This
+is the result.
 
-## How it's structured
-This project is forcefully ordered. That means that I manually numerated the module files and are usually sorted from more important to less. Modules starting with a letter can be thought as apendixes and are usually utilities.
+I called this abstraction a **buffer** and it turns out it has some nice
+properties (some which I didn't notice at first):
+  1. Reuse in multiple collections (so one specification can be reused)
+  1. Remove the knowledge on how the memory is obtained
+  1. Allows dynamic and static memory versions (static vector for free)
+  1. Allows non-contiguous memory layouts (like SoA)
+  1. Isolation and composition of optimizations, and thus allows for targeted
+  optimizations for each use case when necessary (see composition)
+  1. Simpler code
 
-### Vector
-Has a single file with the current vector methods.
 
-### Buffers
-Bufferes are seperated in 3 parts:
-  1. `interface`: Where the traits and its documentation live.
-  1. `base_buffers`: Where the basic buffers (leaf of the composite) are.
-  1. `composites`: Buffers that compose with others. All the optimizations (SVO and ZSTO) are here.
+## Buffer as a composite
+The usual implementation of collections have some optimizations. This
+optimizations are balanced to be good enough for most use cases. If a use case
+is specific enough, then you use another collection.
 
-## To be done
-  - [ ] Better naming (help please)
-  - [ ] More tests
-  - [ ] Add the most commonly used methods
-  - [ ] Upload to Cargo
-  - [ ] Create prelude (?)
-  - [ ] Add optimizations (mainly forcing/avoiding some inlines and adding some hints)
-  - [ ] Achieve parity with std
+As it turns out, you can make a buffer which uses another buffer underneath.
+This composite structure allows to make each implementation into a single buffer
+and to choose which one you'd like to use (or make ones which are tuned).
+
+## List of base buffers (composite leafs)
+  1. `InlineBuffer`: a buffer with an underlying fixed-size array. It cannot be
+  resized. This makes it possible to use on the stack.
+  2. `HeapBuffer`: a buffer that uses `std::ptr` to dynamically allocate and
+  grow.
+  3. `ZstBuffer`: a buffer for zero-sized types (ZST) only. It's a ZST itself.
+  4. `AllocatorBuffer`: a buffer that uses an allocator to dynamically allocate
+  and grow. It requires the `allocator` feature (enabled by default) since it
+  uses the unstable allocator API.
+
+## List of composite buffers
+  1. `ZstoBuffer` (Zero-Sized Type Optimization): Optimization that uses
+  `ZstBuffer` whenever T is a ZST, or its child otherwise.
+  2. `SvoBuffer` (Small Vector Optimization): Have a small inline buffer but can
+  grow into a bigger one (its child). This prevents allocations on small
+  vectors.
+  3. `ExponentGrowthBuffer`: When trying to grow it will grow to the smallest
+  power of 2 at least as big as the requested value. Useful to not allocate at
+  every push.
+  4. `AtLeastBuffer`: Specifies that when growing will at least grow to a set
+  size.
+
+There are also a few others that are utilities to make other buffers or for
+testing.
+
+## Collections
+For now I've only implemented `Vector`.
+
+## How it works
+A `Buffer` implementation have four types of member functions:
+  - Show the capacity (`capacity`)
+  - Manage data (`read_value`, `write_value`, `manually_drop`)
+  - Resizing (`try_grow`, `try_shrink`)
+  - Utils which have default implementations. Allows override when knowledge
+  allows optimizations (for example moving values when the data is contiguous)
+
+This abstraction only assumes that the elements can be references by a `usize`
+index, so the underlying mechanism could be a lot of things.
+
+## Nightly
+The code currently requires the nightly compiler because of
+[`dropck_eyepatch`](https://github.com/rust-lang/rust/issues/34761)
+for [Drop Check (Rustonomicon)](https://doc.rust-lang.org/nomicon/dropck.html)
+
+There is an `allocator` feature to enable an allocator-based buffer. It also
+requires nightly.
+
+## Lack of code optimization
+There are currently no optimizations of the code. This is because the effect of
+the layout is too strong (I saw very big swings where should be none). It's
+obvious that it needs to be optimized, probably by sprinkling `inline` and
+`cold` everywhere, but I need to make sure it actually does what I think it does.
+
+I plan to tackle this next, but it will require to make tools that randomize
+the layout (probably based on [Stabilizer](https://github.com/ccurtsinger/stabilizer))
