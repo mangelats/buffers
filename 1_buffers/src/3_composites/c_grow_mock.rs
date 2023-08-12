@@ -26,7 +26,7 @@ impl<B: Buffer + Default> Default for GrowMockBuffer<B> {
     }
 }
 
-impl<B: Buffer> BufferMod for &mut GrowMockBuffer<B> {
+impl<B: Buffer> BufferMod for GrowMockBuffer<B> {
     type InnerBuffer = B;
 
     fn inner(&self) -> &Self::InnerBuffer {

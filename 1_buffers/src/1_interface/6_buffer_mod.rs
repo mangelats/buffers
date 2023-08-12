@@ -1,6 +1,4 @@
-#[cfg(feature = "allocator")]
-use std::alloc::Allocator;
-use std::ops::RangeBounds;
+use std::ops::{DerefMut, RangeBounds};
 
 use super::buffer::Buffer;
 use super::resize_error::ResizeError;
@@ -90,29 +88,21 @@ impl<T: BufferMod> Buffer for T {
     }
 }
 
-#[cfg(feature = "allocator")]
-impl<B: Buffer, A: Allocator> BufferMod for Box<B, A> {
+/// Blanket implementation to anything that can mutably dereference into a
+/// buffer, as a way of forwarding. This includes `&mut T`, `Box<T>`, etc.
+impl<B, D> BufferMod for D
+where
+    B: Buffer,
+    D: DerefMut<Target = B>,
+{
     type InnerBuffer = B;
 
     fn inner(&self) -> &Self::InnerBuffer {
-        &**self
+        self.deref()
     }
 
     fn inner_mut(&mut self) -> &mut Self::InnerBuffer {
-        &mut **self
-    }
-}
-
-#[cfg(not(feature = "allocator"))]
-impl<B: Buffer> BufferMod for Box<B> {
-    type InnerBuffer = B;
-
-    fn inner(&self) -> &Self::InnerBuffer {
-        &**self
-    }
-
-    fn inner_mut(&mut self) -> &mut Self::InnerBuffer {
-        &mut **self
+        self.deref_mut()
     }
 }
 
