@@ -1,7 +1,11 @@
+⚠ While I belive that this to be correct, it needs improvement. Expect changes
+after I recieve feedback
+
 # Buffers
 Another way of looking at memory management for collections.
 
-To define a buffer, compose the parts you'd like, and then use a collection:
+To define a buffer, compose the parts you'd like, and then use it in a
+collection:
 ```rust
 type ExampleBuffer<T> = ZstoBuffer<  // Optimize if T is a Zero-Sized Type
   ExponentGrowthBuffer< // Make the buffer to grow exponentially (powers of 2)
@@ -16,14 +20,15 @@ let mut example_vector: Vector<u32, ExampleBuffer<_>> = Vector::new()
 ```
 
 ## The model
-Currently when using collections the collection is the responsible for managing
-its memory. If you want a different layout than the provided, you must
-reimplement the entire collection. A good example (an the one started it all) of
-this is [SoA derive](https://github.com/lumol-org/soa-derive) which has to
-reimplement `Vec` and all its functions, a lot of times by simply copying the
-source code with some type annotation change. This is also visible in the
-standard library: they have an undocumented `RawVec`, which has a lot of common
-functions for memory management.
+Currently when using collections, they are responsible for managing its memory.
+If you want a different layout than the provided, you must reimplement the
+entire collection. A good example of this (an the one started it all) is
+[SoA derive](https://github.com/lumol-org/soa-derive) which has to reimplement
+`Vec` and all its functions, a lot of times by simply copying the source code
+with some type annotation change to simply make a vector with a structure of
+arrays. This is also visible in the standard library: there is an undocumented
+`RawVec`, which has a lot of common functions for memory management and was
+created to reduce duplication.
 
 If you squint a bit, you may see that what's common in this cases is that the
 collections have multiple responsibilities:
@@ -44,6 +49,15 @@ properties (some which I didn't notice at first):
   optimizations for each use case when necessary (see composition)
   1. Simpler code
 
+
+## Difference from an allocator
+An allocator is responsible for the necessary strategies to share the entire or
+part of the system memory when requested. It supports dynamic layout and is used
+by multiple collections (and buffers).
+
+A buffer may use one or multiple allocators (see `HeapBuffer` and
+`AllocatorBuffer`) and use them to aquire memory. But it doesn't care about how
+it's saved on the actual memory, nor the relationship needs to be one to one.
 
 ## Buffer as a composite
 The usual implementation of collections have some optimizations. This
@@ -80,7 +94,7 @@ There are also a few others that are utilities to make other buffers or for
 testing.
 
 ## Collections
-For now I've only implemented `Vector`.
+For now I've only implemented `Vector`. It's basicalle `Vec` but with a buffer.
 
 ## How it works
 A `Buffer` implementation have four types of member functions:
