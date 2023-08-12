@@ -3,7 +3,7 @@
 #![cfg_attr(feature = "allocator", feature(allocator_api))]
 
 use base_buffers::heap::HeapBuffer;
-use composites::{svo::SvoBuffer, zsto::ZstOptBuffer};
+use composites::{svo::SvoBuffer, zsto::ZstoBuffer};
 
 #[path = "1_interface/_mod.rs"]
 pub mod interface;
@@ -18,4 +18,4 @@ pub mod composites;
 pub mod never;
 
 pub type DefaultBuffer<T, const SMALL_VECTOR_SIZE: usize = 256> =
-    ZstOptBuffer<T, SvoBuffer<T, SMALL_VECTOR_SIZE, HeapBuffer<T>>>;
+    ZstoBuffer<T, SvoBuffer<T, SMALL_VECTOR_SIZE, HeapBuffer<T>>>;
