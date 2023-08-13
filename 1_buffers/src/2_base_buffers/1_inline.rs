@@ -1,5 +1,6 @@
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer, Buffer,
+    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer,
+    resize_error::ResizeError, Buffer,
 };
 use std::mem::MaybeUninit;
 
@@ -55,6 +56,14 @@ impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
 
     unsafe fn manually_drop(&mut self, index: usize) {
         std::ptr::drop_in_place(self.mut_ptr(index));
+    }
+
+    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
+        Err(ResizeError::UnsupportedOperation)
+    }
+
+    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
+        Err(ResizeError::UnsupportedOperation)
     }
 }
 

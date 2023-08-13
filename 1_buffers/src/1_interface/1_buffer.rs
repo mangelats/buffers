@@ -69,9 +69,7 @@ pub trait Buffer {
     /// # Safety
     ///   * Target size must be bigger than the current capacity (and thus, also
     ///     bigger than zero)
-    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
-        Err(ResizeError::UnsupportedOperation)
-    }
+    unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError>;
 
     /// Asks the buffer to shrink.
     ///
@@ -81,9 +79,7 @@ pub trait Buffer {
     /// # Safety
     ///  * Target size must be smaller than the current capacity.
     ///  * Positions from `target` to `capacity` must be empty.
-    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
-        Err(ResizeError::UnsupportedOperation)
-    }
+    unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError>;
 
     /// Utility method which drops elements (and thus empties) a range of
     /// positions.

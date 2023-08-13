@@ -1,6 +1,8 @@
 use std::marker::PhantomData;
 
-use crate::interface::{ptrs::PtrBuffer, refs::DefaultRefBuffer, Buffer};
+use crate::interface::{
+    ptrs::PtrBuffer, refs::DefaultRefBuffer, resize_error::ResizeError, Buffer,
+};
 
 /// Buffer optimized for zero-sized types.
 ///
@@ -44,6 +46,14 @@ impl<T> Buffer for ZstBuffer<T> {
 
     unsafe fn manually_drop(&mut self, _index: usize) {
         // Do nothing
+    }
+
+    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
+        Err(ResizeError::UnsupportedOperation)
+    }
+
+    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
+        Err(ResizeError::UnsupportedOperation)
     }
 }
 
