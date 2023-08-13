@@ -4,84 +4,104 @@ use std::ops::RangeBounds;
 
 use super::resize_error::ResizeError;
 
-/// Low level of abstraction of multiple `Elements` managed as a group.
+/// Trait that represents a layout of data for a collection. This abstraction is
+/// very low level and only manages the "space" itself, and not the values which
+/// is the collections' responsibility.
 ///
-/// This is perticularly useful to allow different ways of managing data in memory with a uniform interface.
+/// This is the minimal trait to form a buffer. Other traits expand on it
+/// allowing more operations and optimizations.
+///
+/// It also contains some utility methods with default implementation but in
+/// some cases a more efficient one can be provided.
 ///
 /// ## Safety
-/// Buffers are not responsible for a lot of safety features that one may expect (like dropping the values on
-/// drop, check boundaries, check if the memory is initialized, and so on). This is because implementations may
-/// ensure safety by design instead of adding checks every time. A lot of times the buffer doesn't have the
-/// information anyways, making the check hard or impossible. In practice this makes this trait and most of its
-/// methods unsafe.
+/// Because this trait isn't meant to manage what values are being saved, the
+/// user has to manage it. This makes a lot of methods `unsafe`, as the buffer
+/// itself cannot verify that what is being done is actually safe. This actually
+/// makes this abstraction better as a lot of times the collections need to do
+/// so anyways, so making them responsible simplifies it.
 ///
-/// ## Notes
-/// This interface has been deliberately designed to have a little constrains to the implementations as possible.
-/// For example: the underlying data doesn't need to be saved in a contiguous chunk of memory, and it could be on
-/// the stack, on the heap, etc.
+/// The jist of it is:
+///   * Positions in the range `0..capacity` are considered valid.
+///   * To write a value in a position, that position must be valid and empty
+///     (and becomes filled).
+///   * To read a value in a position, that position must be valid and filled
+///     (and becomes empty).
+///   * To drop a value in a position, that position must be valid and filled
+///     (and becomes empty).
+///   * Before droping a buffer, all positions must be and empty.
 pub trait Buffer {
-    /// Type of elements this buffer holds
+    /// Type of elements this buffer holds.
     type Element;
 
-    /// Current capacity of the buffer
+    /// How many elements can this buffer contain.
     fn capacity(&self) -> usize;
 
-    /// Reads the index position in the buffer, and empties it.
+    /// Reads the `index` position in the buffer, emptying it.
     ///
     /// # Safety
-    /// The `index` position must not be empty.
+    ///   * `index` must be less than `capacity`.
+    ///   * The `index` position must be filled.
     unsafe fn read_value(&self, index: usize) -> Self::Element;
 
-    /// Writes the value into the index position of this buffer (which is no longer empty).
+    /// Writes the value into the `index` position, filling it.
     ///
     /// # Safety
-    /// The `index` position must not contain a value.
+    ///   * `index` must be less than `capacity`.
+    ///   * The `index` position must be empty.
     unsafe fn write_value(&mut self, index: usize, value: Self::Element);
 
     /// Manually drops the value in the specified index position and empties it.
     ///
+    /// Unlike [`read_value`], it does not return the element, which may allow
+    /// to drop it in place.
+    ///
     /// # Safety
-    /// The `index` position must not be empty.
+    ///   * `index` must be less than `capacity`.
+    ///   * The `index` position must be filled.
     unsafe fn manually_drop(&mut self, index: usize);
 
-    /// Manually drops all the values specified by the position range and empties it.
+    /// Asks the buffer to grow.
     ///
-    /// By default it calls `manually_drop` one by one, but in most cases it can be overridden for a more performant
-    /// version.
+    /// This operation may fail a number of ways depending on the implementation
+    /// and `Self::Element`. See [`ResizeError`] for more details.
     ///
     /// # Safety
-    /// All the positions in `values_range` must not be empty.
+    ///   * Target size must be bigger than the current capacity (and thus, also
+    ///     bigger than zero)
+    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
+        Err(ResizeError::UnsupportedOperation)
+    }
+
+    /// Asks the buffer to shrink.
+    ///
+    /// This operation may fail a number of ways depending on the implementation
+    /// and `Self::Element`. See [`ResizeError`] for more details.
+    ///
+    /// # Safety
+    ///  * Target size must be smaller than the current capacity.
+    ///  * Positions from `target` to `capacity` must be empty.
+    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
+        Err(ResizeError::UnsupportedOperation)
+    }
+
+    /// Utility method which drops elements (and thus empties) a range of
+    /// positions.
+    ///
+    /// # Safety
+    ///   * All the positions in `values_range` must be valid and filled.
     unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
         for index in clamp_buffer_range(self, values_range) {
             self.manually_drop(index);
         }
     }
 
-    /// Attempt to grow the buffer.
-    ///
-    /// This operation may fail a number of ways depending on the implementation and `Self::Element`
+    /// Utility method to move elements to the right by `positions`.
     ///
     /// # Safety
-    /// Target size must be bigger than the current capacity (and thus, also bigger than 0)
-    unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
-        Err(ResizeError::UnsupportedOperation)
-    }
-
-    /// Attempt to shrink the buffer.
-    ///
-    /// This operation may fail a number of ways depending on the implementation and and `Self::Element`
-    ///
-    /// # Safety
-    /// Target size must be smaller than the current capacity but bigger than 0
-    unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
-        Err(ResizeError::UnsupportedOperation)
-    }
-
-    /// Shift a range of values to the right. By default it copies element by element.
-    /// # Safety
-    /// The values must exist and the new location should be itself or an empty spot
-    ///
-    /// There should be enough space to the right
+    ///   * All positions in `to_move` must be valid.
+    ///   * `positions` positions after the `to_move` range must be valid and
+    ///     empty.
     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
         let range = clamp_buffer_range(self, to_move);
 
@@ -95,12 +115,12 @@ pub trait Buffer {
         // Old values left as is, since the bytes themselves are considered garbage
     }
 
-    /// Shift a range of values to the left. By default it copies element by element.
+    /// Utility method to move elements to the left by `positions`.
     ///
     /// # Safety
-    /// The values must exist and the new location should be itself or an empty spot
-    ///
-    /// There should be enough space to the left
+    ///   * All positions in `to_move` must be valid.
+    ///   * `positions` positions before the `to_move` range must be valid and
+    ///     empty.
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
         let range = clamp_buffer_range(self, to_move);
 
@@ -115,9 +135,8 @@ pub trait Buffer {
     }
 }
 
-/// Utility function that clamps a range into a buffer cappacity.
-///
-/// Useful for allowing open-ended ranges on buffer methods
+/// Utility function that clamps a range into a buffer cappacity. Allows for
+/// open ended ranges in the ranged utility functions.
 fn clamp_buffer_range<B: Buffer + ?Sized, R: RangeBounds<usize>>(
     buffer: &B,
     range: R,

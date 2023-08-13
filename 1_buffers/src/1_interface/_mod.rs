@@ -1,5 +1,5 @@
 //! This module contains all the abstractions which define how a buffer and
-//! other closely related objects may be used.
+//! other closely-related values and abstractions.
 
 #[path = "1_buffer.rs"]
 pub mod buffer;
