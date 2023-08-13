@@ -1,4 +1,4 @@
-use crate::interface::{buffer_mod::BufferMod, resize_error::ResizeError, Buffer};
+use crate::interface::{indirect_buffer::IndirectBuffer, resize_error::ResizeError, Buffer};
 
 /// Composite that grows exponentially (power of 2) instead of the actual
 /// target passed.
@@ -18,7 +18,7 @@ impl<B: Buffer + Default> Default for ExponentGrowthBuffer<B> {
     }
 }
 
-impl<B: Buffer> BufferMod for ExponentGrowthBuffer<B> {
+impl<B: Buffer> IndirectBuffer for ExponentGrowthBuffer<B> {
     type InnerBuffer = B;
 
     fn inner(&self) -> &Self::InnerBuffer {

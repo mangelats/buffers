@@ -1,4 +1,4 @@
-use crate::interface::{buffer_mod::BufferMod, resize_error::ResizeError, Buffer};
+use crate::interface::{indirect_buffer::IndirectBuffer, resize_error::ResizeError, Buffer};
 
 /// Helper (mock) buffer for testing. It passes everything to an inner buffer
 /// but keeps what the last `try_grow` target was.
@@ -26,7 +26,7 @@ impl<B: Buffer + Default> Default for GrowMockBuffer<B> {
     }
 }
 
-impl<B: Buffer> BufferMod for GrowMockBuffer<B> {
+impl<B: Buffer> IndirectBuffer for GrowMockBuffer<B> {
     type InnerBuffer = B;
 
     fn inner(&self) -> &Self::InnerBuffer {

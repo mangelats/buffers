@@ -1,6 +1,6 @@
 use std::cmp::max;
 
-use crate::interface::{buffer_mod::BufferMod, resize_error::ResizeError, Buffer};
+use crate::interface::{indirect_buffer::IndirectBuffer, resize_error::ResizeError, Buffer};
 
 /// Composite that ensures that when trying to grow it has at least a value.
 /// The initial status may still be under this value and you may shrink lower
@@ -22,7 +22,7 @@ impl<const MIN_SIZE: usize, B: Buffer + Default> Default for AtLeastBuffer<MIN_S
     }
 }
 
-impl<const MIN_SIZE: usize, B: Buffer> BufferMod for AtLeastBuffer<MIN_SIZE, B> {
+impl<const MIN_SIZE: usize, B: Buffer> IndirectBuffer for AtLeastBuffer<MIN_SIZE, B> {
     type InnerBuffer = B;
 
     fn inner(&self) -> &Self::InnerBuffer {

@@ -6,7 +6,7 @@ use super::resize_error::ResizeError;
 /// Trait which by default forwards all behaviour into an inner buffer. This is
 /// perticularly useful to allow modifying a single function without having to
 /// implement Buffer in its entirity (eg. changing the minimum that can grow).
-pub trait BufferMod {
+pub trait IndirectBuffer {
     type InnerBuffer: Buffer;
     fn inner(&self) -> &Self::InnerBuffer;
     fn inner_mut(&mut self) -> &mut Self::InnerBuffer;
@@ -48,49 +48,49 @@ pub trait BufferMod {
     }
 }
 
-impl<T: BufferMod> Buffer for T {
-    type Element = <<Self as BufferMod>::InnerBuffer as Buffer>::Element;
+impl<T: IndirectBuffer> Buffer for T {
+    type Element = <<Self as IndirectBuffer>::InnerBuffer as Buffer>::Element;
 
     fn capacity(&self) -> usize {
-        <Self as BufferMod>::capacity(self)
+        <Self as IndirectBuffer>::capacity(self)
     }
 
     unsafe fn read_value(&self, index: usize) -> Self::Element {
-        <Self as BufferMod>::read_value(self, index)
+        <Self as IndirectBuffer>::read_value(self, index)
     }
 
     unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
-        <Self as BufferMod>::write_value(self, index, value)
+        <Self as IndirectBuffer>::write_value(self, index, value)
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
-        <Self as BufferMod>::manually_drop(self, index)
+        <Self as IndirectBuffer>::manually_drop(self, index)
     }
 
     unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
-        <Self as BufferMod>::manually_drop_range(self, values_range)
+        <Self as IndirectBuffer>::manually_drop_range(self, values_range)
     }
 
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
-        <Self as BufferMod>::try_grow(self, target)
+        <Self as IndirectBuffer>::try_grow(self, target)
     }
 
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
-        <Self as BufferMod>::try_shrink(self, target)
+        <Self as IndirectBuffer>::try_shrink(self, target)
     }
 
     unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        <Self as BufferMod>::shift_right(self, to_move, positions)
+        <Self as IndirectBuffer>::shift_right(self, to_move, positions)
     }
 
     unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
-        <Self as BufferMod>::shift_left(self, to_move, positions)
+        <Self as IndirectBuffer>::shift_left(self, to_move, positions)
     }
 }
 
 /// Blanket implementation to anything that can mutably dereference into a
 /// buffer, as a way of forwarding. This includes `&mut T`, `Box<T>`, etc.
-impl<B, D> BufferMod for D
+impl<B, D> IndirectBuffer for D
 where
     B: Buffer,
     D: DerefMut<Target = B>,
