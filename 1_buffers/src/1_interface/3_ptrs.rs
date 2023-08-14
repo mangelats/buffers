@@ -1,25 +1,38 @@
 use super::Buffer;
 
-/// Represents a buffer which has pointers to its elements
+/// This trait extends the buffers that have the hability to recover elements
+/// from a pointer. This pointer may be a regular rust pointer (`*mut T`) but it
+/// doesn't have to. For example: in a structure of arrays setting it could be a
+/// structure of rust pointers.
 ///
-/// Note that in some cases the elements themselves may not ahve a unique pointers (eg. zero-sized types)
+/// In some cases multiple positions may have a shared pointer (eg. zero-sized
+/// types in a [`crate::base_buffers::zst::ZstBuffer`])
 pub trait PtrBuffer: Buffer {
+    /// Type representing a constant pointer of [`Buffer::Element`].
     type ConstantPointer;
+
+    /// Type representing a mutable pointer of [`Buffer::Element`].
     type MutablePointer;
 
-    /// Get a contant pointer to the value in the specified index.
+    /// Get the constant pointer of the element in the specified position.
     ///
     /// # Safety
-    /// `index` needs to be in bounds (`0 <= index < capacity`). It's undefined behaviour when not.
+    ///   * `index` must be a valid position.
+    ///   * Position `index` must be filled.
     ///
-    /// The pointer may point to unitialized or garbage data. It's the responsability of the caller to keep track of the state.
+    /// # Notes
+    /// Calling the function multiple times with the same `index` results in the
+    /// same value.
     unsafe fn ptr(&self, index: usize) -> Self::ConstantPointer;
 
-    /// Get a mutable pointer to the value in the specified index.
+    /// Get the mutable pointer of the element in the specified position.
     ///
     /// # Safety
-    /// `index` needs to be in bounds (`0 <= index < capacity`). It's undefined behaviour when not.
+    ///   * `index` must be a valid position.
+    ///   * Position `index` must be filled.
     ///
-    /// The pointer may point to unitialized or garbage data. It's the responsability of the caller to keep track of the state.
+    /// # Notes
+    /// Calling the function multiple times with the same `index` results in the
+    /// same value.
     unsafe fn mut_ptr(&mut self, index: usize) -> Self::MutablePointer;
 }
