@@ -9,7 +9,12 @@ use crate::interface::{
     resize_error::ResizeError, Buffer,
 };
 
-/// Similar buffer to HeapBuffer but it uses Allocators instead
+/// Buffer that dynamically allocates using an [`Allocator`].
+///
+/// Using the [`Global`] allocator (which is done by default) should be
+/// equivalent to using [`super::heap::HeapBuffer`].
+///
+/// It requires the `allocator` feature.
 pub struct AllocatorBuffer<T, A: Allocator = Global> {
     ptr: NonNull<T>,
     cap: usize,
@@ -18,14 +23,14 @@ pub struct AllocatorBuffer<T, A: Allocator = Global> {
 }
 
 impl<T, A: Allocator + Default> AllocatorBuffer<T, A> {
-    /// Makes a new buffer by default-constructing the allocator
+    /// Makes an empty buffer by default-constructing the allocator.
     pub fn new() -> Self {
         Self::with_allocator(Default::default())
     }
 }
 
 impl<T, A: Allocator> AllocatorBuffer<T, A> {
-    /// Make an empty `AllocatorBuffer` given an allocator
+    /// Make an empty buffer given an allocator.
     pub fn with_allocator(alloc: A) -> Self {
         Self {
             ptr: NonNull::dangling(),
@@ -96,8 +101,10 @@ impl<T, A: Allocator> PtrBuffer for AllocatorBuffer<T, A> {
         self.ptr.as_ptr().add(index)
     }
 }
-impl<T, A: Allocator> ContiguousMemoryBuffer for AllocatorBuffer<T, A> {}
+
 impl<T, A: Allocator> DefaultRefBuffer for AllocatorBuffer<T, A> {}
+
+impl<T, A: Allocator> ContiguousMemoryBuffer for AllocatorBuffer<T, A> {}
 
 impl<T, A: Allocator + Default> Default for AllocatorBuffer<T, A> {
     fn default() -> Self {
@@ -110,15 +117,21 @@ unsafe impl<#[may_dangle] T, A: Allocator> Drop for AllocatorBuffer<T, A> {
         if self.cap != 0 {
             // SAFETY: At this point all content should have been dropped
             unsafe {
+                // Even if it fails, we can only ignore the error
                 let _ = try_deallocate(&self.alloc, self.ptr, self.cap);
             }
         }
     }
 }
-/// Internal utility function.
+
+/// Internal utility function that tries to allocate a new array of a given size
+/// using the provided allocator.
 ///
-/// Tries to allocate a new array of a given size on the heap using the stable functions.
+/// # Safety
+///   * `alloc` must be able to handle `T`.
+///   * `size` must be bigger than zero.
 unsafe fn try_allocate<T, A: Allocator>(alloc: &A, size: usize) -> Result<NonNull<T>, ResizeError> {
+    debug_assert!(size > 0);
     let new_layout = Layout::array::<T>(size)?;
 
     let new_ptr = alloc.allocate(new_layout)?;
@@ -126,15 +139,22 @@ unsafe fn try_allocate<T, A: Allocator>(alloc: &A, size: usize) -> Result<NonNul
     Ok(new_ptr.cast())
 }
 
-/// Internal utility function.
+/// Internal utility function that tries to grow a an array of a given size
+/// using the provided allocator.
 ///
-/// Tries to reallocate an array to a given size on the heap using the stable functions.
+/// # Safety
+///   * `alloc` must be able to handle `T`.
+///   * `old_ptr` must be valid (must not be dangling).
+///   * `old_size` must be the size returned by the size of the array.
+///   * `new_size` must be biggen than `old_size` and zero.
 unsafe fn try_grow<T, A: Allocator>(
     alloc: &A,
     old_ptr: NonNull<T>,
     old_size: usize,
     new_size: usize,
 ) -> Result<NonNull<T>, ResizeError> {
+    debug_assert!(new_size > old_size);
+
     let old_layout = Layout::array::<T>(old_size)?;
     let new_layout = Layout::array::<T>(new_size)?;
 
@@ -143,15 +163,24 @@ unsafe fn try_grow<T, A: Allocator>(
     Ok(new_ptr.cast())
 }
 
-/// Internal utility function.
+/// Internal utility function that tries to shrink a an array of a given size
+/// using the provided allocator.
 ///
-/// Tries to reallocate an array to a given size on the heap using the stable functions.
+/// # Safety
+///   * `alloc` must be able to handle `T`.
+///   * `old_ptr` must be valid (must not be dangling).
+///   * `old_size` must be the size returned by the size of the array.
+///   * `new_size` must be biggen than  zero.
+///   * `new_size` must be smaller than `old_size`.
 unsafe fn try_shrink<T, A: Allocator>(
     alloc: &A,
     old_ptr: NonNull<T>,
     old_size: usize,
     new_size: usize,
 ) -> Result<NonNull<T>, ResizeError> {
+    debug_assert!(new_size > 0);
+    debug_assert!(new_size < old_size);
+
     let old_layout = Layout::array::<T>(old_size)?;
     let new_layout = Layout::array::<T>(new_size)?;
 
@@ -160,9 +189,13 @@ unsafe fn try_shrink<T, A: Allocator>(
     Ok(new_ptr.cast())
 }
 
-/// Internal utility function.
+/// Internal utility function that tries to deallocate an array using an
+/// allocator.
 ///
-/// Tries to reallocate an array to a given size on the heap using the stable functions.
+/// # Safety
+///   * `alloc` must be able to handle `T`.
+///   * `old_ptr` must be valid (must not be dangling).
+///   * `old_size` must be the size returned by the size of the array.
 unsafe fn try_deallocate<T, A: Allocator>(
     alloc: &A,
     old_ptr: NonNull<T>,

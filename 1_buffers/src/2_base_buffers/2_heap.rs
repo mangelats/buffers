@@ -9,7 +9,9 @@ use crate::interface::{
     resize_error::ResizeError, Buffer,
 };
 
-/// Buffer implementation using a heap-allocated continuous array.
+/// Buffer implementation using a heap-allocated contiguous array.
+///
+/// This implementation uses the allocation functions on [`std::alloc`].
 pub struct HeapBuffer<T> {
     buffer_start: NonNull<T>,
     cap: usize,
@@ -31,10 +33,10 @@ impl<T> HeapBuffer<T> {
         }
     }
 
-    /// Internal function that allocates a new array into the heap
+    /// Internal function that allocates a new array into the heap.
     ///
     /// # Safety
-    /// It can only be called when there is no array allocated (capacity is 0)
+    ///   * `cap` must be 0.
     unsafe fn allocate_array(&mut self, target: usize) -> Result<(), ResizeError> {
         debug_assert!(self.cap == 0);
         let ptr = try_array_alloc(target)?;
@@ -42,10 +44,11 @@ impl<T> HeapBuffer<T> {
         Ok(())
     }
 
-    /// Internal function that resizes the array in the heap
+    /// Internal function that tries to resize the array.
     ///
     /// # Safety
-    /// There needs to be an array already heap allocated. Target should be bigger than 0.
+    ///   * `buffer_start` cannot be dangling.
+    ///   * `target` must be greater than zero.
     unsafe fn resize_array(&mut self, target: usize) -> Result<(), ResizeError> {
         debug_assert!(target > 0);
         let ptr = try_array_realloc(self.buffer_start, self.cap, target)?;
@@ -53,17 +56,18 @@ impl<T> HeapBuffer<T> {
         Ok(())
     }
 
-    /// Internal function that deallocates the heap allocated array
+    /// Internal function that deallocates the array.
     ///
     /// # Safety
-    /// There needs to be an array heap allocated
+    ///   * `buffer_start` cannot be dangling.
+    ///   * `target` must be greater than zero.
     unsafe fn deallocate_array(&mut self) -> Result<(), ResizeError> {
         deallocate(self.buffer_start, self.cap)?;
         self.update_buffer(NonNull::dangling(), 0);
         Ok(())
     }
 
-    /// Internal function that sets the capacity and raw buffer pointer
+    /// Internal function that sets the capacity and raw buffer pointer.
     fn update_buffer(&mut self, ptr: NonNull<T>, cap: usize) {
         self.cap = cap;
         self.buffer_start = ptr;
@@ -120,8 +124,10 @@ impl<T> PtrBuffer for HeapBuffer<T> {
         self.buffer_start.as_ptr().add(index)
     }
 }
-impl<T> ContiguousMemoryBuffer for HeapBuffer<T> {}
+
 impl<T> DefaultRefBuffer for HeapBuffer<T> {}
+
+impl<T> ContiguousMemoryBuffer for HeapBuffer<T> {}
 
 impl<T> Default for HeapBuffer<T> {
     fn default() -> Self {
@@ -134,16 +140,17 @@ unsafe impl<#[may_dangle] T> Drop for HeapBuffer<T> {
         if self.cap != 0 {
             // SAFETY: At this point all content should have been dropped
             unsafe {
+                // Even if it fails, we can only ignore the error
                 let _ = self.deallocate_array();
             }
         }
     }
 }
 
-/// Tries to allocate an array of a given size on the heap
+/// Tries to allocate a new array of a given size on the heap.
 ///
 /// # Safety
-/// size must be bigger than zero.
+///   * `size` must be bigger than zero.
 unsafe fn try_array_alloc<T>(size: usize) -> Result<NonNull<T>, ResizeError> {
     debug_assert!(size > 0);
     let layout = Layout::array::<T>(size)?;
@@ -153,11 +160,11 @@ unsafe fn try_array_alloc<T>(size: usize) -> Result<NonNull<T>, ResizeError> {
     NonNull::new(ptr).ok_or(ResizeError::OutOfMemory)
 }
 
-/// Tries to reallocate an existing heap array (growing or shrinking)
+/// Tries to reallocate an existing array (growing or shrinking).
 ///
 /// # Safety
-/// new_size must be different than old_size.
-/// new_size must be bigger than zero.
+///   * `new_size` must be bigger than zero.
+///   * `new_size` must be different than `old_size`.
 unsafe fn try_array_realloc<T>(
     old_ptr: NonNull<T>,
     old_size: usize,
@@ -176,7 +183,10 @@ unsafe fn try_array_realloc<T>(
     NonNull::new(new_ptr).ok_or(ResizeError::OutOfMemory)
 }
 
-/// Deallocates an array
+/// Tries to deallocate an existing array.
+///
+/// # Safety
+///   * `size` must be bigger than zero.
 unsafe fn deallocate<T>(ptr: NonNull<T>, size: usize) -> Result<(), ResizeError> {
     debug_assert!(size > 0);
     let layout = Layout::array::<T>(size)?;
