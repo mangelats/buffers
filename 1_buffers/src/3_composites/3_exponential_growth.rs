@@ -1,14 +1,16 @@
 use crate::interface::{indirect_buffer::IndirectBuffer, resize_error::ResizeError, Buffer};
 
-/// Composite that grows exponentially (power of 2) instead of the actual
-/// target passed.
+/// Composite buffer that modifies the underlying buffer so it grows
+/// exponentially (in powers of 2) instead of the actual target passed.
+///
+/// This is usefull to prevent excessive allocations.
 #[repr(transparent)]
 pub struct ExponentGrowthBuffer<B: Buffer>(B);
 
 impl<B: Buffer> ExponentGrowthBuffer<B> {
-    /// Make a new [`ExponentGrowthBuffer<B>`] given `B`.
-    pub fn from(b: B) -> Self {
-        Self(b)
+    /// Make a new [`ExponentGrowthBuffer<B>`] given the underlying buffer `B`.
+    pub fn from(buffer: B) -> Self {
+        Self(buffer)
     }
 }
 

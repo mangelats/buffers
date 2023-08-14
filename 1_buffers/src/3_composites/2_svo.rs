@@ -10,10 +10,10 @@ use crate::{
 
 use super::either::EitherBuffer;
 
-/// Buffer composite that adds small vector optimization (SVO) to a given buffer.
-///
-/// This means that it can work with both an inline buffer (which is usually left on the stack)
-/// but can automatically grow into a bigger buffer (usually a heap-allocated one).
+/// Buffer composite that adds small vector optimization (SVO) to a given
+/// buffer. This means that it starts working with an inline buffer (which is
+/// usually left on the stack) but can automatically grow into an arbitrary
+/// bigger buffer (usually a heap-allocated one which can grow).
 pub struct SvoBuffer<const SMALL_SIZE: usize, B>
 where
     B: Buffer + Default,

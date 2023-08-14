@@ -13,9 +13,9 @@ where
     A: Buffer,
     B: Buffer<Element = A::Element>,
 {
-    /// First option (A buffer)
+    /// First option (`A` buffer)
     First(A),
-    /// Second option (B buffer)
+    /// Second option (`B` buffer)
     Second(B),
 }
 

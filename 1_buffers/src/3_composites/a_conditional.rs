@@ -5,15 +5,19 @@ use crate::interface::{
     resize_error::ResizeError, Buffer,
 };
 
-/// Trait used to choose between buffer A or buffer B
+/// Trait used to choose between buffer A or buffer B.
+///
+/// This is necessary due to restrictions in const expressions in generic
+/// arguments. But because is technically used publicly, it needs to be public.
 pub trait Selector {
     const SELECT_A: bool;
 }
 
-/// Utility composite buffer that allows to use one buffer or another defined at compilation time.
+/// Utility composite buffer that allows to use one buffer or another defined at
+/// compilation time.
 ///
-/// Note that this uses both buffers but only uses one. This may be able to change
-/// with generic const expressions.
+/// This uses both buffers but only uses one. This may be able to change with
+/// generic const expressions.
 pub struct ConditionalBuffer<A, B, S>
 where
     A: Buffer,
@@ -31,25 +35,27 @@ where
     B: Buffer<Element = A::Element>,
     S: Selector,
 {
-    pub fn with_a(a: A) -> Self {
+    /// Creates the buffer by using the first (`A`) option
+    pub fn with_first(first: A) -> Self {
         debug_assert!(
             S::SELECT_A,
             "Should select A to create ConditionalBuffer with A"
         );
         Self {
-            a: MaybeUninit::new(a),
+            a: MaybeUninit::new(first),
             b: MaybeUninit::uninit(),
             _m: PhantomData,
         }
     }
-    pub fn with_b(b: B) -> Self {
+    /// Creates the buffer by using the second (`B`) option
+    pub fn with_second(second: B) -> Self {
         debug_assert!(
             !S::SELECT_A,
             "Should not select A to create ConditionalBuffer with B"
         );
         Self {
             a: MaybeUninit::uninit(),
-            b: MaybeUninit::new(b),
+            b: MaybeUninit::new(second),
             _m: PhantomData,
         }
     }
@@ -63,9 +69,9 @@ where
 {
     fn default() -> Self {
         if S::SELECT_A {
-            Self::with_a(Default::default())
+            Self::with_first(Default::default())
         } else {
-            Self::with_b(Default::default())
+            Self::with_second(Default::default())
         }
     }
 }
