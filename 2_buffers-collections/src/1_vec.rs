@@ -8,7 +8,9 @@ use buffers::{
     DefaultBuffer,
 };
 
-/// Implementation of a vector
+/// Implementation of a vector but using a [`Buffer`].
+///
+/// This structure mimics the [`Vec`] interface.
 pub struct Vector<T, B: Buffer<Element = T> = DefaultBuffer<T>> {
     len: usize,
     buffer: B,
