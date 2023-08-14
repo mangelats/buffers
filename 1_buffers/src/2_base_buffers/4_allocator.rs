@@ -121,9 +121,7 @@ unsafe impl<#[may_dangle] T, A: Allocator> Drop for AllocatorBuffer<T, A> {
 unsafe fn try_allocate<T, A: Allocator>(alloc: &A, size: usize) -> Result<NonNull<T>, ResizeError> {
     let new_layout = Layout::array::<T>(size)?;
 
-    let new_ptr = alloc
-        .allocate(new_layout)
-        .map_err(|_| ResizeError::OutOfMemory)?;
+    let new_ptr = alloc.allocate(new_layout)?;
 
     Ok(new_ptr.cast())
 }
@@ -140,9 +138,7 @@ unsafe fn try_grow<T, A: Allocator>(
     let old_layout = Layout::array::<T>(old_size)?;
     let new_layout = Layout::array::<T>(new_size)?;
 
-    let new_ptr = alloc
-        .grow(old_ptr.cast(), old_layout, new_layout)
-        .map_err(|_| ResizeError::OutOfMemory)?;
+    let new_ptr = alloc.grow(old_ptr.cast(), old_layout, new_layout)?;
 
     Ok(new_ptr.cast())
 }
@@ -159,9 +155,7 @@ unsafe fn try_shrink<T, A: Allocator>(
     let old_layout = Layout::array::<T>(old_size)?;
     let new_layout = Layout::array::<T>(new_size)?;
 
-    let new_ptr = alloc
-        .shrink(old_ptr.cast(), old_layout, new_layout)
-        .map_err(|_| ResizeError::OutOfMemory)?;
+    let new_ptr = alloc.shrink(old_ptr.cast(), old_layout, new_layout)?;
 
     Ok(new_ptr.cast())
 }
