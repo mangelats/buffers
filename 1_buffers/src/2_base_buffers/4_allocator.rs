@@ -5,7 +5,7 @@ use std::{
 };
 
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer,
+    contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer,
     resize_error::ResizeError, Buffer,
 };
 
@@ -96,7 +96,7 @@ impl<T, A: Allocator> PtrBuffer for AllocatorBuffer<T, A> {
         self.ptr.as_ptr().add(index)
     }
 }
-impl<T, A: Allocator> ContinuousMemoryBuffer for AllocatorBuffer<T, A> {}
+impl<T, A: Allocator> ContiguousMemoryBuffer for AllocatorBuffer<T, A> {}
 impl<T, A: Allocator> DefaultRefBuffer for AllocatorBuffer<T, A> {}
 
 impl<T, A: Allocator + Default> Default for AllocatorBuffer<T, A> {

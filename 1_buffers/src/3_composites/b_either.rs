@@ -1,7 +1,7 @@
 use std::ops::RangeBounds;
 
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+    contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
     resize_error::ResizeError, Buffer,
 };
 
@@ -143,9 +143,9 @@ where
     }
 }
 
-impl<A, B> ContinuousMemoryBuffer for EitherBuffer<A, B>
+impl<A, B> ContiguousMemoryBuffer for EitherBuffer<A, B>
 where
-    A: ContinuousMemoryBuffer,
-    B: Buffer<Element = A::Element> + ContinuousMemoryBuffer,
+    A: ContiguousMemoryBuffer,
+    B: Buffer<Element = A::Element> + ContiguousMemoryBuffer,
 {
 }

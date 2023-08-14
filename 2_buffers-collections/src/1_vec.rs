@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use buffers::{
     interface::{
-        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+        contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
         resize_error::ResizeError, Buffer,
     },
     DefaultBuffer,
@@ -485,7 +485,7 @@ where
 
 impl<T, B> Vector<T, B>
 where
-    B: Buffer<Element = T> + ContinuousMemoryBuffer,
+    B: Buffer<Element = T> + ContiguousMemoryBuffer,
 {
     /// Extracts a slice containing the entire vector
     pub fn as_slice(&self) -> &[T] {

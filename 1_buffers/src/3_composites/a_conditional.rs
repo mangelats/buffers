@@ -1,7 +1,7 @@
 use std::{marker::PhantomData, mem::MaybeUninit, ops::RangeBounds};
 
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+    contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
     resize_error::ResizeError, Buffer,
 };
 
@@ -196,10 +196,10 @@ where
     }
 }
 
-impl<A, B, S> ContinuousMemoryBuffer for ConditionalBuffer<A, B, S>
+impl<A, B, S> ContiguousMemoryBuffer for ConditionalBuffer<A, B, S>
 where
-    A: ContinuousMemoryBuffer,
-    B: Buffer<Element = A::Element> + ContinuousMemoryBuffer,
+    A: ContiguousMemoryBuffer,
+    B: Buffer<Element = A::Element> + ContiguousMemoryBuffer,
     S: Selector,
 {
 }

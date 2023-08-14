@@ -1,5 +1,5 @@
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer,
+    contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer,
     resize_error::ResizeError, Buffer,
 };
 use std::mem::MaybeUninit;
@@ -82,7 +82,7 @@ impl<T, const SIZE: usize> PtrBuffer for InlineBuffer<T, SIZE> {
     }
 }
 
-impl<T, const SIZE: usize> ContinuousMemoryBuffer for InlineBuffer<T, SIZE> {}
+impl<T, const SIZE: usize> ContiguousMemoryBuffer for InlineBuffer<T, SIZE> {}
 impl<T, const SIZE: usize> DefaultRefBuffer for InlineBuffer<T, SIZE> {}
 
 impl<T, const SIZE: usize> Default for InlineBuffer<T, SIZE> {

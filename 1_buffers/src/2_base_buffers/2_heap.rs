@@ -5,7 +5,7 @@ use std::{
 };
 
 use crate::interface::{
-    continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer,
+    contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::DefaultRefBuffer,
     resize_error::ResizeError, Buffer,
 };
 
@@ -120,7 +120,7 @@ impl<T> PtrBuffer for HeapBuffer<T> {
         self.buffer_start.as_ptr().add(index)
     }
 }
-impl<T> ContinuousMemoryBuffer for HeapBuffer<T> {}
+impl<T> ContiguousMemoryBuffer for HeapBuffer<T> {}
 impl<T> DefaultRefBuffer for HeapBuffer<T> {}
 
 impl<T> Default for HeapBuffer<T> {

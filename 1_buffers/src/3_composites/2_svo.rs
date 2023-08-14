@@ -3,7 +3,7 @@ use std::ops::RangeBounds;
 use crate::{
     base_buffers::inline::InlineBuffer,
     interface::{
-        continuous_memory::ContinuousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
+        contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
         resize_error::ResizeError, Buffer,
     },
 };
@@ -156,8 +156,8 @@ where
     }
 }
 
-impl<const SMALL_SIZE: usize, B> ContinuousMemoryBuffer for SvoBuffer<SMALL_SIZE, B> where
-    B: Buffer + Default + ContinuousMemoryBuffer
+impl<const SMALL_SIZE: usize, B> ContiguousMemoryBuffer for SvoBuffer<SMALL_SIZE, B> where
+    B: Buffer + Default + ContiguousMemoryBuffer
 {
 }
 

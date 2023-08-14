@@ -13,8 +13,8 @@ pub mod ptrs;
 #[path = "4_refs.rs"]
 pub mod refs;
 
-#[path = "5_continuous_memory.rs"]
-pub mod continuous_memory;
+#[path = "5_contiguous_memory.rs"]
+pub mod contiguous_memory;
 
 #[path = "6_indirect_buffer.rs"]
 pub mod indirect_buffer;
