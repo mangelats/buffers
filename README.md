@@ -7,6 +7,17 @@ Another way of looking at memory management for collections.
 To define a buffer, compose the parts you'd like, and then use it in a
 collection:
 ```rust
+use buffers::{
+  base_buffers::heap::HeapBuffer,
+  composites::{
+    zsto::ZstoBuffer,
+    exponential_growth::ExponentGrowthBuffer,
+    svo::SvoBuffer,
+  },
+};
+
+use buffers_collections::vec::Vector;
+
 type ExampleBuffer<T> = ZstoBuffer<  // Optimize if T is a Zero-Sized Type
   ExponentGrowthBuffer< // Make the buffer to grow exponentially (powers of 2)
     SvoBuffer<          // Add Small Vector Optimization
@@ -16,7 +27,7 @@ type ExampleBuffer<T> = ZstoBuffer<  // Optimize if T is a Zero-Sized Type
   >
 >;
 
-let mut example_vector: Vector<u32, ExampleBuffer<_>> = Vector::new()
+let mut example_vector: Vector<u32, ExampleBuffer<_>> = Vector::new();
 ```
 
 ## The model
