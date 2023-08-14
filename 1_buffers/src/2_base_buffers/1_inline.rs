@@ -4,35 +4,39 @@ use crate::interface::{
 };
 use std::mem::MaybeUninit;
 
-/// Buffer based on a fixed-sized array, so it cannot grow or shrink.
+/// Buffer based on an inline fixed-sized array. It cannot grow or shrink. This
+/// also means that the memory is contiguous and it can be used in the stack
+/// because the size is known at compile time.
 ///
-/// This means that the memory is contiguous and it can be used in the stack because the size is known at compile time.
-/// It can be used a building block for some other more suffisticated buffers.
+/// It can also be combined with [`std::boxed::Box`] to move the array on the
+/// heap (since `Box<AnyBuffer>` is also a buffer).
 pub struct InlineBuffer<T, const SIZE: usize> {
     array: [MaybeUninit<T>; SIZE],
 }
 
 impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
-    /// Create a new, empty inline buffer
+    /// Create a new empty inline buffer.
     pub fn new() -> Self {
         InlineBuffer {
             array: MaybeUninit::uninit_array(),
         }
     }
 
-    /// Get a contant reference maybe-uninit value in the specified index.
+    /// Get a constant reference to an element in the specified `index` that may
+    /// or may not be initialized.
     ///
     /// # SAFETY
-    /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
+    ///   * `index` must be valid.
     fn at(&self, index: usize) -> &MaybeUninit<T> {
         debug_assert!(index < SIZE);
         &self.array[index]
     }
 
-    /// Get a mutable reference maybe-uninit value in the specified index.
+    /// Get a mutable reference to an element in the specified `index` that may
+    /// or may not be initialized.
     ///
-    /// ## SAFETY
-    /// `index` needs to be in bounds (`0 <= index < SIZE`). It's undefined behaviour when not.
+    /// # SAFETY
+    ///   * `index` must be valid.
     fn mut_at(&mut self, index: usize) -> &mut MaybeUninit<T> {
         debug_assert!(index < SIZE);
         &mut self.array[index]
@@ -82,8 +86,9 @@ impl<T, const SIZE: usize> PtrBuffer for InlineBuffer<T, SIZE> {
     }
 }
 
-impl<T, const SIZE: usize> ContiguousMemoryBuffer for InlineBuffer<T, SIZE> {}
 impl<T, const SIZE: usize> DefaultRefBuffer for InlineBuffer<T, SIZE> {}
+
+impl<T, const SIZE: usize> ContiguousMemoryBuffer for InlineBuffer<T, SIZE> {}
 
 impl<T, const SIZE: usize> Default for InlineBuffer<T, SIZE> {
     fn default() -> Self {
