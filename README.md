@@ -18,11 +18,11 @@ use buffers::{
 
 use buffers_collections::vec::Vector;
 
-type ExampleBuffer<T> = ZstoBuffer<  // Optimize if T is a Zero-Sized Type
-  ExponentialGrowthBuffer< // Make the buffer to grow exponentially (powers of 2)
-    SvoBuffer<          // Add Small Vector Optimization
-      128,              // Size of the small vector (in number of elements)
-      HeapBuffer<T>,    // Save the values on the heap (base buffer)
+type ExampleBuffer<T> = ZstoBuffer<  // Optimization for types where T is a Zero-Sized Type
+  ExponentialGrowthBuffer<           // Make the buffer to grow exponentially
+    SvoBuffer<                       // Add Small Vector Optimization
+      128,
+      HeapBuffer<T>,                 // Save the values on the heap (base buffer)
     >
   >
 >;
