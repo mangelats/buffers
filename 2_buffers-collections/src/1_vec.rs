@@ -520,12 +520,6 @@ impl<T, B: Buffer<Element = T>> Drop for Vector<T, B> {
     }
 }
 
-// SAFETY: The data is managed by the buffer. If it's Sync, so it's the vector.
-unsafe impl<T, B: Buffer<Element = T> + Sync> Sync for Vector<T, B> {}
-
-// SAFETY: The data is managed by the buffer. If it's Send, so it's the vector.
-unsafe impl<T, B: Buffer<Element = T> + Send> Send for Vector<T, B> {}
-
 #[cfg(test)]
 mod tests {
     use buffers::base_buffers::{heap::HeapBuffer, inline::InlineBuffer};
