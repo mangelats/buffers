@@ -12,7 +12,7 @@ pub use svo::SvoBuffer;
 
 #[path = "3_exponential_growth.rs"]
 pub mod exponential_growth;
-pub use exponential_growth::ExponentGrowthBuffer;
+pub use exponential_growth::ExponentialGrowthBuffer;
 
 #[path = "4_at_least.rs"]
 pub mod at_least;

@@ -5,22 +5,23 @@ use crate::interface::{indirect_buffer::IndirectBuffer, resize_error::ResizeErro
 ///
 /// This is usefull to prevent excessive allocations.
 #[repr(transparent)]
-pub struct ExponentGrowthBuffer<B: Buffer>(B);
+pub struct ExponentialGrowthBuffer<B: Buffer>(B);
 
-impl<B: Buffer> ExponentGrowthBuffer<B> {
-    /// Make a new [`ExponentGrowthBuffer<B>`] given the underlying buffer `B`.
+impl<B: Buffer> ExponentialGrowthBuffer<B> {
+    /// Make a new [`ExponentialGrowthBuffer<B>`] given the underlying buffer
+    /// `B`.
     pub fn from(buffer: B) -> Self {
         Self(buffer)
     }
 }
 
-impl<B: Buffer + Default> Default for ExponentGrowthBuffer<B> {
+impl<B: Buffer + Default> Default for ExponentialGrowthBuffer<B> {
     fn default() -> Self {
         Self::from(Default::default())
     }
 }
 
-impl<B: Buffer> IndirectBuffer for ExponentGrowthBuffer<B> {
+impl<B: Buffer> IndirectBuffer for ExponentialGrowthBuffer<B> {
     type InnerBuffer = B;
     type InnerBufferRef<'a> = &'a Self::InnerBuffer where Self: 'a;
     type InnerBufferMutRef<'a> = &'a mut Self::InnerBuffer where Self: 'a;
@@ -47,13 +48,13 @@ mod tests {
         interface::Buffer,
     };
 
-    use super::ExponentGrowthBuffer;
+    use super::ExponentialGrowthBuffer;
 
     #[test]
     fn test_properly_growing() {
         let mut mock_buffer: GrowMockBuffer<InlineBuffer<u32, 1>> = Default::default();
         {
-            let mut buffer = ExponentGrowthBuffer::from(&mut mock_buffer);
+            let mut buffer = ExponentialGrowthBuffer::from(&mut mock_buffer);
             // This will fail, but it doesn't matter for this test.
             let _ = unsafe { buffer.try_grow(10) };
         }
