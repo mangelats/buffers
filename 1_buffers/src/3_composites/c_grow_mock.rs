@@ -28,12 +28,14 @@ impl<B: Buffer + Default> Default for GrowMockBuffer<B> {
 
 impl<B: Buffer> IndirectBuffer for GrowMockBuffer<B> {
     type InnerBuffer = B;
+    type InnerBufferRef<'a> = &'a Self::InnerBuffer where Self: 'a;
+    type InnerBufferMutRef<'a> = &'a mut Self::InnerBuffer where Self: 'a;
 
-    fn inner(&self) -> &Self::InnerBuffer {
+    fn inner(&self) -> &B {
         &self.buff
     }
 
-    fn inner_mut(&mut self) -> &mut Self::InnerBuffer {
+    fn inner_mut(&mut self) -> &mut B {
         &mut self.buff
     }
 

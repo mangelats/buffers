@@ -24,12 +24,14 @@ impl<const MIN_SIZE: usize, B: Buffer + Default> Default for AtLeastBuffer<MIN_S
 
 impl<const MIN_SIZE: usize, B: Buffer> IndirectBuffer for AtLeastBuffer<MIN_SIZE, B> {
     type InnerBuffer = B;
+    type InnerBufferRef<'a> = &'a Self::InnerBuffer where Self: 'a;
+    type InnerBufferMutRef<'a> = &'a mut Self::InnerBuffer where Self: 'a;
 
-    fn inner(&self) -> &Self::InnerBuffer {
+    fn inner(&self) -> &B {
         &self.0
     }
 
-    fn inner_mut(&mut self) -> &mut Self::InnerBuffer {
+    fn inner_mut(&mut self) -> &mut B {
         &mut self.0
     }
 

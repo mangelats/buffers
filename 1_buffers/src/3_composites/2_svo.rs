@@ -139,7 +139,7 @@ where
 
     type MutableReference<'a> = B::MutableReference<'a>;
 
-    unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
+    unsafe fn index<'a: 'b, 'b>(&'a self, index: usize) -> Self::ConstantReference<'b> {
         // For some reason the borrow checker can't check `self.inner.index(index)`
         match self.inner {
             EitherBuffer::First(ref b) => RefBuffer::index(b, index),
@@ -147,7 +147,7 @@ where
         }
     }
 
-    unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
+    unsafe fn mut_index<'a: 'b, 'b>(&'a mut self, index: usize) -> Self::MutableReference<'b> {
         // For some reason the borrow checker can't check `self.inner.mut_index(index)`
         match self.inner {
             EitherBuffer::First(ref mut b) => RefBuffer::mut_index(b, index),

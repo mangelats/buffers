@@ -22,12 +22,14 @@ impl<B: Buffer + Default> Default for ExponentGrowthBuffer<B> {
 
 impl<B: Buffer> IndirectBuffer for ExponentGrowthBuffer<B> {
     type InnerBuffer = B;
+    type InnerBufferRef<'a> = &'a Self::InnerBuffer where Self: 'a;
+    type InnerBufferMutRef<'a> = &'a mut Self::InnerBuffer where Self: 'a;
 
-    fn inner(&self) -> &Self::InnerBuffer {
+    fn inner(&self) -> &B {
         &self.0
     }
 
-    fn inner_mut(&mut self) -> &mut Self::InnerBuffer {
+    fn inner_mut(&mut self) -> &mut B {
         &mut self.0
     }
 

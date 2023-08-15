@@ -128,14 +128,14 @@ where
     where
         Self: 'a;
 
-    unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
+    unsafe fn index<'a: 'b, 'b>(&'a self, index: usize) -> Self::ConstantReference<'b> {
         match self {
             EitherBuffer::First(buf) => buf.index(index),
             EitherBuffer::Second(buf) => buf.index(index),
         }
     }
 
-    unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
+    unsafe fn mut_index<'a: 'b, 'b>(&'a mut self, index: usize) -> Self::MutableReference<'b> {
         match self {
             EitherBuffer::First(buf) => buf.mut_index(index),
             EitherBuffer::Second(buf) => buf.mut_index(index),

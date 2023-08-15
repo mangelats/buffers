@@ -1,8 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::interface::{
-    ptrs::PtrBuffer, refs::DefaultRefBuffer, resize_error::ResizeError, Buffer,
-};
+use crate::interface::{ptrs::PtrBuffer, refs::RefBuffer, resize_error::ResizeError, Buffer};
 
 /// Buffer optimized for zero-sized types.
 ///
@@ -78,4 +76,19 @@ impl<T> PtrBuffer for ZstBuffer<T> {
     }
 }
 
-impl<T> DefaultRefBuffer for ZstBuffer<T> {}
+impl<T> RefBuffer for ZstBuffer<T> {
+    type ConstantReference<'a> = &'a T
+    where
+        Self: 'a;
+    type MutableReference<'a> = &'a mut T
+    where
+        Self: 'a;
+
+    unsafe fn index<'a: 'b, 'b>(&'a self, index: usize) -> &'b T {
+        &*self.ptr(index)
+    }
+
+    unsafe fn mut_index<'a: 'b, 'b>(&'a mut self, index: usize) -> &'b mut T {
+        &mut *self.mut_ptr(index)
+    }
+}

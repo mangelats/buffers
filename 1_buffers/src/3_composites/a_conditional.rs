@@ -185,7 +185,7 @@ where
     where
         Self: 'a;
 
-    unsafe fn index(&self, index: usize) -> Self::ConstantReference<'_> {
+    unsafe fn index<'a: 'b, 'b>(&'a self, index: usize) -> Self::ConstantReference<'b> {
         if S::SELECT_A {
             unsafe { self.a.assume_init_ref() }.index(index)
         } else {
@@ -193,7 +193,7 @@ where
         }
     }
 
-    unsafe fn mut_index(&mut self, index: usize) -> Self::MutableReference<'_> {
+    unsafe fn mut_index<'a: 'b, 'b>(&'a mut self, index: usize) -> Self::MutableReference<'b> {
         if S::SELECT_A {
             unsafe { self.a.assume_init_mut() }.mut_index(index)
         } else {

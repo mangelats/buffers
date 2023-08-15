@@ -17,5 +17,8 @@ pub mod composites;
 #[path = "a_never.rs"]
 pub mod never;
 
+#[path = "b_narrow_ref.rs"]
+pub mod narrow_ref;
+
 pub type DefaultBuffer<T, const SMALL_VECTOR_SIZE: usize = 256> =
     ZstoBuffer<SvoBuffer<SMALL_VECTOR_SIZE, HeapBuffer<T>>>;
