@@ -8,18 +8,18 @@ To define a buffer, compose the parts you'd like, and then use it in a
 collection:
 ```rust
 use buffers::{
-  base_buffers::heap::HeapBuffer,
+  base_buffers::HeapBuffer,
   composites::{
-    zsto::ZstoBuffer,
-    exponential_growth::ExponentGrowthBuffer,
-    svo::SvoBuffer,
+    ZstoBuffer,
+    ExponentialGrowthBuffer,
+    SvoBuffer,
   },
 };
 
 use buffers_collections::vec::Vector;
 
 type ExampleBuffer<T> = ZstoBuffer<  // Optimize if T is a Zero-Sized Type
-  ExponentGrowthBuffer< // Make the buffer to grow exponentially (powers of 2)
+  ExponentialGrowthBuffer< // Make the buffer to grow exponentially (powers of 2)
     SvoBuffer<          // Add Small Vector Optimization
       128,              // Size of the small vector (in number of elements)
       HeapBuffer<T>,    // Save the values on the heap (base buffer)
@@ -95,7 +95,7 @@ and to choose which one you'd like to use (or make ones which are tuned).
   2. `SvoBuffer` (Small Vector Optimization): Have a small inline buffer but can
   grow into a bigger one (its child). This prevents allocations on small
   vectors.
-  3. `ExponentGrowthBuffer`: When trying to grow it will grow to the smallest
+  3. `ExponentialGrowthBuffer`: When trying to grow it will grow to the smallest
   power of 2 at least as big as the requested value. Useful to not allocate at
   every push.
   4. `AtLeastBuffer`: Specifies that when growing will at least grow to a set
