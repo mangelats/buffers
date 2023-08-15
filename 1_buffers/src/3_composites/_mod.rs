@@ -4,15 +4,19 @@
 
 #[path = "1_zsto.rs"]
 pub mod zsto;
+pub use zsto::ZstoBuffer;
 
 #[path = "2_svo.rs"]
 pub mod svo;
+pub use svo::SvoBuffer;
 
 #[path = "3_exponential_growth.rs"]
 pub mod exponential_growth;
+pub use exponential_growth::ExponentGrowthBuffer;
 
 #[path = "4_at_least.rs"]
 pub mod at_least;
+pub use at_least::AtLeastBuffer;
 
 #[path = "a_conditional.rs"]
 pub mod conditional;

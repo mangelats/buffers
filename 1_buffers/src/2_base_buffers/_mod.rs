@@ -3,13 +3,18 @@
 
 #[path = "1_inline.rs"]
 pub mod inline;
+pub use inline::InlineBuffer;
 
 #[path = "2_heap.rs"]
 pub mod heap;
+pub use heap::HeapBuffer;
 
 #[path = "3_zst.rs"]
 pub mod zst;
+pub use zst::ZstBuffer;
 
 #[cfg(feature = "allocator")]
 #[path = "4_allocator.rs"]
 pub mod allocator;
+#[cfg(feature = "allocator")]
+pub use allocator::AllocatorBuffer;
