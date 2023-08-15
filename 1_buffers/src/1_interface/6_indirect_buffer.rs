@@ -3,6 +3,7 @@ use std::ops::{Deref, DerefMut, RangeBounds};
 use crate::narrow_ref::{NarrowMutRef, NarrowRef};
 
 use super::buffer::Buffer;
+use super::contiguous_memory::ContiguousMemoryBuffer;
 use super::ptrs::PtrBuffer;
 use super::refs::RefBuffer;
 use super::resize_error::ResizeError;
@@ -153,6 +154,12 @@ where
     unsafe fn mut_index<'a: 'b, 'b>(&'a mut self, index: usize) -> Self::MutableReference<'b> {
         self.inner_mut().narrow_mut_ref().mut_index(index)
     }
+}
+impl<IB> ContiguousMemoryBuffer for IB
+where
+    IB: IndirectBuffer,
+    IB::InnerBuffer: ContiguousMemoryBuffer,
+{
 }
 
 /// Blanket implementation to anything that can mutably dereference into a
