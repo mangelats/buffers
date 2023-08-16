@@ -20,5 +20,9 @@ pub mod never;
 #[path = "b_narrow_ref.rs"]
 pub mod narrow_ref;
 
-pub type DefaultBuffer<T, const SMALL_VECTOR_SIZE: usize = 256> =
-    ZstoBuffer<SvoBuffer<SMALL_VECTOR_SIZE, HeapBuffer<T>>>;
+/// Default buffer composition.
+///
+/// It's meant to be used as a sensible default for most cases. Its composition
+/// may change, specially when improving performance. If it doesn't comfort your
+/// use case, make one which is! (that's what this library is about)
+pub type DefaultBuffer<T> = ZstoBuffer<SvoBuffer<256, HeapBuffer<T>>>;

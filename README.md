@@ -1,11 +1,12 @@
-⚠ While I belive that this to be correct, it needs improvement. Expect changes
-after I recieve feedback
+:warning: This project is in its infancy. Please give feedback to improve it
+—even if it's just noting that some documentation parts are hard to understand.
 
 # Buffers
-Another way of looking at memory management for collections.
+Buffers are another way of looking at memory management for collections. A
+buffer is responsible for the memory but not its contents; this allows the data
+layout to have many shapes (see [The model] for more information about it).
 
-To define a buffer, compose the parts you'd like, and then use it in a
-collection:
+To define a buffer, compose the desired parts, and then use it in a collection:
 ```rust
 use buffers::{
   base_buffers::HeapBuffer,
@@ -18,11 +19,11 @@ use buffers::{
 
 use buffers_collections::vec::Vector;
 
-type ExampleBuffer<T> = ZstoBuffer<  // Optimization for types where T is a Zero-Sized Type
-  ExponentialGrowthBuffer<           // Make the buffer to grow exponentially
-    SvoBuffer<                       // Add Small Vector Optimization
+type ExampleBuffer<T> = ZstoBuffer< // Optimization for types where T is a Zero-Sized Type
+  ExponentialGrowthBuffer<          // Make the buffer to grow exponentially
+    SvoBuffer<                      // Add Small Vector Optimization
       128,
-      HeapBuffer<T>,                 // Save the values on the heap (base buffer)
+      HeapBuffer<T>,                // Save the values on the heap (base buffer)
     >
   >
 >;
@@ -30,12 +31,19 @@ type ExampleBuffer<T> = ZstoBuffer<  // Optimization for types where T is a Zero
 let mut example_vector: Vector<u32, ExampleBuffer<_>> = Vector::new();
 ```
 
+There's also a default buffer meant to be ok in most use cases:
+```rust
+use buffers::DefaultBuffer;
+let mut another_vector: Vector<u32, DefaultBuffer<_>> = Vector::new();
+let mut default_vector = Vector::<u32>::new(); // Equivalent to previous line
+```
+
 ## The model
-Currently when using collections, they are responsible for managing its memory.
-If you want a different layout than the provided, you must reimplement the
-entire collection. A good example of this (an the one started it all) is
+Currently collections are responsible for managing its memory and layout. If you
+need or want a different layout than the provided, you must reimplement the
+entire collection. A good example of this (an the one that started it all) is
 [SoA derive](https://github.com/lumol-org/soa-derive) which has to reimplement
-`Vec` and all its functions, a lot of times by simply copying the source code
+`Vec` and all its functions; a lot of times by simply copying the source code
 with some type annotation change to simply make a vector with a structure of
 arrays. This is also visible in the standard library: there is an undocumented
 `RawVec`, which has a lot of common functions for memory management and was
@@ -44,7 +52,7 @@ created to reduce duplication.
 If you squint a bit, you may see that what's common in this cases is that the
 collections have multiple responsibilities:
   1. Saving and retrieving objects and values with some properties.
-  2. Managing the memory necessary to do so.
+  2. Managing the raw memory (in a layout) to do so.
 
 Multiple collections may use the same underlying layout (eg. `Vec` and
 `VecDeque`), so what would happen if we made an abstraction for just it? This
@@ -104,8 +112,11 @@ and to choose which one you'd like to use (or make ones which are tuned).
 There are also a few others that are utilities to make other buffers or for
 testing.
 
+It's also worth noting that any `DerefMut` (like `Box`) of a buffer also works
+like a composite buffer (there is a blanket impl for them).
+
 ## Collections
-For now I've only implemented `Vector`. It's basicalle `Vec` but with a buffer.
+For now I've only implemented `Vector`. It's basically `Vec` with a buffer.
 
 ## How it works
 A `Buffer` implementation have four types of member functions:
