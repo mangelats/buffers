@@ -4,7 +4,7 @@
 # Buffers
 Buffers are another way of looking at memory management for collections. A
 buffer is responsible for the memory but not its contents; this allows the data
-layout to have many shapes (see [The model] for more information about it).
+layout to have many shapes (see [The model](#the-model) for more information about it).
 
 To define a buffer, compose the desired parts, and then use it in a collection:
 ```rust
