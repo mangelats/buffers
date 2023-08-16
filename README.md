@@ -1,12 +1,14 @@
 :warning: This project is in its infancy. Please give feedback to improve it
-—even if it's just noting that some documentation parts are hard to understand.
+—even if it's just that some documentation parts are hard to understand.
+
 
 # Buffers
 Buffers are another way of looking at memory management for collections. A
 buffer is responsible for the memory but not its contents; this allows the data
-layout to have many shapes (see [The model](#the-model) for more information about it).
+layout to have many shapes (see [the model section](#the-model) for more
+information about it).
 
-To define a buffer, compose the desired parts, and then use it in a collection:
+To define a buffer compose the desired parts and then use it in a collection:
 ```rust
 use buffers::{
   base_buffers::HeapBuffer,
@@ -79,6 +81,7 @@ A buffer may use one or multiple allocators (see `HeapBuffer` and
 `AllocatorBuffer`) and use them to aquire memory. But it doesn't care about how
 it's saved on the actual memory, nor the relationship needs to be one to one.
 
+
 ## Buffer as a composite
 The usual implementation of collections have some optimizations. This
 optimizations are balanced to be good enough for most use cases. If a use case
@@ -87,6 +90,7 @@ is specific enough, then you use another collection.
 As it turns out, you can make a buffer which uses another buffer underneath.
 This composite structure allows to make each implementation into a single buffer
 and to choose which one you'd like to use (or make ones which are tuned).
+
 
 ## List of base buffers (composite leafs)
   1. `InlineBuffer`: a buffer with an underlying fixed-size array. It cannot be
@@ -97,6 +101,7 @@ and to choose which one you'd like to use (or make ones which are tuned).
   4. `AllocatorBuffer`: a buffer that uses an allocator to dynamically allocate
   and grow. It requires the `allocator` feature (enabled by default) since it
   uses the unstable allocator API.
+
 
 ## List of composite buffers
   1. `ZstoBuffer` (Zero-Sized Type Optimization): Optimization that uses
@@ -116,10 +121,13 @@ testing.
 It's also worth noting that any `DerefMut` (like `Box`) of a buffer also works
 like a composite buffer (there is a blanket impl for them).
 
-## Collections
-For now I've only implemented `Vector`. It's basically `Vec` with a buffer.
 
-## How it works
+## Collections
+For now, I've only implemented `Vector`. It's basically `Vec` with a buffer
+(some methods may be missing).
+
+
+## How to make your own
 A `Buffer` implementation have four types of member functions:
   - Show the capacity (`capacity`)
   - Manage data (`read_value`, `write_value`, `manually_drop`)
@@ -130,6 +138,18 @@ A `Buffer` implementation have four types of member functions:
 This abstraction only assumes that the elements can be references by a `usize`
 index, so the underlying mechanism could be a lot of things.
 
+There are more traits which add capabilities to your:
+  1. `PtrBuffer`: You have a pointer-like type which alows to read an element.
+  1. `RefBuffer`: You can generate a reference-like for the elements.
+  1. `ContiguousMemoryBuffer`: This is a marker trait which indicates that the
+  memory is contiguous.
+
+To modify an exiting buffer's behaviour you may use `IndirectBuffer` instead
+of implementing it yourself. It will have a blanket `Buffer` implementation and
+the same methods as it but with a default implementation which forwards it to
+the inner buffer.
+
+
 ## Nightly
 The code currently requires the nightly compiler because of
 [`dropck_eyepatch`](https://github.com/rust-lang/rust/issues/34761)
@@ -137,6 +157,7 @@ for [Drop Check (Rustonomicon)](https://doc.rust-lang.org/nomicon/dropck.html)
 
 There is an `allocator` feature to enable an allocator-based buffer. It also
 requires nightly.
+
 
 ## Lack of code optimization
 There are currently no optimizations of the code. This is because the effect of
