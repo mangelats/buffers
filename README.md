@@ -1,12 +1,13 @@
-:warning: This project is in its infancy. Please give feedback to improve it
-—even if it's just that some documentation parts are hard to understand.
+:warning: This project is in its infancy. Please give feedback to improve
+it—even if it's just that some documentation parts are hard to understand.
 
 
 # Buffers
 Buffers are another way of looking at memory management for collections. A
 buffer is responsible for the memory but not its contents; this allows the data
-layout to have many shapes (see [the model section](#the-model) for more
-information about it).
+layout to have many shapes (see
+[the model section](##the-model-and-why-i-made-it) for more information about
+it).
 
 To define a buffer compose the desired parts and then use it in a collection:
 ```rust
@@ -41,7 +42,7 @@ let mut another_vector: Vector<u32, DefaultBuffer<_>> = Vector::new();
 let mut default_vector = Vector::<u32>::new(); // Equivalent to previous line
 ```
 
-## The model
+## The model (and why I made it)
 Currently collections are responsible for managing its memory and layout. If you
 need or want a different layout than the provided, you must reimplement the
 entire collection. A good example of this (an the one that started it all) is
@@ -167,3 +168,15 @@ obvious that it needs to be optimized, probably by sprinkling `inline` and
 
 I plan to tackle this next, but it will require to make tools that randomize
 the layout (probably based on [Stabilizer](https://github.com/ccurtsinger/stabilizer))
+
+## Naming
+The names try to convey purpose:
+  * `_mod.rs` files work as the table of contents for that module.
+  * Files and folders starting with a number are sorted and the main code of the
+  module.
+  * Files and folders starting with a letter contain code that isn't the main
+  part of the module (utilities, building blocks, etc.) and are not meant to be
+  used directly on another project.
+
+This convention helped me when I was thinking abstractly, but I may go with a
+more traditional one if it's simpler for people to read.
