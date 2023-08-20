@@ -64,7 +64,7 @@ where
         }
     }
 
-    unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
+    unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
         match self {
             EitherBuffer::First(buf) => buf.manually_drop_range(values_range),
             EitherBuffer::Second(buf) => buf.manually_drop_range(values_range),

@@ -53,7 +53,7 @@ pub trait IndirectBuffer {
         self.inner_mut().narrow_mut_ref().manually_drop(index)
     }
 
-    unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
+    unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
         self.inner_mut()
             .narrow_mut_ref()
             .manually_drop_range(values_range)
@@ -67,13 +67,13 @@ pub trait IndirectBuffer {
         self.inner_mut().narrow_mut_ref().try_shrink(target)
     }
 
-    unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+    unsafe fn shift_right<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         self.inner_mut()
             .narrow_mut_ref()
             .shift_right(to_move, positions)
     }
 
-    unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+    unsafe fn shift_left<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         self.inner_mut()
             .narrow_mut_ref()
             .shift_left(to_move, positions)
@@ -100,7 +100,7 @@ impl<T: IndirectBuffer> Buffer for T {
         <Self as IndirectBuffer>::manually_drop(self, index)
     }
 
-    unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
+    unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
         <Self as IndirectBuffer>::manually_drop_range(self, values_range)
     }
 
@@ -112,11 +112,11 @@ impl<T: IndirectBuffer> Buffer for T {
         <Self as IndirectBuffer>::try_shrink(self, target)
     }
 
-    unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+    unsafe fn shift_right<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         <Self as IndirectBuffer>::shift_right(self, to_move, positions)
     }
 
-    unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+    unsafe fn shift_left<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         <Self as IndirectBuffer>::shift_left(self, to_move, positions)
     }
 }

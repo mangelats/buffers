@@ -89,7 +89,7 @@ where
         self.inner.manually_drop(index)
     }
 
-    unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
+    unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
         self.inner.manually_drop_range(values_range)
     }
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {

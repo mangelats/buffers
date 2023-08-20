@@ -24,7 +24,7 @@ pub trait ContiguousMemoryBuffer:
     /// # Safety
     ///  * `range` must be a range of valid positions.
     ///  * All positions in `range` must be filled.
-    unsafe fn slice<R: RangeBounds<usize>>(&self, range: R) -> &[Self::Element] {
+    unsafe fn slice<R: RangeBounds<usize> + Clone>(&self, range: R) -> &[Self::Element] {
         let (start, len) = start_len(self, range);
         std::slice::from_raw_parts(self.ptr(start), len)
     }
@@ -34,7 +34,10 @@ pub trait ContiguousMemoryBuffer:
     /// # Safety
     ///  * `range` must be a range of valid positions.
     ///  * All positions in `range` must be filled.
-    unsafe fn mut_slice<R: RangeBounds<usize>>(&mut self, range: R) -> &mut [Self::Element] {
+    unsafe fn mut_slice<R: RangeBounds<usize> + Clone>(
+        &mut self,
+        range: R,
+    ) -> &mut [Self::Element] {
         let (start, len) = start_len(self, range);
         std::slice::from_raw_parts_mut(self.mut_ptr(start), len)
     }
@@ -42,7 +45,10 @@ pub trait ContiguousMemoryBuffer:
 
 /// Finds the start and length of a range for a specific buffer (allows open
 /// ranges).
-fn start_len<B: Buffer + ?Sized, R: RangeBounds<usize>>(buffer: &B, range: R) -> (usize, usize) {
+fn start_len<B: Buffer + ?Sized, R: RangeBounds<usize> + Clone>(
+    buffer: &B,
+    range: R,
+) -> (usize, usize) {
     let start: usize = match range.start_bound() {
         Included(index) => *index,
         Excluded(index) => *index + 1,

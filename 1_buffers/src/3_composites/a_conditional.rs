@@ -115,7 +115,7 @@ where
         }
     }
 
-    unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
+    unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
         if S::SELECT_A {
             unsafe { self.a.assume_init_mut() }.manually_drop_range(values_range)
         } else {

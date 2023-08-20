@@ -86,7 +86,7 @@ pub trait Buffer {
     ///
     /// # Safety
     ///   * All the positions in `values_range` must be valid and filled.
-    unsafe fn manually_drop_range<R: RangeBounds<usize>>(&mut self, values_range: R) {
+    unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
         for index in clamp_buffer_range(self, values_range) {
             self.manually_drop(index);
         }
@@ -98,7 +98,7 @@ pub trait Buffer {
     ///   * All positions in `to_move` must be valid.
     ///   * `positions` positions after the `to_move` range must be valid and
     ///     empty.
-    unsafe fn shift_right<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+    unsafe fn shift_right<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         let range = clamp_buffer_range(self, to_move);
 
         debug_assert!(range.end + positions <= self.capacity());
@@ -117,7 +117,7 @@ pub trait Buffer {
     ///   * All positions in `to_move` must be valid.
     ///   * `positions` positions before the `to_move` range must be valid and
     ///     empty.
-    unsafe fn shift_left<R: RangeBounds<usize>>(&mut self, to_move: R, positions: usize) {
+    unsafe fn shift_left<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         let range = clamp_buffer_range(self, to_move);
 
         debug_assert!(range.end >= positions);
@@ -133,7 +133,7 @@ pub trait Buffer {
 
 /// Utility function that clamps a range into a buffer cappacity. Allows for
 /// open ended ranges in the ranged utility functions.
-fn clamp_buffer_range<B: Buffer + ?Sized, R: RangeBounds<usize>>(
+fn clamp_buffer_range<B: Buffer + ?Sized, R: RangeBounds<usize> + Clone>(
     buffer: &B,
     range: R,
 ) -> Range<usize> {
