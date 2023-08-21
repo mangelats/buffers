@@ -7,5 +7,6 @@ edition = "2021"
 test_utils = { path = "../a_test_utils" }
 
 [features]
-default = ["allocator"]
+default = ["allocator", "array"]
 allocator = []
+array = []

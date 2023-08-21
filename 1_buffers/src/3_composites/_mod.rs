@@ -18,6 +18,12 @@ pub use exponential_growth::ExponentialGrowthBuffer;
 pub mod at_least;
 pub use at_least::AtLeastBuffer;
 
+#[cfg(feature = "array")]
+#[path = "5_array.rs"]
+pub mod array;
+#[cfg(feature = "array")]
+pub use array::ArrayBuffer;
+
 #[path = "a_conditional.rs"]
 pub mod conditional;
 

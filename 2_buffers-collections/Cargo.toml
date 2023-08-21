@@ -8,5 +8,6 @@ buffers = { path = "../1_buffers", default-features = false }
 test_utils = { path = "../a_test_utils" }
 
 [features]
-default = ["allocator"]
+default = ["allocator", "array"]
 allocator = ["buffers/allocator"]
+array = ["buffers/array"]

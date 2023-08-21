@@ -1,6 +1,7 @@
 #![feature(dropck_eyepatch)]
 #![feature(maybe_uninit_uninit_array)]
 #![cfg_attr(feature = "allocator", feature(allocator_api))]
+#![cfg_attr(feature = "array", feature(maybe_uninit_array_assume_init))]
 
 use base_buffers::heap::HeapBuffer;
 use composites::{svo::SvoBuffer, zsto::ZstoBuffer};
