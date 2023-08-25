@@ -34,45 +34,92 @@ pub trait IndirectBuffer {
     where
         Self: 'a;
 
+    /// Aquire a constant reference into the inner buffer.
     fn inner(&self) -> Self::InnerBufferRef<'_>;
+    /// Aquire a mutable reference into the inner buffer.
     fn inner_mut(&mut self) -> Self::InnerBufferMutRef<'_>;
 
+    /// Same as [`Buffer::capacity`] but default-implemented to pass it to
+    /// [`IndirectBuffer::inner`].
+    ///
+    /// # Safety
+    /// Same as [`Buffer::capacity`].
     fn capacity(&self) -> usize {
         self.inner().narrow_ref().capacity()
     }
 
+    /// Same as [`Buffer::read_value`] but default-implemented to pass it to
+    /// [`IndirectBuffer::inner`].
+    ///
+    /// # Safety
+    /// Same as [`Buffer::read_value`].
     unsafe fn read_value(&self, index: usize) -> <Self::InnerBuffer as Buffer>::Element {
         self.inner().narrow_ref().read_value(index)
     }
 
+    /// Same as [`Buffer::write_value`] but default-implemented to pass it to
+    /// [`IndirectBuffer::inner`].
+    ///
+    /// # Safety
+    /// Same as [`Buffer::write_value`].
     unsafe fn write_value(&mut self, index: usize, value: <Self::InnerBuffer as Buffer>::Element) {
         self.inner_mut().narrow_mut_ref().write_value(index, value)
     }
 
+    /// Same as [`Buffer::manually_drop`] but default-implemented to pass it to
+    /// [`IndirectBuffer::inner`].
+    ///
+    /// # Safety
+    /// Same as [`Buffer::manually_drop`].
     unsafe fn manually_drop(&mut self, index: usize) {
         self.inner_mut().narrow_mut_ref().manually_drop(index)
     }
 
+    /// Same as [`Buffer::manually_drop_range`] but default-implemented to pass it to
+    /// [`IndirectBuffer::inner`].
+    ///
+    /// # Safety
+    /// Same as [`Buffer::manually_drop_range`].
     unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
         self.inner_mut()
             .narrow_mut_ref()
             .manually_drop_range(values_range)
     }
 
+    /// Same as [`Buffer::try_grow`] but default-implemented to pass it to
+    /// [`IndirectBuffer::inner`].
+    ///
+    /// # Safety
+    /// Same as [`Buffer::try_grow`].
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
         self.inner_mut().narrow_mut_ref().try_grow(target)
     }
 
+    /// Same as [`Buffer::try_shrink`] but default-implemented to pass it to
+    /// [`IndirectBuffer::inner`].
+    ///
+    /// # Safety
+    /// Same as [`Buffer::try_shrink`].
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
         self.inner_mut().narrow_mut_ref().try_shrink(target)
     }
 
+    /// Same as [`Buffer::shift_right`] but default-implemented to pass it to
+    /// [`IndirectBuffer::inner`].
+    ///
+    /// # Safety
+    /// Same as [`Buffer::shift_right`].
     unsafe fn shift_right<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         self.inner_mut()
             .narrow_mut_ref()
             .shift_right(to_move, positions)
     }
 
+    /// Same as [`Buffer::shift_left`] but default-implemented to pass it to
+    /// [`IndirectBuffer::inner`].
+    ///
+    /// # Safety
+    /// Same as [`Buffer::shift_left`].
     unsafe fn shift_left<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         self.inner_mut()
             .narrow_mut_ref()

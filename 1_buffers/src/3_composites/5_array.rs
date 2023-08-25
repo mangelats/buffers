@@ -40,10 +40,10 @@ where
     }
 
     fn buffer_iter(&self) -> impl Iterator<Item = &B> {
-        self.buffers.as_slice().into_iter()
+        self.buffers.as_slice().iter()
     }
     fn buffer_iter_mut(&mut self) -> impl Iterator<Item = &mut B> {
-        self.buffers.as_mut_slice().into_iter()
+        self.buffers.as_mut_slice().iter_mut()
     }
 }
 
@@ -145,10 +145,10 @@ where
 /// [`Default`].
 fn default_array<T: Default, const N: usize>() -> [T; N] {
     let mut result = MaybeUninit::<T>::uninit_array::<N>();
-    for i in 0..N {
+    for position in result.iter_mut() {
         // SAFETY: All positions are empty before the loop. The loop visits them
         // only once. This the moving on each value is valid.
-        unsafe { result[i].as_mut_ptr().write(Default::default()) }
+        unsafe { position.as_mut_ptr().write(Default::default()) }
     }
 
     // SAFETY: All values have been set on the previous loop
