@@ -35,6 +35,6 @@ pub mod narrow_ref;
 pub type DefaultBuffer<T> = ZstoBuffer<SvoBuffer<256, HeapBuffer<T>>>;
 
 // Force running README.md example code, so we can ensure it actually works :)
-#[doc = include_str!("../../README.md")]
+#[doc = include_str!("../README.md")]
 #[cfg(doctest)]
 extern "C" {}

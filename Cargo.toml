@@ -1,3 +1,9 @@
-[workspace]
-members = ["1_buffers"]
-resolver = "2"
+[package]
+name = "buffers"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["allocator", "array"]
+allocator = []
+array = []
