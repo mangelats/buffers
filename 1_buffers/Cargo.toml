@@ -3,9 +3,6 @@ name = "buffers"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-test_utils = { path = "../a_test_utils" }
-
 [features]
 default = ["allocator", "array"]
 allocator = []

@@ -115,7 +115,7 @@ impl<T, const SIZE: usize> Default for InlineBuffer<T, SIZE> {
 mod tests {
     use std::sync::atomic::{AtomicI64, Ordering};
 
-    use test_utils::life_counter::LifeCounter;
+    use crate::test_utils::life_counter::LifeCounter;
 
     use super::*;
 

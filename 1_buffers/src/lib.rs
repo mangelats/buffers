@@ -18,10 +18,13 @@ pub mod composites;
 #[path = "4_collections/_mod.rs"]
 pub mod collections;
 
-#[path = "a_never.rs"]
+#[path = "a_test_utils/_mod.rs"]
+pub mod test_utils;
+
+#[path = "b_never.rs"]
 pub mod never;
 
-#[path = "b_narrow_ref.rs"]
+#[path = "c_narrow_ref.rs"]
 pub mod narrow_ref;
 
 /// Default buffer composition.
