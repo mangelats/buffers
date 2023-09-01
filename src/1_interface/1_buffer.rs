@@ -88,7 +88,9 @@ pub trait Buffer {
     ///   * All the positions in `values_range` must be valid and filled.
     unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
         for index in clamp_buffer_range(self, values_range) {
-            self.manually_drop(index);
+            // SAFETY: All positions should fulfill the requirements as per
+            // this function documentation.
+            unsafe { self.manually_drop(index) };
         }
     }
 
@@ -105,7 +107,14 @@ pub trait Buffer {
 
         for old_pos in range.into_iter().rev() {
             let new_pos = old_pos + positions;
-            self.write_value(new_pos, self.read_value(old_pos));
+            // SAFETY: This function requirements ensure that `to_move` (`range`
+            // after clamp) has all values be valid. We are moving values before
+            // overriding, ensuring that the value is still valid.
+            let value = unsafe { self.read_value(old_pos) };
+            // SAFETY: This function requirements ensure that `positions` won't
+            // get out of memory empty. On the overlapping space, the values are
+            // emptied before writing on it.
+            unsafe { self.write_value(new_pos, value) };
         }
 
         // Old values left as is, since the bytes themselves are considered garbage
@@ -124,7 +133,14 @@ pub trait Buffer {
 
         for old_pos in range.into_iter() {
             let new_pos = old_pos - positions;
-            self.write_value(new_pos, self.read_value(old_pos));
+            // SAFETY: This function requirements ensure that `to_move` (`range`
+            // after clamp) has all values be valid. We are moving values before
+            // overriding, ensuring that the value is still valid.
+            let value = unsafe { self.read_value(old_pos) };
+            // SAFETY: This function requirements ensure that `positions` won't
+            // get out of memory empty. On the overlapping space, the values are
+            // emptied before writing on it.
+            unsafe { self.write_value(new_pos, value) };
         }
 
         // Old values left as is, since the bytes themselves are considered garbage

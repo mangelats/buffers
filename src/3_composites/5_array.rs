@@ -77,35 +77,51 @@ where
     type Element = [B::Element; SIZE];
 
     fn capacity(&self) -> usize {
-        self.buffers.iter().map(B::capacity).max().unwrap_or(0)
+        self.buffers.iter().map(B::capacity).min().unwrap_or(0)
     }
 
     unsafe fn read_value(&self, index: usize) -> Self::Element {
         let mut result = MaybeUninit::<B::Element>::uninit_array::<SIZE>();
         for (i, buffer) in self.buffer_iter().enumerate() {
-            result[i].as_mut_ptr().write(buffer.read_value(index));
+            let ptr = result[i].as_mut_ptr();
+
+            // SAFETY: if `index` is a valid and filled position to this buffer,
+            // it's also valid and filled for all the underlying ones.
+            let val = unsafe { buffer.read_value(index) };
+            // SAFETY: `ptr` is part of a local array, thus a valid location
+            // (and without a value).
+            unsafe { ptr.write(val) };
         }
-        MaybeUninit::array_assume_init(result)
+
+        // SAFETY: the loop filled the entire array, thus it's initialized.
+        unsafe { MaybeUninit::array_assume_init(result) }
     }
 
     unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
         for (buffer, v) in self.buffer_iter_mut().zip(value) {
-            buffer.write_value(index, v)
+            // SAFETY: if `index` is a valid and empty position to this buffer,
+            // it's also valid and empty for all the underlying ones.
+            unsafe { buffer.write_value(index, v) }
         }
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
         for buffer in self.buffer_iter_mut() {
-            buffer.manually_drop(index)
+            // SAFETY: if `index` is a valid and filled position to this buffer,
+            // it's also valid and filled for all the underlying ones.
+            unsafe { buffer.manually_drop(index) }
         }
     }
 
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
         for buffer in self.buffer_iter_mut() {
-            match buffer.try_grow(target) {
-                Ok(_) => {}
-                Err(ResizeError::UnsupportedOperation) => {}
-                Err(e) => return Err(e),
+            if buffer.capacity() < target {
+                // SAFETY: Conditional guards precondition.
+                match unsafe { buffer.try_grow(target) } {
+                    Ok(_) => {}
+                    Err(ResizeError::UnsupportedOperation) => {}
+                    Err(e) => return Err(e),
+                }
             }
         }
         Ok(())
@@ -113,7 +129,9 @@ where
 
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), crate::interface::ResizeError> {
         for buffer in self.buffer_iter_mut() {
-            match buffer.try_shrink(target) {
+            // SAFETY: `self.capacity()` <= `inner_buffer.capacity()`. Thus
+            // `target` < `inner_buffer.capacity()` for all inner buffers.
+            match unsafe { buffer.try_shrink(target) } {
                 Ok(_) => {}
                 Err(ResizeError::UnsupportedOperation) => {}
                 Err(e) => return Err(e),
@@ -124,19 +142,25 @@ where
 
     unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
         for buffer in self.buffer_iter_mut() {
-            buffer.manually_drop_range(values_range.clone());
+            let range = values_range.clone();
+            // SAFETY: Forwarding call to inner buffers.
+            unsafe { buffer.manually_drop_range(range) };
         }
     }
 
     unsafe fn shift_right<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         for buffer in self.buffer_iter_mut() {
-            buffer.shift_right(to_move.clone(), positions);
+            let range = to_move.clone();
+            // SAFETY: Forwarding call to inner buffers.
+            unsafe { buffer.shift_right(range, positions) };
         }
     }
 
     unsafe fn shift_left<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         for buffer in self.buffer_iter_mut() {
-            buffer.shift_left(to_move.clone(), positions);
+            let range = to_move.clone();
+            // SAFETY: Forwarding call to inner buffers.
+            unsafe { buffer.shift_left(range, positions) };
         }
     }
 }

@@ -37,7 +37,10 @@ impl<B: Buffer> IndirectBuffer for ExponentialGrowthBuffer<B> {
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
         // SAFETY: target is always bigger than 0 because of the restriction on Buffer; it won't underflow.
         let new_target = (target - 1).next_power_of_two();
-        self.inner_mut().try_grow(new_target)
+        let inner = self.inner_mut();
+
+        // SAFETY: `new_target` >= `target` > `self.capacity()`.
+        unsafe { inner.try_grow(new_target) }
     }
 }
 

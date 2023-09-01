@@ -36,7 +36,11 @@ impl<const MIN_SIZE: usize, B: Buffer> IndirectBuffer for AtLeastBuffer<MIN_SIZE
     }
 
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
-        self.inner_mut().try_grow(max(target, MIN_SIZE))
+        let inner = self.inner_mut();
+        let new_target = max(target, MIN_SIZE);
+
+        // SAFETY: `new_target` >= `target` > `self.capacity()`.
+        unsafe { inner.try_grow(new_target) }
     }
 }
 

@@ -2,6 +2,9 @@
 #![feature(maybe_uninit_uninit_array)]
 #![cfg_attr(feature = "allocator", feature(allocator_api))]
 #![cfg_attr(feature = "array", feature(maybe_uninit_array_assume_init))]
+#![deny(unsafe_op_in_unsafe_fn)]
+#![deny(clippy::multiple_unsafe_ops_per_block)]
+#![warn(clippy::undocumented_unsafe_blocks)]
 
 use base_buffers::heap::HeapBuffer;
 use composites::{svo::SvoBuffer, zsto::ZstoBuffer};

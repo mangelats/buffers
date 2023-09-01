@@ -54,7 +54,9 @@ pub trait IndirectBuffer {
     /// # Safety
     /// Same as [`Buffer::read_value`].
     unsafe fn read_value(&self, index: usize) -> <Self::InnerBuffer as Buffer>::Element {
-        self.inner().narrow_ref().read_value(index)
+        let inner = self.inner().narrow_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.read_value(index) }
     }
 
     /// Same as [`Buffer::write_value`] but default-implemented to pass it to
@@ -63,7 +65,9 @@ pub trait IndirectBuffer {
     /// # Safety
     /// Same as [`Buffer::write_value`].
     unsafe fn write_value(&mut self, index: usize, value: <Self::InnerBuffer as Buffer>::Element) {
-        self.inner_mut().narrow_mut_ref().write_value(index, value)
+        let inner = self.inner_mut().narrow_mut_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.write_value(index, value) }
     }
 
     /// Same as [`Buffer::manually_drop`] but default-implemented to pass it to
@@ -72,7 +76,9 @@ pub trait IndirectBuffer {
     /// # Safety
     /// Same as [`Buffer::manually_drop`].
     unsafe fn manually_drop(&mut self, index: usize) {
-        self.inner_mut().narrow_mut_ref().manually_drop(index)
+        let inner = self.inner_mut().narrow_mut_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.manually_drop(index) }
     }
 
     /// Same as [`Buffer::manually_drop_range`] but default-implemented to pass it to
@@ -81,9 +87,9 @@ pub trait IndirectBuffer {
     /// # Safety
     /// Same as [`Buffer::manually_drop_range`].
     unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
-        self.inner_mut()
-            .narrow_mut_ref()
-            .manually_drop_range(values_range)
+        let inner = self.inner_mut().narrow_mut_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.manually_drop_range(values_range) }
     }
 
     /// Same as [`Buffer::try_grow`] but default-implemented to pass it to
@@ -92,7 +98,9 @@ pub trait IndirectBuffer {
     /// # Safety
     /// Same as [`Buffer::try_grow`].
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
-        self.inner_mut().narrow_mut_ref().try_grow(target)
+        let inner = self.inner_mut().narrow_mut_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.try_grow(target) }
     }
 
     /// Same as [`Buffer::try_shrink`] but default-implemented to pass it to
@@ -101,7 +109,9 @@ pub trait IndirectBuffer {
     /// # Safety
     /// Same as [`Buffer::try_shrink`].
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
-        self.inner_mut().narrow_mut_ref().try_shrink(target)
+        let inner = self.inner_mut().narrow_mut_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.try_shrink(target) }
     }
 
     /// Same as [`Buffer::shift_right`] but default-implemented to pass it to
@@ -110,9 +120,9 @@ pub trait IndirectBuffer {
     /// # Safety
     /// Same as [`Buffer::shift_right`].
     unsafe fn shift_right<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
-        self.inner_mut()
-            .narrow_mut_ref()
-            .shift_right(to_move, positions)
+        let inner = self.inner_mut().narrow_mut_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.shift_right(to_move, positions) }
     }
 
     /// Same as [`Buffer::shift_left`] but default-implemented to pass it to
@@ -121,9 +131,9 @@ pub trait IndirectBuffer {
     /// # Safety
     /// Same as [`Buffer::shift_left`].
     unsafe fn shift_left<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
-        self.inner_mut()
-            .narrow_mut_ref()
-            .shift_left(to_move, positions)
+        let inner = self.inner_mut().narrow_mut_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.shift_left(to_move, positions) }
     }
 }
 
@@ -136,35 +146,43 @@ impl<T: IndirectBuffer> Buffer for T {
     }
 
     unsafe fn read_value(&self, index: usize) -> Self::Element {
-        <Self as IndirectBuffer>::read_value(self, index)
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { <Self as IndirectBuffer>::read_value(self, index) }
     }
 
     unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
-        <Self as IndirectBuffer>::write_value(self, index, value)
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { <Self as IndirectBuffer>::write_value(self, index, value) }
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
-        <Self as IndirectBuffer>::manually_drop(self, index)
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { <Self as IndirectBuffer>::manually_drop(self, index) }
     }
 
     unsafe fn manually_drop_range<R: RangeBounds<usize> + Clone>(&mut self, values_range: R) {
-        <Self as IndirectBuffer>::manually_drop_range(self, values_range)
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { <Self as IndirectBuffer>::manually_drop_range(self, values_range) }
     }
 
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
-        <Self as IndirectBuffer>::try_grow(self, target)
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { <Self as IndirectBuffer>::try_grow(self, target) }
     }
 
     unsafe fn try_shrink(&mut self, target: usize) -> Result<(), ResizeError> {
-        <Self as IndirectBuffer>::try_shrink(self, target)
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { <Self as IndirectBuffer>::try_shrink(self, target) }
     }
 
     unsafe fn shift_right<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
-        <Self as IndirectBuffer>::shift_right(self, to_move, positions)
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { <Self as IndirectBuffer>::shift_right(self, to_move, positions) }
     }
 
     unsafe fn shift_left<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
-        <Self as IndirectBuffer>::shift_left(self, to_move, positions)
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { <Self as IndirectBuffer>::shift_left(self, to_move, positions) }
     }
 }
 
@@ -178,11 +196,15 @@ where
     type MutablePointer = B::MutablePointer;
 
     unsafe fn ptr(&self, index: usize) -> Self::ConstantPointer {
-        self.inner().narrow_ref().ptr(index)
+        let inner = self.inner().narrow_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.ptr(index) }
     }
 
     unsafe fn mut_ptr(&mut self, index: usize) -> Self::MutablePointer {
-        self.inner_mut().narrow_mut_ref().mut_ptr(index)
+        let inner = self.inner_mut().narrow_mut_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.mut_ptr(index) }
     }
 }
 impl<IB> RefBuffer for IB
@@ -195,11 +217,15 @@ where
     type MutableReference<'a> = <<IB as IndirectBuffer>::InnerBuffer as RefBuffer>::MutableReference<'a> where Self: 'a;
 
     unsafe fn index<'a: 'b, 'b>(&'a self, index: usize) -> Self::ConstantReference<'b> {
-        self.inner().narrow_ref().index(index)
+        let inner = self.inner().narrow_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.index(index) }
     }
 
     unsafe fn mut_index<'a: 'b, 'b>(&'a mut self, index: usize) -> Self::MutableReference<'b> {
-        self.inner_mut().narrow_mut_ref().mut_index(index)
+        let inner = self.inner_mut().narrow_mut_ref();
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { inner.mut_index(index) }
     }
 }
 impl<IB> ContiguousMemoryBuffer for IB

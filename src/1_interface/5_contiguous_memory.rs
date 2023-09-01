@@ -26,7 +26,12 @@ pub trait ContiguousMemoryBuffer:
     ///  * All positions in `range` must be filled.
     unsafe fn slice<R: RangeBounds<usize> + Clone>(&self, range: R) -> &[Self::Element] {
         let (start, len) = start_len(self, range);
-        std::slice::from_raw_parts(self.ptr(start), len)
+        // SAFETY: `start` is part of `range` which must be valid.
+        let data = unsafe { self.ptr(start) };
+        // SAFETY: `len` is limited to capacity. Because all values must be
+        // filled, the values are valid. `ptr` ensures that the values are
+        // non-null, properly aligned, and valid.
+        unsafe { std::slice::from_raw_parts(data, len) }
     }
 
     /// Get the mutable slice of memory of the buffer specified by `range`.
@@ -39,7 +44,12 @@ pub trait ContiguousMemoryBuffer:
         range: R,
     ) -> &mut [Self::Element] {
         let (start, len) = start_len(self, range);
-        std::slice::from_raw_parts_mut(self.mut_ptr(start), len)
+        // SAFETY: `start` is part of `range` which must be valid.
+        let data = unsafe { self.mut_ptr(start) };
+        // SAFETY: `len` is limited to capacity. Because all values must be
+        // filled, the values are valid. `ptr` ensures that the values are
+        // non-null, properly aligned, and valid.
+        unsafe { std::slice::from_raw_parts_mut(data, len) }
     }
 }
 

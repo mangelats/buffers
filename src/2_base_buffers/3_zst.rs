@@ -37,7 +37,7 @@ impl<T> Buffer for ZstBuffer<T> {
         // pointer.
         // TODO: adding an intrinsics::assume for the size of T may increase
         // performance.
-        std::ptr::read(std::ptr::NonNull::dangling().as_ptr())
+        unsafe { std::ptr::read(std::ptr::NonNull::dangling().as_ptr()) }
     }
 
     unsafe fn write_value(&mut self, _index: usize, _value: T) {
@@ -85,10 +85,20 @@ impl<T> RefBuffer for ZstBuffer<T> {
         Self: 'a;
 
     unsafe fn index<'a: 'b, 'b>(&'a self, index: usize) -> &'b T {
-        &*self.ptr(index)
+        // SAFETY: [`RefBuffer::index`] has at least the same requirements as
+        // [`PtrBuffer::ptr`].
+        let ptr = unsafe { self.ptr(index) };
+        // SAFETY: [`PtrBuffer::ptr`] requires that the pointer can be
+        // dereferenced.
+        unsafe { &*ptr }
     }
 
     unsafe fn mut_index<'a: 'b, 'b>(&'a mut self, index: usize) -> &'b mut T {
-        &mut *self.mut_ptr(index)
+        // SAFETY: [`RefBuffer::mut_index`] has at least the same requirements
+        // as [`PtrBuffer::mut_ptr`].
+        let ptr = unsafe { self.mut_ptr(index) };
+        // SAFETY: [`PtrBuffer::mut_ptr`] requires that the pointer can be
+        // dereferenced.
+        unsafe { &mut *ptr }
     }
 }

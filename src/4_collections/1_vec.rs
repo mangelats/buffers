@@ -263,10 +263,11 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
 
         // Move only when necessary
         if self.len != index {
-            unsafe {
-                let value = self.buffer.read_value(self.len);
-                self.buffer.write_value(index, value);
-            }
+            // SAFETY: `self.len` has been decreased but the position hasn't
+            // been emptied, yet.
+            let value = unsafe { self.buffer.read_value(self.len) };
+            // SAFETY: `index` was empties when reading to return the value.
+            unsafe { self.buffer.write_value(index, value) };
         }
 
         current
@@ -301,14 +302,18 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         }
 
         if self.len >= self.buffer.capacity() {
-            let resize_result = unsafe { self.buffer.try_grow(Self::at_least(self.len + 1)) };
+            let new_target = Self::at_least(self.len + 1);
+            // SAFETY: `new_target` > `self.len` >= `self.buffer.capacity()`
+            let resize_result = unsafe { self.buffer.try_grow(new_target) };
             resize_result.expect("Cannot grow the buffer when trying to insert a new value")
         }
 
-        unsafe {
-            self.buffer.shift_right(index..self.len, 1);
-            self.buffer.write_value(index, element);
-        }
+        // SAFETY: The conditional before ensured that there is an empty
+        // position at `self.len`.
+        unsafe { self.buffer.shift_right(index..self.len, 1) };
+        // SAFETY: After shifting index, that position is empty.
+        unsafe { self.buffer.write_value(index, element) };
+
         self.len += 1;
     }
 
@@ -341,7 +346,11 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
             panic!("Index out of bounds")
         }
 
+        // SAFETY: `0..self.len` is valid. 0 < `index` < `self.len`, so it's
+        // valid.
         let result = unsafe { self.buffer.read_value(index) };
+        // SAFETY: We remove a single element (`index`). `(index + 1)..self.len`
+        // are valid and can be shifted by 1 (position `index` is now empty).
         unsafe {
             self.buffer.shift_left((index + 1)..self.len, 1);
         }
@@ -363,14 +372,13 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     pub fn try_push(&mut self, value: T) -> Result<usize, ResizeError> {
         let index = self.len;
         if index >= self.buffer.capacity() {
+            // SAFETY: conditional checks precondition.
             unsafe {
                 self.buffer.try_grow(Self::at_least(self.len + 1))?;
             }
         }
-        unsafe {
-            // SAFETY: we know this value is unused because of len
-            self.buffer.write_value(index, value)
-        }
+        // SAFETY: we know this value is unused because of `self.len`
+        unsafe { self.buffer.write_value(index, value) };
         self.len += 1;
         Ok(index)
     }
@@ -402,8 +410,8 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// ```
     pub fn pop(&mut self) -> Option<T> {
         if self.len > 0 {
-            // SAFETY: self.len-1 is the last element, which we will pop
             self.len -= 1;
+            // SAFETY: self.len-1 is the last element, which we are poping
             let value = unsafe { self.buffer.read_value(self.len) };
             Some(value)
         } else {

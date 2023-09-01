@@ -16,9 +16,10 @@ pub trait PtrBuffer: Buffer {
 
     /// Get the constant pointer of the element in the specified position.
     ///
+    /// This pointer must point to an actual value which can be dereferenced.
+    ///
     /// # Safety
     ///   * `index` must be a valid position.
-    ///   * Position `index` must be filled.
     ///
     /// # Notes
     /// Calling the function multiple times with the same `index` results in the
@@ -27,9 +28,10 @@ pub trait PtrBuffer: Buffer {
 
     /// Get the mutable pointer of the element in the specified position.
     ///
+    /// This pointer must point to an actual value which can be dereferenced.
+    ///
     /// # Safety
     ///   * `index` must be a valid position.
-    ///   * Position `index` must be filled.
     ///
     /// # Notes
     /// Calling the function multiple times with the same `index` results in the

@@ -41,6 +41,9 @@ impl<B: Buffer> IndirectBuffer for GrowMockBuffer<B> {
 
     unsafe fn try_grow(&mut self, target: usize) -> Result<(), ResizeError> {
         self.last_target = target;
-        self.inner_mut().try_grow(target)
+        let inner = self.inner_mut();
+
+        // SAFETY: Forwards call to underlying buffer.
+        unsafe { inner.try_grow(target) }
     }
 }

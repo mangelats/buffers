@@ -51,15 +51,27 @@ impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
     }
 
     unsafe fn read_value(&self, index: usize) -> T {
-        self.ptr(index).read()
+        // SAFETY: `index` is unsafe with requirements that ensures that
+        // [`PtrBuffer::ptr`] can be used.
+        let ptr = unsafe { self.ptr(index) };
+        // SAFETY: if `index` is a valid position, `ptr` is valid to read from.
+        unsafe { ptr.read() }
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
-        self.mut_ptr(index).write(value)
+        // SAFETY: `index` is unsafe with requirements that ensures that
+        // [`PtrBuffer::ptr`] can be used.
+        let ptr = unsafe { self.mut_ptr(index) };
+        // SAFETY: if `index` is an empty position, `ptr` is valid to write to.
+        unsafe { ptr.write(value) }
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
-        std::ptr::drop_in_place(self.mut_ptr(index));
+        // SAFETY: `index` is unsafe with requirements that ensures that
+        // [`PtrBuffer::ptr`] can be used.
+        let ptr = unsafe { self.mut_ptr(index) };
+        // SAFETY: if `index` is a valid position, `ptr` is valid to drop.
+        unsafe { std::ptr::drop_in_place(ptr) };
     }
 
     unsafe fn try_grow(&mut self, _target: usize) -> Result<(), ResizeError> {
@@ -95,11 +107,21 @@ impl<T, const SIZE: usize> RefBuffer for InlineBuffer<T, SIZE> {
         Self: 'a;
 
     unsafe fn index<'a: 'b, 'b>(&'a self, index: usize) -> &'b T {
-        &*self.ptr(index)
+        // SAFETY: `index` is unsafe with requirements that ensures that
+        // [`PtrBuffer::ptr`] can be used.
+        let ptr = unsafe { self.ptr(index) };
+        // SAFETY: [`PtrBuffer::ptr`] ensures that the pointer can be
+        // derefferenced.
+        unsafe { &*ptr }
     }
 
     unsafe fn mut_index<'a: 'b, 'b>(&'a mut self, index: usize) -> &'b mut T {
-        &mut *self.mut_ptr(index)
+        // SAFETY: `mut_index` is unsafe with requirements that ensures that
+        // [`PtrBuffer::mut_ptr`] can be used.
+        let ptr = unsafe { self.mut_ptr(index) };
+        // SAFETY: [`PtrBuffer::mut_ptr`] ensures that the pointer can be
+        // derefferenced.
+        unsafe { &mut *ptr }
     }
 }
 
