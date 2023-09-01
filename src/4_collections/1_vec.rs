@@ -302,7 +302,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         }
 
         if self.len >= self.buffer.capacity() {
-            let new_target = Self::at_least(self.len + 1);
+            let new_target = self.len + 1;
             // SAFETY: `new_target` > `self.len` >= `self.buffer.capacity()`
             let resize_result = unsafe { self.buffer.try_grow(new_target) };
             resize_result.expect("Cannot grow the buffer when trying to insert a new value")
@@ -374,7 +374,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         if index >= self.buffer.capacity() {
             // SAFETY: conditional checks precondition.
             unsafe {
-                self.buffer.try_grow(Self::at_least(self.len + 1))?;
+                self.buffer.try_grow(self.len + 1)?;
             }
         }
         // SAFETY: we know this value is unused because of `self.len`
@@ -417,11 +417,6 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         } else {
             None
         }
-    }
-
-    fn at_least(min: usize) -> usize {
-        // TODO: grow more than necessary for performance reasons
-        min
     }
 }
 
