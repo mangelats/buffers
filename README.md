@@ -18,8 +18,8 @@ use buffers::{
     ExponentialGrowthBuffer,
     SvoBuffer,
   },
+  collections::Vector,
 };
-use buffers_collections::vec::Vector;
 
 type ExampleBuffer<T> = ZstoBuffer< // Optimization for types where T is a Zero-Sized Type
   ExponentialGrowthBuffer<          // Make the buffer to grow exponentially
@@ -35,8 +35,7 @@ let mut example_vector: Vector<u32, ExampleBuffer<_>> = Vector::new();
 
 There's also a default buffer meant to be ok in most use cases:
 ```rust
-use buffers::DefaultBuffer;
-use buffers_collections::vec::Vector;
+use buffers::{DefaultBuffer, collections::Vector};
 
 let mut another_vector: Vector<u32, DefaultBuffer<_>> = Vector::new();
 let mut default_vector = Vector::<u32>::new(); // Equivalent to previous line

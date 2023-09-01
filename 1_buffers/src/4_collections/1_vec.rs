@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use buffers::{
+use crate::{
     interface::{
         contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
         resize_error::ResizeError, Buffer,
@@ -22,8 +22,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Example
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::{base_buffers::inline::InlineBuffer, collections::Vector};
     /// let _vec = Vector::from_buffer(InlineBuffer::<u32, 1>::new());
     /// ```
     pub fn from_buffer(buffer: B) -> Vector<T, B> {
@@ -38,8 +37,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Example
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::{base_buffers::inline::InlineBuffer, collections::Vector};
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let vec = Vector::<_, ExampleBuffer>::new();
     /// assert_eq!(vec.len(), 0);
@@ -52,8 +50,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Example
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::{base_buffers::inline::InlineBuffer, collections::Vector};
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let vec = Vector::<_, ExampleBuffer>::new();
     /// assert_eq!(vec.is_empty(), true);
@@ -66,8 +63,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Example
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::{base_buffers::inline::InlineBuffer, collections::Vector};
     /// let vec = Vector::<_, InlineBuffer::<u32, 150>>::new();
     /// assert_eq!(vec.capacity(), 150);
     /// ```
@@ -86,7 +82,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Example
     /// ```
-    /// # use buffers_collections::Vector;
+    /// # use buffers::collections::Vector;
     /// let mut vec = Vector::<u32>::new();
     /// vec.reserve(150);
     /// assert!(vec.capacity() >= 150);
@@ -105,7 +101,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// # Example
     /// ```
-    /// # use buffers_collections::Vector;
+    /// # use buffers::collections::Vector;
     /// let mut vec = Vector::<u32>::new();
     /// vec.reserve_exact(150);
     /// assert!(vec.capacity() >= 150);
@@ -122,7 +118,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Examples
     /// Ok case:
     /// ```
-    /// # use buffers_collections::Vector;
+    /// # use buffers::collections::Vector;
     /// let mut vec = Vector::<u32>::new();
     /// let result = vec.try_reserve(150);
     /// assert_eq!(result.is_ok(), true);
@@ -131,8 +127,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// Failing case (an inline buffer cannot grow):
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::{base_buffers::inline::InlineBuffer, collections::Vector};
     /// let mut vec = Vector::<u32, InlineBuffer<_, 10>>::new();
     /// let result = vec.try_reserve(150);
     /// assert_eq!(result.is_err(), true);
@@ -149,7 +144,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Examples
     /// Ok case:
     /// ```
-    /// # use buffers_collections::Vector;
+    /// # use buffers::collections::Vector;
     /// let mut vec = Vector::<u32>::new();
     /// let result = vec.try_reserve_exact(150);
     /// assert_eq!(result.is_ok(), true);
@@ -158,8 +153,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     ///
     /// Failing case (an inline buffer cannot grow):
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::{base_buffers::inline::InlineBuffer, collections::Vector};
     /// let mut vec = Vector::<u32, InlineBuffer<_, 10>>::new();
     /// let result = vec.try_reserve_exact(150);
     /// assert_eq!(result.is_err(), true);
@@ -179,7 +173,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::collections::Vector;
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(10);
     /// assert!(vec.capacity() >= 10);
@@ -200,7 +194,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::collections::Vector;
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(10);
     /// assert!(vec.capacity() >= 10);
@@ -244,7 +238,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::collections::Vector;
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(4);
     /// vec.push(0);
@@ -287,7 +281,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::collections::Vector;
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(4);
     /// vec.push(0);
@@ -328,7 +322,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// # Example
     /// ```
     /// # use buffers::base_buffers::heap::HeapBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::collections::Vector;
     /// let mut vec = Vector::<u32, HeapBuffer<_>>::new();
     /// vec.reserve(4);
     /// vec.push(0);
@@ -359,8 +353,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// space and the buffer cannot grow.
     ///
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::{base_buffers::inline::InlineBuffer, collections::Vector};
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let mut vec = Vector::<u32, ExampleBuffer>::new();
     /// vec.try_push(1);
@@ -385,8 +378,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Adds a value at the end of the vector. Panics if it cannot.
     ///
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::{base_buffers::inline::InlineBuffer, collections::Vector};
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let mut vec = Vector::<u32, ExampleBuffer>::new();
     /// vec.push(1);
@@ -401,8 +393,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
     /// Removes the last element of the vector and returns it
     ///
     /// ```
-    /// # use buffers::base_buffers::inline::InlineBuffer;
-    /// # use buffers_collections::Vector;
+    /// # use buffers::{base_buffers::inline::InlineBuffer, collections::Vector};
     /// # type ExampleBuffer = InlineBuffer<u32, 1>;
     /// let mut vec = Vector::<u32, ExampleBuffer>::new();
     /// vec.push(123);
@@ -435,7 +426,7 @@ where
     /// # Example
     ///
     /// ```
-    /// # use buffers_collections::Vector;
+    /// # use buffers::collections::Vector;
     /// let _vec = Vector::<u32>::new();
     /// ```
     pub fn new() -> Vector<T, B> {
@@ -522,7 +513,7 @@ impl<T, B: Buffer<Element = T>> Drop for Vector<T, B> {
 
 #[cfg(test)]
 mod tests {
-    use buffers::base_buffers::{heap::HeapBuffer, inline::InlineBuffer};
+    use crate::base_buffers::{HeapBuffer, InlineBuffer};
 
     use super::*;
 

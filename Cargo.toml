@@ -1,7 +1,3 @@
 [workspace]
-members = [
-    "1_buffers",
-    "2_buffers-collections",
-    "a_test_utils"
-]
+members = ["1_buffers", "a_test_utils"]
 resolver = "2"

@@ -15,6 +15,9 @@ pub mod base_buffers;
 #[path = "3_composites/_mod.rs"]
 pub mod composites;
 
+#[path = "4_collections/_mod.rs"]
+pub mod collections;
+
 #[path = "a_never.rs"]
 pub mod never;
 
@@ -27,3 +30,8 @@ pub mod narrow_ref;
 /// may change, specially when improving performance. If it doesn't comfort your
 /// use case, make one which is! (that's what this library is about)
 pub type DefaultBuffer<T> = ZstoBuffer<SvoBuffer<256, HeapBuffer<T>>>;
+
+// Force running README.md example code, so we can ensure it actually works :)
+#[doc = include_str!("../../README.md")]
+#[cfg(doctest)]
+extern "C" {}
