@@ -12,7 +12,7 @@ use super::resize_error::ResizeError;
 /// perticularly useful to allow modifying a single function without having to
 /// implement Buffer in its entirity (eg. changing the minimum that can grow).
 pub trait IndirectBuffer {
-    type InnerBuffer: Buffer;
+    type InnerBuffer: Buffer + ?Sized;
 
     /// Utility type which is used to able to tell rust the proper lifetime of
     /// references.
@@ -138,7 +138,7 @@ pub trait IndirectBuffer {
 }
 
 /// Implementation of Buffer which forwards to IndirectBuffer's methods.
-impl<T: IndirectBuffer> Buffer for T {
+impl<IB: IndirectBuffer + ?Sized> Buffer for IB {
     type Element = <<Self as IndirectBuffer>::InnerBuffer as Buffer>::Element;
 
     fn capacity(&self) -> usize {
@@ -189,8 +189,8 @@ impl<T: IndirectBuffer> Buffer for T {
 /// Implementation of Buffer which forwards to the underlying buffer.
 impl<B, IB> PtrBuffer for IB
 where
-    IB: IndirectBuffer<InnerBuffer = B>,
-    B: Buffer + PtrBuffer,
+    IB: IndirectBuffer<InnerBuffer = B> + ?Sized,
+    B: Buffer + PtrBuffer + ?Sized,
 {
     type ConstantPointer = B::ConstantPointer;
     type MutablePointer = B::MutablePointer;
@@ -209,7 +209,7 @@ where
 }
 impl<IB> RefBuffer for IB
 where
-    IB: IndirectBuffer,
+    IB: IndirectBuffer + ?Sized,
     IB::InnerBuffer: RefBuffer,
 {
     // Forward references types to the ones in `Self::IndirectBuffer`.
@@ -230,7 +230,7 @@ where
 }
 impl<IB> ContiguousMemoryBuffer for IB
 where
-    IB: IndirectBuffer,
+    IB: IndirectBuffer + ?Sized,
     IB::InnerBuffer: ContiguousMemoryBuffer,
 {
 }
@@ -240,7 +240,7 @@ where
 impl<D> IndirectBuffer for D
 where
     D: DerefMut,
-    D::Target: Buffer + Sized,
+    D::Target: Buffer,
 {
     type InnerBuffer = <D as Deref>::Target;
 
