@@ -12,7 +12,10 @@ it).
 To define a buffer compose the desired parts and then use it in a collection:
 ```rust
 use buffers::{
-  base_buffers::HeapBuffer,
+  base_buffers::{
+    HeapBuffer,
+    InlineBuffer,
+  },
   composites::{
     ZstoBuffer,
     ExponentialGrowthBuffer,
@@ -30,7 +33,8 @@ type ExampleBuffer<T> = ZstoBuffer< // Optimization for types where T is a Zero-
   >
 >;
 
-let mut example_vector: Vector<u32, ExampleBuffer<_>> = Vector::new();
+let example_vector: Vector<u32, ExampleBuffer<_>> = Vector::new();
+let my_inline_vector: Vector<u32, InlineBuffer<_, 128>> = Vector::new();
 ```
 
 There's also a default buffer meant to be ok in most use cases:
