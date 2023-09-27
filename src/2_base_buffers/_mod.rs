@@ -13,8 +13,12 @@ pub use heap::HeapBuffer;
 pub mod zst;
 pub use zst::ZstBuffer;
 
+#[path = "4_slice.rs"]
+pub mod slice;
+pub use slice::SliceBuffer;
+
 #[cfg(feature = "allocator")]
-#[path = "4_allocator.rs"]
+#[path = "5_allocator.rs"]
 pub mod allocator;
 #[cfg(feature = "allocator")]
 pub use allocator::AllocatorBuffer;
