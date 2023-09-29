@@ -95,12 +95,12 @@ where
         }
     }
 
-    unsafe fn read_value(&self, index: usize) -> Self::Element {
+    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
         if S::SELECT_A {
-            let reference = unsafe { self.a.assume_init_ref() };
+            let reference = unsafe { self.a.assume_init_mut() };
             unsafe { reference.read_value(index) }
         } else {
-            let reference = unsafe { self.b.assume_init_ref() };
+            let reference = unsafe { self.b.assume_init_mut() };
             unsafe { reference.read_value(index) }
         }
     }

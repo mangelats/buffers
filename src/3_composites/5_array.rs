@@ -39,9 +39,7 @@ where
         Self { buffers }
     }
 
-    fn buffer_iter(&self) -> impl Iterator<Item = &B> {
-        self.buffers.as_slice().iter()
-    }
+    /// Helper function to iterate over all inner buffers
     fn buffer_iter_mut(&mut self) -> impl Iterator<Item = &mut B> {
         self.buffers.as_mut_slice().iter_mut()
     }
@@ -80,9 +78,9 @@ where
         self.buffers.iter().map(B::capacity).min().unwrap_or(0)
     }
 
-    unsafe fn read_value(&self, index: usize) -> Self::Element {
+    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
         let mut result = MaybeUninit::<B::Element>::uninit_array::<SIZE>();
-        for (i, buffer) in self.buffer_iter().enumerate() {
+        for (i, buffer) in self.buffer_iter_mut().enumerate() {
             let ptr = result[i].as_mut_ptr();
 
             // SAFETY: if `index` is a valid and filled position to this buffer,

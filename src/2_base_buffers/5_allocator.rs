@@ -54,7 +54,7 @@ impl<T, A: Allocator> Buffer for AllocatorBuffer<T, A> {
         self.cap
     }
 
-    unsafe fn read_value(&self, index: usize) -> T {
+    unsafe fn read_value(&mut self, index: usize) -> T {
         // SAFETY: [`Buffer::read_value`] ensures that the position is valid
         // and filled.
         let ptr = unsafe { self.ptr(index) };

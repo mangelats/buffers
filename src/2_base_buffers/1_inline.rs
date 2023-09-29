@@ -50,7 +50,7 @@ impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
         SIZE
     }
 
-    unsafe fn read_value(&self, index: usize) -> T {
+    unsafe fn read_value(&mut self, index: usize) -> T {
         // SAFETY: `index` is unsafe with requirements that ensures that
         // [`PtrBuffer::ptr`] can be used.
         let ptr = unsafe { self.ptr(index) };

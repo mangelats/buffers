@@ -50,7 +50,7 @@ impl<'a, T> Buffer for SliceBuffer<'a, T> {
         self.slice.len()
     }
 
-    unsafe fn read_value(&self, index: usize) -> Self::Element {
+    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
         // SAFETY: the Buffer interface requires the position to exist which
         // means it must have been writen into before.
         unsafe { self.slice[index].assume_init_read() }

@@ -90,7 +90,7 @@ impl<T> Buffer for HeapBuffer<T> {
         self.cap
     }
 
-    unsafe fn read_value(&self, index: usize) -> T {
+    unsafe fn read_value(&mut self, index: usize) -> T {
         // SAFETY: [`Buffer::read_value`] ensures that the position is valid
         // and filled.
         let src = unsafe { self.ptr(index) };

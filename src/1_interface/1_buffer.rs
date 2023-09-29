@@ -42,7 +42,7 @@ pub trait Buffer {
     /// # Safety
     ///   * `index` must be less than `capacity`.
     ///   * The `index` position must be filled.
-    unsafe fn read_value(&self, index: usize) -> Self::Element;
+    unsafe fn read_value(&mut self, index: usize) -> Self::Element;
 
     /// Writes the value into the `index` position, filling it.
     ///

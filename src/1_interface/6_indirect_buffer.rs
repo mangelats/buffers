@@ -53,8 +53,8 @@ pub trait IndirectBuffer {
     ///
     /// # Safety
     /// Same as [`Buffer::read_value`].
-    unsafe fn read_value(&self, index: usize) -> <Self::InnerBuffer as Buffer>::Element {
-        let inner = self.inner().narrow_ref();
+    unsafe fn read_value(&mut self, index: usize) -> <Self::InnerBuffer as Buffer>::Element {
+        let inner = self.inner_mut().narrow_mut_ref();
         // SAFETY: Just calls the inner function with the same requirements.
         unsafe { inner.read_value(index) }
     }
@@ -145,7 +145,7 @@ impl<IB: IndirectBuffer + ?Sized> Buffer for IB {
         <Self as IndirectBuffer>::capacity(self)
     }
 
-    unsafe fn read_value(&self, index: usize) -> Self::Element {
+    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
         // SAFETY: Just calls the inner function with the same requirements.
         unsafe { <Self as IndirectBuffer>::read_value(self, index) }
     }

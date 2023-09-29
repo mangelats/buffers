@@ -46,7 +46,7 @@ where
         }
     }
 
-    unsafe fn read_value(&self, index: usize) -> Self::Element {
+    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
         match self {
             EitherBuffer::First(buf) => unsafe { buf.read_value(index) },
             EitherBuffer::Second(buf) => unsafe { buf.read_value(index) },

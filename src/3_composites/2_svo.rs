@@ -87,7 +87,7 @@ where
         self.inner.capacity()
     }
 
-    unsafe fn read_value(&self, index: usize) -> Self::Element {
+    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
         // SAFETY: Forwarding call to inner buffer.
         unsafe { self.inner.read_value(index) }
     }
