@@ -33,8 +33,8 @@ impl<T> Buffer for ZstBuffer<T> {
     }
 
     unsafe fn read_value(&mut self, _index: usize) -> T {
-        // SAFETY: This type has no size. Null should work as well as any other
-        // pointer.
+        // SAFETY: This type has no size. A dangling pointer should work as well
+        // as any other pointer.
         // TODO: adding an intrinsics::assume for the size of T may increase
         // performance.
         unsafe { std::ptr::read(std::ptr::NonNull::dangling().as_ptr()) }
