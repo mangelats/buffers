@@ -9,14 +9,17 @@ pub use self::buffer::Buffer;
 pub mod resize_error;
 pub use self::resize_error::ResizeError;
 
-#[path = "3_ptrs.rs"]
+#[path = "3_copy_value.rs"]
+pub mod copy_value;
+
+#[path = "4_ptrs.rs"]
 pub mod ptrs;
 
-#[path = "4_refs.rs"]
+#[path = "5_refs.rs"]
 pub mod refs;
 
-#[path = "5_contiguous_memory.rs"]
+#[path = "6_contiguous_memory.rs"]
 pub mod contiguous_memory;
 
-#[path = "6_indirect_buffer.rs"]
+#[path = "7_indirect_buffer.rs"]
 pub mod indirect_buffer;
