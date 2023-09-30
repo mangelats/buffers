@@ -81,7 +81,7 @@ An allocator is responsible for the necessary strategies to share the entire or
 part of the system memory when requested. It supports dynamic layout and is used
 by multiple collections (and buffers).
 
-A buffer may use one or multiple allocators (see `HeapBuffer` and
+A buffer may use any number of allocators (see `HeapBuffer` and
 `AllocatorBuffer`) and use them to aquire memory. But it doesn't care about how
 it's saved on the actual memory, nor the relationship needs to be one to one.
 
@@ -102,22 +102,26 @@ and to choose which one you'd like to use (or make ones which are tuned).
   2. `HeapBuffer`: a buffer that uses `std::ptr` to dynamically allocate and
   grow.
   3. `ZstBuffer`: a buffer for zero-sized types (ZST) only. It's a ZST itself.
-  4. `AllocatorBuffer`: a buffer that uses an allocator to dynamically allocate
+  4. `SliceBuffer`: a buffer wrapping a `&mut [MaybeUninit<T>]`.
+  5. `AllocatorBuffer`: a buffer that uses an allocator to dynamically allocate
   and grow. It requires the `allocator` feature (enabled by default) since it
   uses the unstable allocator API.
 
 
 ## List of composite buffers
-  1. `ZstoBuffer` (Zero-Sized Type Optimization): Optimization that uses
+  1. `ZstoBuffer` (Zero-Sized Type Optimization): optimization that uses
   `ZstBuffer` whenever T is a ZST, or its child otherwise.
-  2. `SvoBuffer` (Small Vector Optimization): Have a small inline buffer but can
+  2. `SvoBuffer` (Small Vector Optimization): have a small inline buffer but can
   grow into a bigger one (its child). This prevents allocations on small
   vectors.
-  3. `ExponentialGrowthBuffer`: When trying to grow it will grow to the smallest
+  3. `ExponentialGrowthBuffer`: when trying to grow it will grow to the smallest
   power of 2 at least as big as the requested value. Useful to not allocate at
   every push.
-  4. `AtLeastBuffer`: Specifies that when growing will at least grow to a set
+  4. `AtLeastBuffer`: specifies that when growing will at least grow to a set
   size.
+  5. `ArrayBuffer`: buffer for buffer where the elements are fixed-sized arrays
+  (eg. `[i32; 3]`). It makes a SoA composite buffer, where each position has its
+  own buffer.
 
 There are also a few others that are utilities to make other buffers or for
 testing.
@@ -134,7 +138,7 @@ For now, I've only implemented `Vector`. It's basically `Vec` with a buffer
 ## How to make your own
 A `Buffer` implementation have four types of member functions:
   - Show the capacity (`capacity`)
-  - Manage data (`put`, `take`, `manually_drop`, `copy`)
+  - Manage data (`put`, `take`, `manually_drop`)
   - Resizing (`try_grow`, `try_shrink`)
   - Utils which have default implementations. Allows override when knowledge
   allows optimizations (for example moving values when the data is contiguous)
@@ -143,6 +147,8 @@ This abstraction only assumes that the elements can be references by a `usize`
 index, so the underlying mechanism could be a lot of things.
 
 There are more traits which add capabilities to your:
+  1. `CopyValueBuffer`: Adds `copy` which can copy a value of a position (if
+  its type is `Copy`). 
   1. `PtrBuffer`: You have a pointer-like type which alows to read an element.
   1. `RefBuffer`: You can generate a reference-like for the elements.
   1. `ContiguousMemoryBuffer`: This is a marker trait which indicates that the
