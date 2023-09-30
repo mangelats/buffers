@@ -1,6 +1,9 @@
 use std::marker::PhantomData;
 
-use crate::interface::{ptrs::PtrBuffer, refs::RefBuffer, resize_error::ResizeError, Buffer};
+use crate::interface::{
+    copy_value::CopyValueBuffer, ptrs::PtrBuffer, refs::RefBuffer, resize_error::ResizeError,
+    Buffer,
+};
 
 /// Buffer optimized for zero-sized types.
 ///
@@ -23,6 +26,19 @@ impl<T> ZstBuffer<T> {
         );
         Self { _m: PhantomData }
     }
+
+    /// Internal utility that reads `index`.
+    ///
+    /// # Safety
+    ///   * `index` must be less than `capacity`.
+    ///   * The `index` position must be filled.
+    unsafe fn read(&self, _index: usize) -> T {
+        // SAFETY: This type has no size. A dangling pointer should work as well
+        // as any other pointer.
+        // TODO: adding an intrinsics::assume for the size of T may increase
+        // performance.
+        unsafe { std::ptr::read(std::ptr::NonNull::dangling().as_ptr()) }
+    }
 }
 
 impl<T> Buffer for ZstBuffer<T> {
@@ -32,12 +48,9 @@ impl<T> Buffer for ZstBuffer<T> {
         usize::MAX
     }
 
-    unsafe fn read_value(&mut self, _index: usize) -> T {
-        // SAFETY: This type has no size. A dangling pointer should work as well
-        // as any other pointer.
-        // TODO: adding an intrinsics::assume for the size of T may increase
-        // performance.
-        unsafe { std::ptr::read(std::ptr::NonNull::dangling().as_ptr()) }
+    unsafe fn read_value(&mut self, index: usize) -> T {
+        // SAFETY: it has the same requirements
+        unsafe { self.read(index) }
     }
 
     unsafe fn write_value(&mut self, _index: usize, _value: T) {
@@ -54,6 +67,13 @@ impl<T> Buffer for ZstBuffer<T> {
 
     unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
         Err(ResizeError::UnsupportedOperation)
+    }
+}
+
+impl<T: Copy> CopyValueBuffer for ZstBuffer<T> {
+    unsafe fn copy_value(&self, index: usize) -> T {
+        // SAFETY: it has the same requirements
+        unsafe { self.read(index) }
     }
 }
 

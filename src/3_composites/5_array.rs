@@ -1,6 +1,6 @@
 use std::{mem::MaybeUninit, ops::RangeBounds};
 
-use crate::interface::{Buffer, ResizeError};
+use crate::interface::{copy_value::CopyValueBuffer, Buffer, ResizeError};
 
 /// Buffer that given a fixed-size array, it makes a buffer the underlying
 /// layout of which is an array of buffers of the array's element type. This is
@@ -37,6 +37,11 @@ where
     /// buffers.
     pub fn from(buffers: [B; SIZE]) -> Self {
         Self { buffers }
+    }
+
+    /// Helper function to iterate over all inner buffers
+    fn buffer_iter(&self) -> impl Iterator<Item = &B> {
+        self.buffers.as_slice().iter()
     }
 
     /// Helper function to iterate over all inner buffers
@@ -160,6 +165,29 @@ where
             // SAFETY: Forwarding call to inner buffers.
             unsafe { buffer.shift_left(range, positions) };
         }
+    }
+}
+
+impl<const SIZE: usize, B> CopyValueBuffer for ArrayBuffer<SIZE, B>
+where
+    B: CopyValueBuffer,
+    B::Element: Copy,
+{
+    unsafe fn copy_value(&self, index: usize) -> Self::Element {
+        let mut result = MaybeUninit::<B::Element>::uninit_array::<SIZE>();
+        for (i, buffer) in self.buffer_iter().enumerate() {
+            let ptr = result[i].as_mut_ptr();
+
+            // SAFETY: if `index` is a valid and filled position to this buffer,
+            // it's also valid and filled for all the underlying ones.
+            let val = unsafe { buffer.copy_value(index) };
+            // SAFETY: `ptr` is part of a local array, thus a valid location
+            // (and without a value).
+            unsafe { ptr.write(val) };
+        }
+
+        // SAFETY: the loop filled the entire array, thus it's initialized.
+        unsafe { MaybeUninit::array_assume_init(result) }
     }
 }
 

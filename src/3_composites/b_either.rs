@@ -4,8 +4,8 @@
 use std::ops::RangeBounds;
 
 use crate::interface::{
-    contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
-    resize_error::ResizeError, Buffer,
+    contiguous_memory::ContiguousMemoryBuffer, copy_value::CopyValueBuffer, ptrs::PtrBuffer,
+    refs::RefBuffer, resize_error::ResizeError, Buffer,
 };
 
 /// Utility buffer that may contain one of two buffers.
@@ -85,6 +85,20 @@ where
         match self {
             EitherBuffer::First(buf) => unsafe { buf.try_shrink(target) },
             EitherBuffer::Second(buf) => unsafe { buf.try_shrink(target) },
+        }
+    }
+}
+
+impl<A, B> CopyValueBuffer for EitherBuffer<A, B>
+where
+    A: Buffer + CopyValueBuffer,
+    A::Element: Copy,
+    B: Buffer<Element = A::Element> + CopyValueBuffer,
+{
+    unsafe fn copy_value(&self, index: usize) -> Self::Element {
+        match self {
+            EitherBuffer::First(buf) => unsafe { buf.copy_value(index) },
+            EitherBuffer::Second(buf) => unsafe { buf.copy_value(index) },
         }
     }
 }

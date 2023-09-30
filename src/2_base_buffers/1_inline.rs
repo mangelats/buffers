@@ -1,6 +1,6 @@
 use crate::interface::{
-    contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
-    resize_error::ResizeError, Buffer,
+    contiguous_memory::ContiguousMemoryBuffer, copy_value::CopyValueBuffer, ptrs::PtrBuffer,
+    refs::RefBuffer, resize_error::ResizeError, Buffer,
 };
 use std::mem::MaybeUninit;
 
@@ -41,6 +41,20 @@ impl<T, const SIZE: usize> InlineBuffer<T, SIZE> {
         debug_assert!(index < SIZE);
         &mut self.array[index]
     }
+
+    /// Internal utility that reads `index`. Used both for copying and for
+    /// extracting the value.
+    ///
+    /// # Safety
+    ///   * `index` must be less than `capacity`.
+    ///   * The `index` position must be filled.
+    unsafe fn read(&self, index: usize) -> T {
+        // SAFETY: `index` is unsafe with requirements that ensures that
+        // [`PtrBuffer::ptr`] can be used.
+        let ptr = unsafe { self.ptr(index) };
+        // SAFETY: if `index` is a valid position, `ptr` is valid to read from.
+        unsafe { ptr.read() }
+    }
 }
 
 impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
@@ -51,11 +65,8 @@ impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
     }
 
     unsafe fn read_value(&mut self, index: usize) -> T {
-        // SAFETY: `index` is unsafe with requirements that ensures that
-        // [`PtrBuffer::ptr`] can be used.
-        let ptr = unsafe { self.ptr(index) };
-        // SAFETY: if `index` is a valid position, `ptr` is valid to read from.
-        unsafe { ptr.read() }
+        // SAFETY: it has the same requirements
+        unsafe { self.read(index) }
     }
 
     unsafe fn write_value(&mut self, index: usize, value: T) {
@@ -80,6 +91,13 @@ impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
 
     unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
         Err(ResizeError::UnsupportedOperation)
+    }
+}
+
+impl<T: Copy, const SIZE: usize> CopyValueBuffer for InlineBuffer<T, SIZE> {
+    unsafe fn copy_value(&self, index: usize) -> T {
+        // SAFETY: it has the same requirements
+        unsafe { self.read(index) }
     }
 }
 

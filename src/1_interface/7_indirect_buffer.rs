@@ -4,6 +4,7 @@ use crate::narrow_ref::{NarrowMutRef, NarrowRef};
 
 use super::buffer::Buffer;
 use super::contiguous_memory::ContiguousMemoryBuffer;
+use super::copy_value::CopyValueBuffer;
 use super::ptrs::PtrBuffer;
 use super::refs::RefBuffer;
 use super::resize_error::ResizeError;
@@ -183,6 +184,18 @@ impl<IB: IndirectBuffer + ?Sized> Buffer for IB {
     unsafe fn shift_left<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         // SAFETY: Just calls the inner function with the same requirements.
         unsafe { <Self as IndirectBuffer>::shift_left(self, to_move, positions) }
+    }
+}
+
+impl<IB> CopyValueBuffer for IB
+where
+    IB: IndirectBuffer + ?Sized,
+    IB::InnerBuffer: CopyValueBuffer,
+    <IB::InnerBuffer as Buffer>::Element: Copy,
+{
+    unsafe fn copy_value(&self, index: usize) -> Self::Element {
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { self.inner().narrow_ref().copy_value(index) }
     }
 }
 

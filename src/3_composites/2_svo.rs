@@ -3,8 +3,8 @@ use std::ops::RangeBounds;
 use crate::{
     base_buffers::inline::InlineBuffer,
     interface::{
-        contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
-        resize_error::ResizeError, Buffer,
+        contiguous_memory::ContiguousMemoryBuffer, copy_value::CopyValueBuffer, ptrs::PtrBuffer,
+        refs::RefBuffer, resize_error::ResizeError, Buffer,
     },
 };
 
@@ -126,6 +126,17 @@ where
                 unsafe { buf.try_shrink(target) }
             }
         }
+    }
+}
+
+impl<const SMALL_SIZE: usize, B> CopyValueBuffer for SvoBuffer<SMALL_SIZE, B>
+where
+    B: ContiguousMemoryBuffer + CopyValueBuffer + Default,
+    Self::Element: Copy,
+{
+    unsafe fn copy_value(&self, index: usize) -> Self::Element {
+        // SAFETY: Forwarding call to inner buffer.
+        unsafe { self.inner.copy_value(index) }
     }
 }
 
