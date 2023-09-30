@@ -4,6 +4,7 @@ use crate::narrow_ref::{NarrowMutRef, NarrowRef};
 
 use super::buffer::Buffer;
 use super::contiguous_memory::ContiguousMemoryBuffer;
+use super::copy_value::CopyValueBuffer;
 use super::ptrs::PtrBuffer;
 use super::refs::RefBuffer;
 use super::resize_error::ResizeError;
@@ -48,26 +49,26 @@ pub trait IndirectBuffer {
         self.inner().narrow_ref().capacity()
     }
 
-    /// Same as [`Buffer::read_value`] but default-implemented to pass it to
+    /// Same as [`Buffer::take`] but default-implemented to pass it to
     /// [`IndirectBuffer::inner`].
     ///
     /// # Safety
-    /// Same as [`Buffer::read_value`].
-    unsafe fn read_value(&mut self, index: usize) -> <Self::InnerBuffer as Buffer>::Element {
+    /// Same as [`Buffer::take`].
+    unsafe fn take(&mut self, index: usize) -> <Self::InnerBuffer as Buffer>::Element {
         let inner = self.inner_mut().narrow_mut_ref();
         // SAFETY: Just calls the inner function with the same requirements.
-        unsafe { inner.read_value(index) }
+        unsafe { inner.take(index) }
     }
 
-    /// Same as [`Buffer::write_value`] but default-implemented to pass it to
+    /// Same as [`Buffer::put`] but default-implemented to pass it to
     /// [`IndirectBuffer::inner`].
     ///
     /// # Safety
-    /// Same as [`Buffer::write_value`].
-    unsafe fn write_value(&mut self, index: usize, value: <Self::InnerBuffer as Buffer>::Element) {
+    /// Same as [`Buffer::put`].
+    unsafe fn put(&mut self, index: usize, value: <Self::InnerBuffer as Buffer>::Element) {
         let inner = self.inner_mut().narrow_mut_ref();
         // SAFETY: Just calls the inner function with the same requirements.
-        unsafe { inner.write_value(index, value) }
+        unsafe { inner.put(index, value) }
     }
 
     /// Same as [`Buffer::manually_drop`] but default-implemented to pass it to
@@ -145,14 +146,14 @@ impl<IB: IndirectBuffer + ?Sized> Buffer for IB {
         <Self as IndirectBuffer>::capacity(self)
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
+    unsafe fn take(&mut self, index: usize) -> Self::Element {
         // SAFETY: Just calls the inner function with the same requirements.
-        unsafe { <Self as IndirectBuffer>::read_value(self, index) }
+        unsafe { <Self as IndirectBuffer>::take(self, index) }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
+    unsafe fn put(&mut self, index: usize, value: Self::Element) {
         // SAFETY: Just calls the inner function with the same requirements.
-        unsafe { <Self as IndirectBuffer>::write_value(self, index, value) }
+        unsafe { <Self as IndirectBuffer>::put(self, index, value) }
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
@@ -183,6 +184,18 @@ impl<IB: IndirectBuffer + ?Sized> Buffer for IB {
     unsafe fn shift_left<R: RangeBounds<usize> + Clone>(&mut self, to_move: R, positions: usize) {
         // SAFETY: Just calls the inner function with the same requirements.
         unsafe { <Self as IndirectBuffer>::shift_left(self, to_move, positions) }
+    }
+}
+
+impl<IB> CopyValueBuffer for IB
+where
+    IB: IndirectBuffer + ?Sized,
+    IB::InnerBuffer: CopyValueBuffer,
+    <IB::InnerBuffer as Buffer>::Element: Copy,
+{
+    unsafe fn copy(&self, index: usize) -> Self::Element {
+        // SAFETY: Just calls the inner function with the same requirements.
+        unsafe { self.inner().narrow_ref().copy(index) }
     }
 }
 

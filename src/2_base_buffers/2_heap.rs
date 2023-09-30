@@ -5,8 +5,8 @@ use std::{
 };
 
 use crate::interface::{
-    contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
-    resize_error::ResizeError, Buffer,
+    contiguous_memory::ContiguousMemoryBuffer, copy_value::CopyValueBuffer, ptrs::PtrBuffer,
+    refs::RefBuffer, resize_error::ResizeError, Buffer,
 };
 
 /// Buffer implementation using a heap-allocated contiguous array.
@@ -31,6 +31,20 @@ impl<T> HeapBuffer<T> {
             cap: 0,
             _marker: PhantomData,
         }
+    }
+
+    /// Internal utility that reads `index`. Used both for copying and for
+    /// extracting the value.
+    ///
+    /// # Safety
+    ///   * `index` must be less than `capacity`.
+    ///   * The `index` position must be filled.
+    unsafe fn read(&self, index: usize) -> T {
+        // SAFETY: `index` is unsafe with requirements that ensures that
+        // [`PtrBuffer::ptr`] can be used.
+        let ptr = unsafe { self.ptr(index) };
+        // SAFETY: if `index` is a valid position, `ptr` is valid to read from.
+        unsafe { ptr.read() }
     }
 
     /// Internal function that allocates a new array into the heap.
@@ -90,21 +104,16 @@ impl<T> Buffer for HeapBuffer<T> {
         self.cap
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> T {
-        // SAFETY: [`Buffer::read_value`] ensures that the position is valid
-        // and filled.
-        let src = unsafe { self.ptr(index) };
-        // SAFETY: `self.ptr` ensures that the pointer is valid.
-        // [`Buffer::read_value`] ensures that the position is filled.
-        unsafe { ptr::read(src) }
+    unsafe fn take(&mut self, index: usize) -> T {
+        // SAFETY: it has the same requirements
+        unsafe { self.read(index) }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: T) {
-        // SAFETY: [`Buffer::write_value`] ensures that the position is valid
-        // and empty.
+    unsafe fn put(&mut self, index: usize, value: T) {
+        // SAFETY: [`Buffer::put`] ensures that the position is valid and empty.
         let dst = unsafe { self.mut_ptr(index) };
         // SAFETY: [`PtrBuffer::mut_ptr`] ensures that the pointer is valid.
-        // [`Buffer::write_value`] ensures that the position is empty.
+        // [`Buffer::put`] ensures that the position is empty.
         unsafe { ptr::write(dst, value) };
     }
 
@@ -113,7 +122,7 @@ impl<T> Buffer for HeapBuffer<T> {
         // and filled.
         let to_drop = unsafe { self.mut_ptr(index) };
         // SAFETY: [`PtrBuffer::mut_ptr`] ensures that the pointer is valid.
-        // [`Buffer::write_value`] ensures that the position is filled.
+        // [`Buffer::manually_drop`] ensures that the position is filled.
         unsafe { ptr::drop_in_place(to_drop) };
     }
 
@@ -146,6 +155,13 @@ impl<T> Buffer for HeapBuffer<T> {
             // and thus `self.buffer_start` is not dangling.
             unsafe { self.resize_array(target) }
         }
+    }
+}
+
+impl<T: Copy> CopyValueBuffer for HeapBuffer<T> {
+    unsafe fn copy(&self, index: usize) -> T {
+        // SAFETY: it has the same requirements
+        unsafe { self.read(index) }
     }
 }
 

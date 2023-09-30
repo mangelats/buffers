@@ -5,8 +5,8 @@ use std::{
 };
 
 use crate::interface::{
-    contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
-    resize_error::ResizeError, Buffer,
+    contiguous_memory::ContiguousMemoryBuffer, copy_value::CopyValueBuffer, ptrs::PtrBuffer,
+    refs::RefBuffer, resize_error::ResizeError, Buffer,
 };
 
 /// Buffer that dynamically allocates using an [`Allocator`].
@@ -40,6 +40,15 @@ impl<T, A: Allocator> AllocatorBuffer<T, A> {
         }
     }
 
+    unsafe fn read(&self, index: usize) -> T {
+        // SAFETY: [`Buffer::take`] ensures that the position is valid and
+        // filled.
+        let ptr = unsafe { self.ptr(index) };
+        // SAFETY: `self.ptr` ensures that the pointer is valid.
+        // [`Buffer::take`] ensures that the position is filled.
+        unsafe { std::ptr::read(ptr) }
+    }
+
     /// Internal function that sets the capacity and raw buffer pointer
     fn update_buffer(&mut self, ptr: NonNull<T>, cap: usize) {
         self.cap = cap;
@@ -54,21 +63,16 @@ impl<T, A: Allocator> Buffer for AllocatorBuffer<T, A> {
         self.cap
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> T {
-        // SAFETY: [`Buffer::read_value`] ensures that the position is valid
-        // and filled.
-        let ptr = unsafe { self.ptr(index) };
-        // SAFETY: `self.ptr` ensures that the pointer is valid.
-        // [`Buffer::read_value`] ensures that the position is filled.
-        unsafe { std::ptr::read(ptr) }
+    unsafe fn take(&mut self, index: usize) -> T {
+        // SAFETY: it has the same requirements
+        unsafe { self.read(index) }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: T) {
-        // SAFETY: [`Buffer::write_value`] ensures that the position is valid
-        // and empty.
+    unsafe fn put(&mut self, index: usize, value: T) {
+        // SAFETY: [`Buffer::put`] ensures that the position is valid and empty.
         let ptr = unsafe { self.mut_ptr(index) };
         // SAFETY: [`PtrBuffer::mut_ptr`] ensures that the pointer is valid.
-        // [`Buffer::write_value`] ensures that the position is empty.
+        // [`Buffer::put`] ensures that the position is empty.
         unsafe { std::ptr::write(ptr, value) };
     }
 
@@ -77,7 +81,7 @@ impl<T, A: Allocator> Buffer for AllocatorBuffer<T, A> {
         // and filled.
         let ptr = unsafe { self.mut_ptr(index) };
         // SAFETY: [`PtrBuffer::mut_ptr`] ensures that the pointer is valid.
-        // [`Buffer::write_value`] ensures that the position is filled.
+        // [`Buffer::manually_drop`] ensures that the position is filled.
         unsafe { std::ptr::drop_in_place(ptr) };
     }
 
@@ -116,6 +120,13 @@ impl<T, A: Allocator> Buffer for AllocatorBuffer<T, A> {
             self.update_buffer(ptr, target);
             Ok(())
         }
+    }
+}
+
+impl<T: Copy, A: Allocator> CopyValueBuffer for AllocatorBuffer<T, A> {
+    unsafe fn copy(&self, index: usize) -> T {
+        // SAFETY: it has the same requirements
+        unsafe { self.read(index) }
     }
 }
 

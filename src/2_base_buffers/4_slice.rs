@@ -2,8 +2,8 @@ use core::slice;
 use std::mem::MaybeUninit;
 
 use crate::interface::{
-    contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer, Buffer,
-    ResizeError,
+    contiguous_memory::ContiguousMemoryBuffer, copy_value::CopyValueBuffer, ptrs::PtrBuffer,
+    refs::RefBuffer, Buffer, ResizeError,
 };
 
 /// Buffer which works on top of a mutable slice of maybe-uninit values.
@@ -41,6 +41,18 @@ impl<'a, T> SliceBuffer<'a, T> {
         let slice = unsafe { slice::from_raw_parts_mut(data, len) };
         Self { slice }
     }
+
+    /// Internal utility that reads `index`. Used both for copying and for
+    /// extracting the value.
+    ///
+    /// # Safety
+    ///   * `index` must be less than `capacity`.
+    ///   * The `index` position must be filled.
+    unsafe fn read(&self, index: usize) -> T {
+        // SAFETY: the Buffer interface requires the position to exist which
+        // means it must have been writen into before.
+        unsafe { self.slice[index].assume_init_read() }
+    }
 }
 
 impl<'a, T> Buffer for SliceBuffer<'a, T> {
@@ -50,13 +62,12 @@ impl<'a, T> Buffer for SliceBuffer<'a, T> {
         self.slice.len()
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
-        // SAFETY: the Buffer interface requires the position to exist which
-        // means it must have been writen into before.
-        unsafe { self.slice[index].assume_init_read() }
+    unsafe fn take(&mut self, index: usize) -> Self::Element {
+        // SAFETY: same requirements
+        unsafe { self.read(index) }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
+    unsafe fn put(&mut self, index: usize, value: Self::Element) {
         self.slice[index] = MaybeUninit::new(value);
     }
 
@@ -72,6 +83,13 @@ impl<'a, T> Buffer for SliceBuffer<'a, T> {
 
     unsafe fn try_shrink(&mut self, _target: usize) -> Result<(), ResizeError> {
         Err(ResizeError::UnsupportedOperation)
+    }
+}
+
+impl<'a, T: Copy> CopyValueBuffer for SliceBuffer<'a, T> {
+    unsafe fn copy(&self, index: usize) -> T {
+        // SAFETY: it has the same requirements
+        unsafe { self.read(index) }
     }
 }
 
@@ -133,9 +151,9 @@ mod tests {
         let mut buffer = SliceBuffer::from_slice(slice);
 
         const VALUE: u32 = 123;
-        unsafe { buffer.write_value(0, VALUE) };
-        let read_value = unsafe { buffer.read_value(0) };
-        assert_eq!(read_value, VALUE);
+        unsafe { buffer.put(0, VALUE) };
+        let result = unsafe { buffer.take(0) };
+        assert_eq!(result, VALUE);
     }
 
     #[test]
@@ -147,8 +165,8 @@ mod tests {
         let mut buffer = unsafe { SliceBuffer::from_raw_slice_parts(ptr, SIZE) };
 
         const VALUE: u32 = 456;
-        unsafe { buffer.write_value(0, VALUE) };
-        let read_value = unsafe { buffer.read_value(0) };
-        assert_eq!(read_value, VALUE);
+        unsafe { buffer.put(0, VALUE) };
+        let result = unsafe { buffer.take(0) };
+        assert_eq!(result, VALUE);
     }
 }

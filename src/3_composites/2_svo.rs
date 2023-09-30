@@ -3,8 +3,8 @@ use std::ops::RangeBounds;
 use crate::{
     base_buffers::inline::InlineBuffer,
     interface::{
-        contiguous_memory::ContiguousMemoryBuffer, ptrs::PtrBuffer, refs::RefBuffer,
-        resize_error::ResizeError, Buffer,
+        contiguous_memory::ContiguousMemoryBuffer, copy_value::CopyValueBuffer, ptrs::PtrBuffer,
+        refs::RefBuffer, resize_error::ResizeError, Buffer,
     },
 };
 
@@ -87,14 +87,14 @@ where
         self.inner.capacity()
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
+    unsafe fn take(&mut self, index: usize) -> Self::Element {
         // SAFETY: Forwarding call to inner buffer.
-        unsafe { self.inner.read_value(index) }
+        unsafe { self.inner.take(index) }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
+    unsafe fn put(&mut self, index: usize, value: Self::Element) {
         // SAFETY: Forwarding call to inner buffer.
-        unsafe { self.inner.write_value(index, value) }
+        unsafe { self.inner.put(index, value) }
     }
 
     unsafe fn manually_drop(&mut self, index: usize) {
@@ -126,6 +126,17 @@ where
                 unsafe { buf.try_shrink(target) }
             }
         }
+    }
+}
+
+impl<const SMALL_SIZE: usize, B> CopyValueBuffer for SvoBuffer<SMALL_SIZE, B>
+where
+    B: ContiguousMemoryBuffer + CopyValueBuffer + Default,
+    Self::Element: Copy,
+{
+    unsafe fn copy(&self, index: usize) -> Self::Element {
+        // SAFETY: Forwarding call to inner buffer.
+        unsafe { self.inner.copy(index) }
     }
 }
 
@@ -211,9 +222,9 @@ mod tests {
     fn should_move_elements_when_growing() {
         let mut buffer: SvoBuffer<1, HeapBuffer<u32>> = Default::default();
         unsafe {
-            buffer.write_value(0, 123);
+            buffer.put(0, 123);
             buffer.try_grow(32).expect("Should be able to grow");
-            assert_eq!(buffer.read_value(0), 123);
+            assert_eq!(buffer.take(0), 123);
         }
     }
 }

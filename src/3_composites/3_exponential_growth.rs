@@ -44,23 +44,23 @@ impl<B: Buffer> IndirectBuffer for ExponentialGrowthBuffer<B> {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::{
-//         base_buffers::inline::InlineBuffer, composites::grow_mock::GrowMockBuffer,
-//         interface::Buffer,
-//     };
+#[cfg(test)]
+mod tests {
+    use crate::{
+        base_buffers::inline::InlineBuffer, composites::grow_mock::GrowMockBuffer,
+        interface::Buffer,
+    };
 
-//     use super::ExponentialGrowthBuffer;
+    use super::ExponentialGrowthBuffer;
 
-//     #[test]
-//     fn test_properly_growing() {
-//         let mut mock_buffer: GrowMockBuffer<InlineBuffer<u32, 1>> = Default::default();
-//         {
-//             let mut buffer = ExponentialGrowthBuffer::from(&mut mock_buffer);
-//             // This will fail, but it doesn't matter for this test.
-//             let _ = unsafe { buffer.try_grow(10) };
-//         }
-//         assert_eq!(mock_buffer.last_target(), 16);
-//     }
-// }
+    #[test]
+    fn test_properly_growing() {
+        let mut mock_buffer: GrowMockBuffer<InlineBuffer<u32, 1>> = Default::default();
+        {
+            let mut buffer = ExponentialGrowthBuffer::from(&mut mock_buffer);
+            // This will fail, but it doesn't matter for this test.
+            let _ = unsafe { buffer.try_grow(10) };
+        }
+        assert_eq!(mock_buffer.last_target(), 16);
+    }
+}
