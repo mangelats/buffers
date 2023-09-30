@@ -1,4 +1,3 @@
-use core::slice;
 use std::mem::MaybeUninit;
 
 use crate::interface::{
@@ -25,20 +24,6 @@ impl<'a, T> SliceBuffer<'a, T> {
     ///
     /// Note: To use it as a buffer, the caller must know the state its in.
     pub fn from_slice(slice: &'a mut [MaybeUninit<T>]) -> Self {
-        Self { slice }
-    }
-
-    /// Utility constructor that takes a `SliceBuffer` from an slice parts
-    /// (pointer and length).
-    ///
-    /// # Safety
-    /// The parts must make a valid slice. See
-    /// [`core::slice::from_raw_parts_mut`] for further information.
-    pub unsafe fn from_raw_slice_parts(ptr: *mut T, len: usize) -> Self {
-        let data = ptr as *mut MaybeUninit<T>;
-        // SAFETY: This function explicitly requires the caler to fulfill the
-        // `slice::from_raw_parts_mut` safety requirements.
-        let slice = unsafe { slice::from_raw_parts_mut(data, len) };
         Self { slice }
     }
 
@@ -151,20 +136,6 @@ mod tests {
         let mut buffer = SliceBuffer::from_slice(slice);
 
         const VALUE: u32 = 123;
-        unsafe { buffer.put(0, VALUE) };
-        let result = unsafe { buffer.take(0) };
-        assert_eq!(result, VALUE);
-    }
-
-    #[test]
-    fn can_be_constructed_from_slice_parts() {
-        const SIZE: usize = 10;
-        let mut array = MaybeUninit::<u32>::uninit_array::<10>();
-        let ptr = array.as_mut_ptr() as *mut u32;
-
-        let mut buffer = unsafe { SliceBuffer::from_raw_slice_parts(ptr, SIZE) };
-
-        const VALUE: u32 = 456;
         unsafe { buffer.put(0, VALUE) };
         let result = unsafe { buffer.take(0) };
         assert_eq!(result, VALUE);
