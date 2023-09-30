@@ -62,12 +62,12 @@ impl<'a, T> Buffer for SliceBuffer<'a, T> {
         self.slice.len()
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
+    unsafe fn take(&mut self, index: usize) -> Self::Element {
         // SAFETY: same requirements
         unsafe { self.read(index) }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
+    unsafe fn put(&mut self, index: usize, value: Self::Element) {
         self.slice[index] = MaybeUninit::new(value);
     }
 
@@ -151,9 +151,9 @@ mod tests {
         let mut buffer = SliceBuffer::from_slice(slice);
 
         const VALUE: u32 = 123;
-        unsafe { buffer.write_value(0, VALUE) };
-        let read_value = unsafe { buffer.read_value(0) };
-        assert_eq!(read_value, VALUE);
+        unsafe { buffer.put(0, VALUE) };
+        let result = unsafe { buffer.take(0) };
+        assert_eq!(result, VALUE);
     }
 
     #[test]
@@ -165,8 +165,8 @@ mod tests {
         let mut buffer = unsafe { SliceBuffer::from_raw_slice_parts(ptr, SIZE) };
 
         const VALUE: u32 = 456;
-        unsafe { buffer.write_value(0, VALUE) };
-        let read_value = unsafe { buffer.read_value(0) };
-        assert_eq!(read_value, VALUE);
+        unsafe { buffer.put(0, VALUE) };
+        let result = unsafe { buffer.take(0) };
+        assert_eq!(result, VALUE);
     }
 }

@@ -46,17 +46,17 @@ where
         }
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
+    unsafe fn take(&mut self, index: usize) -> Self::Element {
         match self {
-            EitherBuffer::First(buf) => unsafe { buf.read_value(index) },
-            EitherBuffer::Second(buf) => unsafe { buf.read_value(index) },
+            EitherBuffer::First(buf) => unsafe { buf.take(index) },
+            EitherBuffer::Second(buf) => unsafe { buf.take(index) },
         }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
+    unsafe fn put(&mut self, index: usize, value: Self::Element) {
         match self {
-            EitherBuffer::First(buf) => unsafe { buf.write_value(index, value) },
-            EitherBuffer::Second(buf) => unsafe { buf.write_value(index, value) },
+            EitherBuffer::First(buf) => unsafe { buf.put(index, value) },
+            EitherBuffer::Second(buf) => unsafe { buf.put(index, value) },
         }
     }
 

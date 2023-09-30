@@ -14,12 +14,12 @@ use crate::interface::{copy_value::CopyValueBuffer, Buffer, ResizeError};
 /// let mut buffer: ArrayBuffer<2, HeapBuffer<u32>> = Default::default();
 /// unsafe {
 ///     buffer.try_grow(10);
-///     buffer.write_value(0, [1, 2]);
-///     buffer.write_value(1, [4, 5]);
+///     buffer.put(0, [1, 2]);
+///     buffer.put(1, [4, 5]);
 /// }
 ///
-/// assert_eq!(unsafe { buffer.read_value(0) }, [1, 2]);
-/// assert_eq!(unsafe { buffer.read_value(1) }, [4, 5]);
+/// assert_eq!(unsafe { buffer.take(0) }, [1, 2]);
+/// assert_eq!(unsafe { buffer.take(1) }, [4, 5]);
 /// ```
 #[repr(transparent)]
 pub struct ArrayBuffer<const SIZE: usize, B>
@@ -83,14 +83,14 @@ where
         self.buffers.iter().map(B::capacity).min().unwrap_or(0)
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
+    unsafe fn take(&mut self, index: usize) -> Self::Element {
         let mut result = MaybeUninit::<B::Element>::uninit_array::<SIZE>();
         for (i, buffer) in self.buffer_iter_mut().enumerate() {
             let ptr = result[i].as_mut_ptr();
 
             // SAFETY: if `index` is a valid and filled position to this buffer,
             // it's also valid and filled for all the underlying ones.
-            let val = unsafe { buffer.read_value(index) };
+            let val = unsafe { buffer.take(index) };
             // SAFETY: `ptr` is part of a local array, thus a valid location
             // (and without a value).
             unsafe { ptr.write(val) };
@@ -100,11 +100,11 @@ where
         unsafe { MaybeUninit::array_assume_init(result) }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
+    unsafe fn put(&mut self, index: usize, value: Self::Element) {
         for (buffer, v) in self.buffer_iter_mut().zip(value) {
             // SAFETY: if `index` is a valid and empty position to this buffer,
             // it's also valid and empty for all the underlying ones.
-            unsafe { buffer.write_value(index, v) }
+            unsafe { buffer.put(index, v) }
         }
     }
 

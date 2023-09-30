@@ -95,23 +95,23 @@ where
         }
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> Self::Element {
+    unsafe fn take(&mut self, index: usize) -> Self::Element {
         if S::SELECT_A {
             let reference = unsafe { self.a.assume_init_mut() };
-            unsafe { reference.read_value(index) }
+            unsafe { reference.take(index) }
         } else {
             let reference = unsafe { self.b.assume_init_mut() };
-            unsafe { reference.read_value(index) }
+            unsafe { reference.take(index) }
         }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: Self::Element) {
+    unsafe fn put(&mut self, index: usize, value: Self::Element) {
         if S::SELECT_A {
             let reference = unsafe { self.a.assume_init_mut() };
-            unsafe { reference.write_value(index, value) }
+            unsafe { reference.put(index, value) }
         } else {
             let reference = unsafe { self.b.assume_init_mut() };
-            unsafe { reference.write_value(index, value) }
+            unsafe { reference.put(index, value) }
         }
     }
 

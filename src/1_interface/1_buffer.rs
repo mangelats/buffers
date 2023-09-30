@@ -42,19 +42,19 @@ pub trait Buffer {
     /// # Safety
     ///   * `index` must be less than `capacity`.
     ///   * The `index` position must be filled.
-    unsafe fn read_value(&mut self, index: usize) -> Self::Element;
+    unsafe fn take(&mut self, index: usize) -> Self::Element;
 
     /// Writes the value into the `index` position, filling it.
     ///
     /// # Safety
     ///   * `index` must be less than `capacity`.
     ///   * The `index` position must be empty.
-    unsafe fn write_value(&mut self, index: usize, value: Self::Element);
+    unsafe fn put(&mut self, index: usize, value: Self::Element);
 
     /// Manually drops the value in the specified index position and empties it.
     ///
-    /// Unlike [`read_value`], it does not return the element, which may allow
-    /// to drop it in place.
+    /// Unlike [`take`], it does not return the element, which may allow to drop
+    /// it in place.
     ///
     /// # Safety
     ///   * `index` must be less than `capacity`.
@@ -110,11 +110,11 @@ pub trait Buffer {
             // SAFETY: This function requirements ensure that `to_move` (`range`
             // after clamp) has all values be valid. We are moving values before
             // overriding, ensuring that the value is still valid.
-            let value = unsafe { self.read_value(old_pos) };
+            let value = unsafe { self.take(old_pos) };
             // SAFETY: This function requirements ensure that `positions` won't
             // get out of memory empty. On the overlapping space, the values are
             // emptied before writing on it.
-            unsafe { self.write_value(new_pos, value) };
+            unsafe { self.put(new_pos, value) };
         }
 
         // Old values left as is, since the bytes themselves are considered garbage
@@ -136,11 +136,11 @@ pub trait Buffer {
             // SAFETY: This function requirements ensure that `to_move` (`range`
             // after clamp) has all values be valid. We are moving values before
             // overriding, ensuring that the value is still valid.
-            let value = unsafe { self.read_value(old_pos) };
+            let value = unsafe { self.take(old_pos) };
             // SAFETY: This function requirements ensure that `positions` won't
             // get out of memory empty. On the overlapping space, the values are
             // emptied before writing on it.
-            unsafe { self.write_value(new_pos, value) };
+            unsafe { self.put(new_pos, value) };
         }
 
         // Old values left as is, since the bytes themselves are considered garbage

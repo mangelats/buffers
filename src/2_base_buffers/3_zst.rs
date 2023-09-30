@@ -48,12 +48,12 @@ impl<T> Buffer for ZstBuffer<T> {
         usize::MAX
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> T {
+    unsafe fn take(&mut self, index: usize) -> T {
         // SAFETY: it has the same requirements
         unsafe { self.read(index) }
     }
 
-    unsafe fn write_value(&mut self, _index: usize, _value: T) {
+    unsafe fn put(&mut self, _index: usize, _value: T) {
         // Do nothing
     }
 

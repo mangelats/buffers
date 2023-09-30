@@ -64,12 +64,12 @@ impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
         SIZE
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> T {
+    unsafe fn take(&mut self, index: usize) -> T {
         // SAFETY: it has the same requirements
         unsafe { self.read(index) }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: T) {
+    unsafe fn put(&mut self, index: usize, value: T) {
         // SAFETY: `index` is unsafe with requirements that ensures that
         // [`PtrBuffer::ptr`] can be used.
         let ptr = unsafe { self.mut_ptr(index) };
@@ -174,8 +174,8 @@ mod tests {
     fn inline_buffer_should_can_read_previously_written_values() {
         let mut vec = InlineBuffer::<u32, 123>::new();
         for x in 1..3 {
-            unsafe { vec.write_value(0, x) };
-            let r = unsafe { vec.read_value(0) };
+            unsafe { vec.put(0, x) };
+            let r = unsafe { vec.take(0) };
 
             assert_eq!(x, r)
         }
@@ -185,10 +185,10 @@ mod tests {
     fn inline_buffer_should_be_able_to_read_multiple_values() {
         let mut vec = InlineBuffer::<usize, 123>::new();
         for x in 1..3 {
-            unsafe { vec.write_value(x, x * 2) };
+            unsafe { vec.put(x, x * 2) };
         }
         for x in 1..3 {
-            let r = unsafe { vec.read_value(x) };
+            let r = unsafe { vec.take(x) };
             assert_eq!(r, x * 2)
         }
     }
@@ -198,7 +198,7 @@ mod tests {
         let counter = AtomicI64::new(0);
         let mut buffer = InlineBuffer::<LifeCounter<'_>, 1>::new();
 
-        unsafe { buffer.write_value(0, LifeCounter::new(&counter)) };
+        unsafe { buffer.put(0, LifeCounter::new(&counter)) };
         assert_eq!(counter.load(Ordering::SeqCst), 1);
 
         unsafe { buffer.manually_drop(0) };

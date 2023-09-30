@@ -104,17 +104,16 @@ impl<T> Buffer for HeapBuffer<T> {
         self.cap
     }
 
-    unsafe fn read_value(&mut self, index: usize) -> T {
+    unsafe fn take(&mut self, index: usize) -> T {
         // SAFETY: it has the same requirements
         unsafe { self.read(index) }
     }
 
-    unsafe fn write_value(&mut self, index: usize, value: T) {
-        // SAFETY: [`Buffer::write_value`] ensures that the position is valid
-        // and empty.
+    unsafe fn put(&mut self, index: usize, value: T) {
+        // SAFETY: [`Buffer::put`] ensures that the position is valid and empty.
         let dst = unsafe { self.mut_ptr(index) };
         // SAFETY: [`PtrBuffer::mut_ptr`] ensures that the pointer is valid.
-        // [`Buffer::write_value`] ensures that the position is empty.
+        // [`Buffer::put`] ensures that the position is empty.
         unsafe { ptr::write(dst, value) };
     }
 
@@ -123,7 +122,7 @@ impl<T> Buffer for HeapBuffer<T> {
         // and filled.
         let to_drop = unsafe { self.mut_ptr(index) };
         // SAFETY: [`PtrBuffer::mut_ptr`] ensures that the pointer is valid.
-        // [`Buffer::write_value`] ensures that the position is filled.
+        // [`Buffer::manually_drop`] ensures that the position is filled.
         unsafe { ptr::drop_in_place(to_drop) };
     }
 

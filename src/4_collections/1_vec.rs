@@ -259,15 +259,15 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         self.len -= 1;
 
         // SAFETY: index is in bounds
-        let current = unsafe { self.buffer.read_value(index) };
+        let current = unsafe { self.buffer.take(index) };
 
         // Move only when necessary
         if self.len != index {
             // SAFETY: `self.len` has been decreased but the position hasn't
             // been emptied, yet.
-            let value = unsafe { self.buffer.read_value(self.len) };
+            let value = unsafe { self.buffer.take(self.len) };
             // SAFETY: `index` was empties when reading to return the value.
-            unsafe { self.buffer.write_value(index, value) };
+            unsafe { self.buffer.put(index, value) };
         }
 
         current
@@ -312,7 +312,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         // position at `self.len`.
         unsafe { self.buffer.shift_right(index..self.len, 1) };
         // SAFETY: After shifting index, that position is empty.
-        unsafe { self.buffer.write_value(index, element) };
+        unsafe { self.buffer.put(index, element) };
 
         self.len += 1;
     }
@@ -348,7 +348,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
 
         // SAFETY: `0..self.len` is valid. 0 < `index` < `self.len`, so it's
         // valid.
-        let result = unsafe { self.buffer.read_value(index) };
+        let result = unsafe { self.buffer.take(index) };
         // SAFETY: We remove a single element (`index`). `(index + 1)..self.len`
         // are valid and can be shifted by 1 (position `index` is now empty).
         unsafe {
@@ -378,7 +378,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
             }
         }
         // SAFETY: we know this value is unused because of `self.len`
-        unsafe { self.buffer.write_value(index, value) };
+        unsafe { self.buffer.put(index, value) };
         self.len += 1;
         Ok(index)
     }
@@ -412,7 +412,7 @@ impl<T, B: Buffer<Element = T>> Vector<T, B> {
         if self.len > 0 {
             self.len -= 1;
             // SAFETY: self.len-1 is the last element, which we are poping
-            let value = unsafe { self.buffer.read_value(self.len) };
+            let value = unsafe { self.buffer.take(self.len) };
             Some(value)
         } else {
             None

@@ -6,8 +6,8 @@ where
 {
     /// Copies the value in `position` without emptying it.
     ///
-    /// Unlike [`Buffer::read_value`] it doesn't require mutable access because
-    /// it doesn't empty the position.
+    /// Unlike [`Buffer::take`] it doesn't require mutable access because it
+    /// doesn't empty the position.
     ///
     /// # Safety
     ///   * `index` must be less than `capacity`.
