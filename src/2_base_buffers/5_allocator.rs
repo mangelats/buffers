@@ -125,7 +125,7 @@ impl<T, A: Allocator> Buffer for AllocatorBuffer<T, A> {
 }
 
 impl<T: Copy, A: Allocator> CopyValueBuffer for AllocatorBuffer<T, A> {
-    unsafe fn copy_value(&self, index: usize) -> T {
+    unsafe fn copy(&self, index: usize) -> T {
         // SAFETY: it has the same requirements
         unsafe { self.read(index) }
     }

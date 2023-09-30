@@ -173,14 +173,14 @@ where
     B: CopyValueBuffer,
     B::Element: Copy,
 {
-    unsafe fn copy_value(&self, index: usize) -> Self::Element {
+    unsafe fn copy(&self, index: usize) -> Self::Element {
         let mut result = MaybeUninit::<B::Element>::uninit_array::<SIZE>();
         for (i, buffer) in self.buffer_iter().enumerate() {
             let ptr = result[i].as_mut_ptr();
 
             // SAFETY: if `index` is a valid and filled position to this buffer,
             // it's also valid and filled for all the underlying ones.
-            let val = unsafe { buffer.copy_value(index) };
+            let val = unsafe { buffer.copy(index) };
             // SAFETY: `ptr` is part of a local array, thus a valid location
             // (and without a value).
             unsafe { ptr.write(val) };

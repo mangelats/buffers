@@ -12,5 +12,5 @@ where
     /// # Safety
     ///   * `index` must be less than `capacity`.
     ///   * The `index` position must be filled.
-    unsafe fn copy_value(&self, index: usize) -> Self::Element;
+    unsafe fn copy(&self, index: usize) -> Self::Element;
 }

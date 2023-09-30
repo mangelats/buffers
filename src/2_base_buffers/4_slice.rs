@@ -87,7 +87,7 @@ impl<'a, T> Buffer for SliceBuffer<'a, T> {
 }
 
 impl<'a, T: Copy> CopyValueBuffer for SliceBuffer<'a, T> {
-    unsafe fn copy_value(&self, index: usize) -> T {
+    unsafe fn copy(&self, index: usize) -> T {
         // SAFETY: it has the same requirements
         unsafe { self.read(index) }
     }

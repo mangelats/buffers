@@ -134,9 +134,9 @@ where
     B: ContiguousMemoryBuffer + CopyValueBuffer + Default,
     Self::Element: Copy,
 {
-    unsafe fn copy_value(&self, index: usize) -> Self::Element {
+    unsafe fn copy(&self, index: usize) -> Self::Element {
         // SAFETY: Forwarding call to inner buffer.
-        unsafe { self.inner.copy_value(index) }
+        unsafe { self.inner.copy(index) }
     }
 }
 

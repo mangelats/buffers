@@ -95,10 +95,10 @@ where
     A::Element: Copy,
     B: Buffer<Element = A::Element> + CopyValueBuffer,
 {
-    unsafe fn copy_value(&self, index: usize) -> Self::Element {
+    unsafe fn copy(&self, index: usize) -> Self::Element {
         match self {
-            EitherBuffer::First(buf) => unsafe { buf.copy_value(index) },
-            EitherBuffer::Second(buf) => unsafe { buf.copy_value(index) },
+            EitherBuffer::First(buf) => unsafe { buf.copy(index) },
+            EitherBuffer::Second(buf) => unsafe { buf.copy(index) },
         }
     }
 }

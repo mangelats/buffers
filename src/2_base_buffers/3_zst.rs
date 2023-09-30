@@ -71,7 +71,7 @@ impl<T> Buffer for ZstBuffer<T> {
 }
 
 impl<T: Copy> CopyValueBuffer for ZstBuffer<T> {
-    unsafe fn copy_value(&self, index: usize) -> T {
+    unsafe fn copy(&self, index: usize) -> T {
         // SAFETY: it has the same requirements
         unsafe { self.read(index) }
     }

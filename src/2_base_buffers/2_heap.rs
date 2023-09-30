@@ -160,7 +160,7 @@ impl<T> Buffer for HeapBuffer<T> {
 }
 
 impl<T: Copy> CopyValueBuffer for HeapBuffer<T> {
-    unsafe fn copy_value(&self, index: usize) -> T {
+    unsafe fn copy(&self, index: usize) -> T {
         // SAFETY: it has the same requirements
         unsafe { self.read(index) }
     }

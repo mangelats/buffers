@@ -95,7 +95,7 @@ impl<T, const SIZE: usize> Buffer for InlineBuffer<T, SIZE> {
 }
 
 impl<T: Copy, const SIZE: usize> CopyValueBuffer for InlineBuffer<T, SIZE> {
-    unsafe fn copy_value(&self, index: usize) -> T {
+    unsafe fn copy(&self, index: usize) -> T {
         // SAFETY: it has the same requirements
         unsafe { self.read(index) }
     }

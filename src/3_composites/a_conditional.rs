@@ -162,13 +162,13 @@ where
     B: Buffer<Element = A::Element> + CopyValueBuffer,
     S: Selector,
 {
-    unsafe fn copy_value(&self, index: usize) -> Self::Element {
+    unsafe fn copy(&self, index: usize) -> Self::Element {
         if S::SELECT_A {
             let reference = unsafe { self.a.assume_init_ref() };
-            unsafe { reference.copy_value(index) }
+            unsafe { reference.copy(index) }
         } else {
             let reference = unsafe { self.b.assume_init_ref() };
-            unsafe { reference.copy_value(index) }
+            unsafe { reference.copy(index) }
         }
     }
 }

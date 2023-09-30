@@ -193,9 +193,9 @@ where
     IB::InnerBuffer: CopyValueBuffer,
     <IB::InnerBuffer as Buffer>::Element: Copy,
 {
-    unsafe fn copy_value(&self, index: usize) -> Self::Element {
+    unsafe fn copy(&self, index: usize) -> Self::Element {
         // SAFETY: Just calls the inner function with the same requirements.
-        unsafe { self.inner().narrow_ref().copy_value(index) }
+        unsafe { self.inner().narrow_ref().copy(index) }
     }
 }
 
