@@ -134,7 +134,7 @@ For now, I've only implemented `Vector`. It's basically `Vec` with a buffer
 ## How to make your own
 A `Buffer` implementation have four types of member functions:
   - Show the capacity (`capacity`)
-  - Manage data (`read_value`, `write_value`, `manually_drop`)
+  - Manage data (`put`, `take`, `manually_drop`, `copy`)
   - Resizing (`try_grow`, `try_shrink`)
   - Utils which have default implementations. Allows override when knowledge
   allows optimizations (for example moving values when the data is contiguous)
