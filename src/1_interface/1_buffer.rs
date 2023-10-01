@@ -59,7 +59,12 @@ pub trait Buffer {
     /// # Safety
     ///   * `index` must be less than `capacity`.
     ///   * The `index` position must be filled.
-    unsafe fn manually_drop(&mut self, index: usize);
+    unsafe fn manually_drop(&mut self, index: usize) {
+        // Taking a value and letting Rust drop it may not be the most
+        // efficient, since a lot of thems can drop in place.
+        // SAFETY: They both have the same safety requirements (to be filled).
+        let _ = unsafe { self.take(index) };
+    }
 
     /// Asks the buffer to grow.
     ///
